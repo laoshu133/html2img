@@ -1,0 +1,15 @@
+{
+  "name": "base",
+  "description": "基础缩略图生成",
+  "version": "0.0.1",
+  "url": null,
+  "outPath": "__out",
+  "wrapSelector": ".hlg_flag_wrap_panel",
+  "replaceSelector": ".hlg_flag_replace_place",
+  "horsemanConfig": {
+    "phantomPath": "/usr/local/bin/phantomjs"
+  },
+  "viewport": null,
+  "oninit": null,
+  "oninitxx": null
+}

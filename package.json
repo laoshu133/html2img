@@ -1,0 +1,15 @@
+{
+  "name": "hlg-html2img",
+  "description": "hlg-html2img",
+  "version": "0.0.1",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git@git.huanleguang.com:static/html2img.git"
+  },
+  "devDependencies": {
+    "async": "^0.9.0",
+    "node-horseman": "^1.5.1"
+  },
+  "readmeFilename": "README.md"
+}

@@ -4,6 +4,7 @@
 node_modules
 
 # build
+__out
 __build
 
 # IDE
