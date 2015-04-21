@@ -9,7 +9,5 @@
   "horsemanConfig": {
     "phantomPath": "/usr/local/bin/phantomjs"
   },
-  "viewport": null,
-  "oninit": null,
-  "oninitxx": null
+  "viewport": null
 }
