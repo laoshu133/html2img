@@ -49,6 +49,8 @@ var getOutImgFileName = function() {
 
 tools.mkDeepDir(outPath);
 
+return;
+
 
 // init
 var horseman = new Horseman(config.horsemanConfig);
@@ -97,7 +99,9 @@ if(replacePlaceCount > 0) {
         var elems = $(replaceSelector);
 
         elems.each(function(i) {
-            $(this).html('{{'+ replacePlaces[i] +'}}');
+            var item = replacePlaces[i];
+
+            $(this).html('{{'+ item.filename +'}}');
         });
 
         // 返回处理后代码

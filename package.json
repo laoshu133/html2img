@@ -13,6 +13,6 @@
   },
   "readmeFilename": "README.md",
   "scripts": {
-    "test": "node demos/thumb_whit_replace.json"
+    "test": "node app.js demos/thumb_whit_replace.json"
   }
 }

@@ -46,11 +46,14 @@ var tools = {
     },
     // fs
     mkDeepDir: function(destPath) {
-        var tmpPath;
+        var tmpPath = '';
+        var destPaths = [];
         var paths = destPath.replace(/\\+/g, '/').split('/');
 
         while(paths.length) {
-            tmpPath = paths.shift();
+            destPaths.push(paths.shift());
+
+            tmpPath = destPaths.join('/');
 
             if(!fs.existsSync(tmpPath)) {
                 fs.mkdirSync(tmpPath);
