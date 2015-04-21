@@ -25,9 +25,9 @@ if(configPath && fs.existsSync(configPath)) {
 }
 
 if(!config) {
-    console.error('config path load error: ', configPath);
+    console.error('Config path load error: ', configPath);
 
-    process.exit();
+    return;
 }
 
 var defaultConfig = tools.getConfig('./config.json');
@@ -70,14 +70,22 @@ tools.time('Horseman open');
 horseman.open(config.url);
 tools.timeEnd('Horseman open');
 
-// 截全图
-var fullImgPath = path.join(outPath, getOutImgFileName());
+if(!horseman.count(config.wrapSelector)) {
+    console.error('Wrap element not found: ', config.wrapSelector);
 
-tools.time('Full shot');
-horseman.screenshot(fullImgPath);
-tools.timeEnd('Full shot');
+    horseman.close();
+    return;
+}
 
-// 预处理（代码，区域截图）
+// 截原图
+var originImgPath = path.join(outPath, outFileName + '_origin.png');
+
+tools.time('Origin shot');
+horseman.crop(config.wrapSelector, originImgPath);
+tools.timeEnd('Origin shot');
+
+
+// 预处理（代码，区域截图），待完善
 var replacePlaces = horseman
 var replacePlaceCount = horseman.count(config.replaceSelector);
 if(replacePlaceCount > 0) {
@@ -85,13 +93,16 @@ if(replacePlaceCount > 0) {
     var replacePlaces = [];
 
     tools.time('Replace shot');
-    for(var tmpPath,i=0; i<replacePlaceCount; i++) {
+    for(var tmpName,i=0; i<replacePlaceCount; i++) {
+        tmpName = getOutImgFileName();
+
         replacePlaces[i] = {
-            filename: getOutImgFileName()
+            filename: tmpName,
+            fullPath: path.join(outPath, tmpName),
+            selector: config.replaceSelector + ':eq('+ i +')'
         };
 
-        tmpPath = path.join(outPath, replacePlaces[i].filename);
-        horseman.crop(config.replaceSelector, tmpPath);
+        horseman.crop(replacePlaces[i].selector, replacePlaces[i].fullPath);
     }
     tools.timeEnd('Replace shot');
 
@@ -125,14 +136,13 @@ if(replacePlaceCount > 0) {
 }
 
 // 正文截图
-if(horseman.count(config.wrapSelector) > 0) {
-    tools.time('Wrap shot');
+tools.time('Wrap shot');
 
-    var wrapOutPath = path.join(outPath, outFileName + '.png');
-    horseman.crop(config.wrapSelector, wrapOutPath);
+var wrapOutPath = path.join(outPath, outFileName + '.png');
+horseman.crop(config.wrapSelector, wrapOutPath);
 
-    tools.timeEnd('Wrap shot');
-}
+tools.timeEnd('Wrap shot');
+
 
 // destroy
 horseman.close();
