@@ -13,7 +13,7 @@ var tools = require('./tools');
 var Horseman = require('node-horseman');
 
 // all process timestamp start
-tools.time('All_process');
+tools.time('All process');
 
 // config
 var args = process.argv.slice(2);
@@ -53,9 +53,9 @@ tools.mkDeepDir(outPath);
 // init
 console.log('Start Horseman...');
 
-tools.time('Load_Horseman(phantomjs)');
+tools.time('Load Horseman(phantomjs)');
 var horseman = new Horseman(config.horsemanConfig);
-tools.timeEnd('Load_Horseman(phantomjs)');
+tools.timeEnd('Load Horseman(phantomjs)');
 
 // setup
 if(config.viewport) {
@@ -66,16 +66,16 @@ if(config.viewport) {
 }
 
 // tools.fireEvent(config, 'init', horseman);
-tools.time('Horseman_open');
+tools.time('Horseman open');
 horseman.open(config.url);
-tools.timeEnd('Horseman_open');
+tools.timeEnd('Horseman open');
 
 // 截全图
 var fullImgPath = path.join(outPath, getOutImgFileName());
 
-tools.time('Full_shot');
+tools.time('Full shot');
 horseman.screenshot(fullImgPath);
-tools.timeEnd('Full_shot');
+tools.timeEnd('Full shot');
 
 // 预处理（代码，区域截图）
 var replacePlaces = horseman
@@ -84,7 +84,7 @@ if(replacePlaceCount > 0) {
     var outHTML = '';
     var replacePlaces = [];
 
-    tools.time('Replace_shot');
+    tools.time('Replace shot');
     for(var tmpPath,i=0; i<replacePlaceCount; i++) {
         replacePlaces[i] = {
             filename: getOutImgFileName()
@@ -93,10 +93,10 @@ if(replacePlaceCount > 0) {
         tmpPath = path.join(outPath, replacePlaces[i].filename);
         horseman.crop(config.replaceSelector, tmpPath);
     }
-    tools.timeEnd('Replace_shot');
+    tools.timeEnd('Replace shot');
 
     // 处理代码，替换占位符
-    tools.time('Code_process');
+    tools.time('Code process');
     outHTML = horseman.evaluate(function(wrapSelector, replaceSelector, replacePlaces) {
         var $ = window.jQuery;
         var elems = $(replaceSelector);
@@ -118,7 +118,7 @@ if(replacePlaceCount > 0) {
         return html;
 
     }, config.wrapSelector, config.replaceSelector, replacePlaces);
-    tools.timeEnd('Code_process');
+    tools.timeEnd('Code process');
 
     var outHTMLPath = path.join(outPath, outFileName + '.html');
     fs.writeFileSync(outHTMLPath, outHTML);
@@ -126,16 +126,16 @@ if(replacePlaceCount > 0) {
 
 // 正文截图
 if(horseman.count(config.wrapSelector) > 0) {
-    tools.time('Wrap_shot');
+    tools.time('Wrap shot');
 
     var wrapOutPath = path.join(outPath, outFileName + '.png');
     horseman.crop(config.wrapSelector, wrapOutPath);
 
-    tools.timeEnd('Wrap_shot');
+    tools.timeEnd('Wrap shot');
 }
 
 // destroy
 horseman.close();
 
 // all process timestamp end
-tools.timeEnd('All_process');
+tools.timeEnd('All process');
