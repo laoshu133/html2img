@@ -49,8 +49,6 @@ var getOutImgFileName = function() {
 
 tools.mkDeepDir(outPath);
 
-return;
-
 
 // init
 var horseman = new Horseman(config.horsemanConfig);
