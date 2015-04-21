@@ -1,8 +1,0 @@
-{
-  "name": "thumb",
-  "description": "缩略图生成",
-  "version": "0.0.1",
-  "viewport": [1024, 800],
-  "url": "./demos/list_thumb.html",
-  "outPath": "__out"
-}
