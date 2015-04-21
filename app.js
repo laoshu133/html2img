@@ -51,7 +51,11 @@ tools.mkDeepDir(outPath);
 
 
 // init
+console.log('Start Horseman...');
+
+tools.time('Load_Horseman(phantomjs)');
 var horseman = new Horseman(config.horsemanConfig);
+tools.timeEnd('Load_Horseman(phantomjs)');
 
 // setup
 if(config.viewport) {
@@ -62,8 +66,9 @@ if(config.viewport) {
 }
 
 // tools.fireEvent(config, 'init', horseman);
-
+tools.time('Horseman_open');
 horseman.open(config.url);
+tools.timeEnd('Horseman_open');
 
 // 截全图
 var fullImgPath = path.join(outPath, getOutImgFileName());
