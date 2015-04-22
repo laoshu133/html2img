@@ -86,7 +86,6 @@ tools.timeEnd('Origin shot');
 
 
 // 预处理（代码，区域截图），待完善
-var replacePlaces = horseman
 var replacePlaceCount = horseman.count(config.replaceSelector);
 if(replacePlaceCount > 0) {
     var outHTML = '';

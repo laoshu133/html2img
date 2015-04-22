@@ -60,6 +60,13 @@ var tools = {
             }
         }
     },
+    // log
+    log: function() {
+        var args = [].slice.call(arguments);
+        args.unshift('[HTML2IMG]');
+
+        console.log.apply(console, args);
+    },
     // events
     fireEvent: function(config, type) {
         var callback = config ? config['on' + type] : null;
