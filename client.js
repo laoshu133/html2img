@@ -34,6 +34,8 @@ var client = net.connect({
 client.on('connect', function() {
     console.log('Strat shot...');
 
+    tools.time('All shots');
+
     sendConfig();
 });
 
@@ -73,6 +75,8 @@ function sendConfig() {
 
     if(!configs.length) {
         client.end();
+
+        tools.timeEnd('All shots');
 
         return;
     }
