@@ -67,6 +67,12 @@ var tools = {
 
         console.log.apply(console, args);
     },
+    error: function() {
+        var args = [].slice.call(arguments);
+        args.unshift('![HTML2IMG]');
+
+        console.error.apply(console, args);
+    },
     // events
     fireEvent: function(config, type) {
         var callback = config ? config['on' + type] : null;

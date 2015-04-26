@@ -1,7 +1,7 @@
 {
-  "name": "base",
-  "description": "基础缩略图生成",
-  "version": "0.0.2",
+  "id": null,
+  "action": "hello",
+  "description": "任务说明",
   "listenPort": 3000,
   "url": null,
   "outPath": "__out",
