@@ -54,6 +54,8 @@ var queue = {
             return cb();
         }
 
+        this.status = 'processing';
+
         actionFn(stack.client, config, cb);
 
         function cb() {
