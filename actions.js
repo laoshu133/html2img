@@ -26,15 +26,20 @@ var actions = {
     hello: function(client, config, callback) {
         var data = new Buffer('Hello~');
 
-        client.write(data);
-
-        callback();
+        client.write(data, callback);
     },
     makeshot: function(client, config, callback) {
         makeShot(config, function(ret) {
-            client.write(JSON.stringify(ret));
+            var outCfg = config.out;
+            var retFilePath = path.join(outCfg.path, outCfg.name + '.json');
 
-            callback();
+            fs.writeFileSync(retFilePath, JSON.stringify(ret));
+
+            var rs = fs.createReadStream(retFilePath);
+
+            rs.pipe(client);
+
+            rs.on('end', callback);
         });
     },
     getfile: function(client, config, callback) {
@@ -44,19 +49,9 @@ var actions = {
 
         var rs = fs.createReadStream(config.url);
 
-        rs.on('end', function() {
-            callback();
-        });
+        rs.pipe(client);
 
-        rs.on('data', function(chunk) {
-            if(!client.write(chunk)) {
-                rs.pause();
-            }
-        });
-
-        client.on('drain', function() {
-            rs.resume();
-        });
+        rs.on('end', callback);
     }
 };
 
@@ -73,7 +68,8 @@ function processConfig(config) {
     config.out = outCfg;
 
     if(config.content) {
-        var htmlTpl = fs.readFileSync('tpl/html.html');
+        var htmlTplPath = path.join('tpl', config.htmlTpl);
+        var htmlTpl = fs.readFileSync(htmlTplPath);
 
         var html = htmlTpl.toString().replace('{content}', config.content);
         var inPath = path.join(outCfg.path, 'in.html');
@@ -236,11 +232,16 @@ function processShot(config, outCfg) {
     };
 }
 
-// error catch
+// clean horseman
 process.on('exit', function(err) {
     if(horseman) {
         horseman.close();
     }
+});
+
+// error catch
+process.on('uncaughtException', function(err) {
+    process.exit();
 });
 
 module.exports = actions;

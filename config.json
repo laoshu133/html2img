@@ -3,6 +3,7 @@
   "action": "hello",
   "description": "任务说明",
   "listenPort": 3000,
+  "htmlTpl": "tb_desc.html",
   "url": null,
   "outPath": "__out",
   "wrapSelector": ".hlg_flag_wrap_panel",

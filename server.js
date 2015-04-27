@@ -59,7 +59,7 @@ var queue = {
         actionFn(stack.client, config, cb);
 
         function cb() {
-            stack.client.end();
+            // stack.client.end();
 
             self.status = 'ready';
             self.next();
