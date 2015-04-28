@@ -50,6 +50,11 @@ var tools = {
         var destPaths = [];
         var paths = destPath.replace(/\\+/g, '/').split('/');
 
+        // ext. /var/tmp
+        if(paths[0] === '') {
+            paths[0] = '/';
+        }
+
         while(paths.length) {
             destPaths.push(paths.shift());
 
