@@ -28,6 +28,19 @@ var actions = {
 
         client.write(data, callback);
     },
+    // 取文件
+    getfile: function(client, config, callback) {
+        if(!fs.existsSync(config.url)) {
+            return callback();
+        }
+
+        var rs = fs.createReadStream(config.url);
+
+        rs.pipe(client);
+
+        rs.on('end', callback);
+    },
+    // 缩略图
     makeshot: function(client, config, callback) {
         makeShot(config, function(ret) {
             var outCfg = config.out;
@@ -42,16 +55,9 @@ var actions = {
             rs.on('end', callback);
         });
     },
-    getfile: function(client, config, callback) {
-        if(!fs.existsSync(config.url)) {
-            return callback();
-        }
-
-        var rs = fs.createReadStream(config.url);
-
-        rs.pipe(client);
-
-        rs.on('end', callback);
+    // 新关联列表（待完善）
+    makelist: function() {
+        tools.log('makelist...');
     }
 };
 
@@ -153,13 +159,12 @@ function makeShot(config, callback) {
     // tools.timeEnd('Origin Main shot');
 
     // 处理数据
-    // ret.data = processShot(config, outCfg);
-    ret.data = {
+    ret.data = lodash.merge({
         id: config.id,
         outName: outCfg.name,
         outFile: outCfg.path + '/' + outCfg.name + '.png',
-        content: '',
-    };
+        content: ''
+    }, processShot(config, outCfg));
 
     // 正文截图
     tools.time('Main shot');
@@ -178,59 +183,93 @@ function makeShot(config, callback) {
 
 // 预处理（代码，区域截图），待完善
 function processShot(config, outCfg) {
-    var outHTML = '';
-    var replacePlaces = [];
-    var replacePlaceCount = horseman.count(config.replaceSelector);
+    var action  = config.action;
 
-    if(replacePlaceCount > 0) {
-        tools.time('Replace shot');
-        for(var tmpName,i=0; i<replacePlaceCount; i++) {
-            tmpName = outCfg.createImgFilename();
+    var ret = {};
 
-            replacePlaces[i] = {
-                filename: tmpName,
-                fullPath: path.join(outCfg.path, tmpName),
-                selector: config.replaceSelector + ':eq('+ i +')'
-            };
-
-            horseman.crop(replacePlaces[i].selector, replacePlaces[i].fullPath);
-        }
-        tools.timeEnd('Replace shot');
-
-        // 处理代码，替换占位符
-        tools.time('Code process');
-        outHTML = horseman.evaluate(function(wrapSelector, replaceSelector, replacePlaces) {
-            var $ = window.jQuery;
-            var elems = $(replaceSelector);
-
-            elems.each(function(i) {
-                var item = replacePlaces[i];
-
-                $(this).html('{{'+ item.filename +'}}');
-            });
-
-            // 返回处理后代码
-            var wrapElem = $(wrapSelector || 'body');
-            var html = wrapElem.html();
-
-            if(!html) {
-                html = document.body.innerHTML;
-            }
-
-            return html;
-
-        }, config.wrapSelector, config.replaceSelector, replacePlaces);
-        tools.timeEnd('Code process');
-
-        var outHTMLPath = path.join(outCfg.path, outCfg.name + '.html');
-        fs.writeFileSync(outHTMLPath, outHTML);
+    if(processers[action]) {
+        ret = processers[action](config, outCfg);
     }
 
-    return {
-        replacePlaces: replacePlaces,
-        content: outHTML
-    };
+    return ret;
 }
+
+
+/**
+ * processers
+ *
+ * 截图预处理
+ *
+ */
+var processers = {
+    // 标准截图
+    makeshot: function(config, outCfg) {
+        // restore
+        // horseman.zoom(1);
+
+        // 比例缩放
+        var size = config.size;
+        if(size && size.width) {
+
+        }
+    },
+    // 新关联列表（待完善）
+    makelist: function() {
+        var outHTML = '';
+        var replacePlaces = [];
+        var replacePlaceCount = horseman.count(config.replaceSelector);
+
+        if(replacePlaceCount > 0) {
+            tools.time('Replace shot');
+            for(var tmpName,i=0; i<replacePlaceCount; i++) {
+                tmpName = outCfg.createImgFilename();
+
+                replacePlaces[i] = {
+                    filename: tmpName,
+                    fullPath: path.join(outCfg.path, tmpName),
+                    selector: config.replaceSelector + ':eq('+ i +')'
+                };
+
+                horseman.crop(replacePlaces[i].selector, replacePlaces[i].fullPath);
+            }
+            tools.timeEnd('Replace shot');
+
+            // 处理代码，替换占位符
+            tools.time('Code process');
+            outHTML = horseman.evaluate(function(wrapSelector, replaceSelector, replacePlaces) {
+                var $ = window.jQuery;
+                var elems = $(replaceSelector);
+
+                elems.each(function(i) {
+                    var item = replacePlaces[i];
+
+                    $(this).html('{{'+ item.filename +'}}');
+                });
+
+                // 返回处理后代码
+                var wrapElem = $(wrapSelector || 'body');
+                var html = wrapElem.html();
+
+                if(!html) {
+                    html = document.body.innerHTML;
+                }
+
+                return html;
+
+            }, config.wrapSelector, config.replaceSelector, replacePlaces);
+            tools.timeEnd('Code process');
+
+            var outHTMLPath = path.join(outCfg.path, outCfg.name + '.html');
+            fs.writeFileSync(outHTMLPath, outHTML);
+        }
+
+        return {
+            replacePlaces: replacePlaces,
+            content: outHTML
+        };
+    }
+};
+
 
 // clean horseman
 process.on('exit', function(err) {
