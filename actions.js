@@ -37,7 +37,6 @@ var actions = {
         var rs = fs.createReadStream(config.url);
 
         rs.pipe(client);
-
         rs.on('end', callback);
     },
     // 缩略图

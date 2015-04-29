@@ -26,7 +26,7 @@ var client = net.connect({
 async.waterfall([
     function connect(cb) {
         client.on('connect', function() {
-            tools.log('Strat client...');
+            console.log('Strat client...');
 
             cb();
         });
@@ -65,7 +65,7 @@ async.waterfall([
 ], function(err, ret) {
     ret = ret.toString();
 
-    tools.log('Client process done, ', ret);
+    console.log('Client process done, ', ret);
 
-    tools.timeEnd('Client process');
+    tools.timeEnd('Client process', true);
 });

@@ -4,6 +4,16 @@
 
 var fs = require('fs');
 var path = require('path');
+var debugFactor = require('debug');
+
+// debug
+var debugPrefix = 'html2img';
+var debugLog = debugFactor(debugPrefix);
+var debugInfo = debugFactor(debugPrefix);
+var debugError = debugFactor(debugPrefix);
+debugLog.log = console.log.bind(console);
+debugInfo.info = console.info.bind(console);
+debugError.error = console.error.bind(console);
 
 var tools = {
     getConfig: function(path) {
@@ -15,7 +25,7 @@ var tools = {
             config = JSON.parse(content);
         }
         catch(ex) {
-            console.log('config read error, ', ex);
+            this.error('config read error, ', ex);
         }
 
         return config;
@@ -31,7 +41,7 @@ var tools = {
         var now = Date.now();
         this.timeCache[name] = now;
     },
-    timeEnd: function(name) {
+    timeEnd: function(name, forceLog) {
         var cache = this.timeCache[name];
         if(!cache) {
             return;
@@ -42,7 +52,11 @@ var tools = {
 
         delete this.timeCache[name];
 
-        console.info(name, 'elapsed(ms):', elapsed);
+        if(forceLog) {
+            console.log(name, 'elapsed(ms):', elapsed);
+
+            return;
+        }
     },
     // fs
     mkDeepDir: function(destPath) {
@@ -67,16 +81,13 @@ var tools = {
     },
     // log
     log: function() {
-        var args = [].slice.call(arguments);
-        args.unshift('[HTML2IMG]');
-
-        console.log.apply(console, args);
+        debugLog.apply(null, arguments);
+    },
+    info: function() {
+        debugInfo.apply(null, arguments);
     },
     error: function() {
-        var args = [].slice.call(arguments);
-        args.unshift('![HTML2IMG]');
-
-        console.error.apply(console, args);
+        debugError.apply(null, arguments);
     },
     // events
     fireEvent: function(config, type) {
