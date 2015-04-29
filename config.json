@@ -11,5 +11,8 @@
   "horsemanConfig": {
     "phantomPath": "/usr/local/bin/phantomjs"
   },
+  "headers": {
+    "Referer": "http://tbgr.huanleguang.com/_thumb"
+  },
   "viewport": null
 }

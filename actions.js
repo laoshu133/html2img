@@ -46,13 +46,19 @@ var actions = {
             var outCfg = config.out;
             var retFilePath = path.join(outCfg.path, outCfg.name + '.json');
 
-            fs.writeFileSync(retFilePath, JSON.stringify(ret));
+            fs.writeFile(retFilePath, JSON.stringify(ret), function(err) {
+                if(err) {
+                    tools.error('Write file err: ', err);
 
-            var rs = fs.createReadStream(retFilePath);
+                    callback();
+                    return;
+                }
 
-            rs.pipe(client);
+                var rs = fs.createReadStream(retFilePath);
 
-            rs.on('end', callback);
+                rs.pipe(client);
+                rs.on('end', callback);
+            });
         });
     },
     // 新关联列表（待完善）
@@ -137,6 +143,11 @@ function makeShot(config, callback) {
 
     horseman.viewport(width, height);
 
+    // headers
+    if(config.headers) {
+        horseman.headers(config.headers);
+    }
+
     // open url
     tools.time('Horseman open');
     horseman.open(config.url);
@@ -208,10 +219,10 @@ var processers = {
         // horseman.zoom(1);
 
         // 比例缩放
-        var size = config.size;
-        if(size && size.width) {
+        // var size = config.size;
+        // if(size && size.width) {
 
-        }
+        // }
     },
     // 新关联列表（待完善）
     makelist: function() {
