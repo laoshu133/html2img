@@ -164,7 +164,6 @@ function makeShot(config, callback) {
 
     // 截原图
     // var originImgPath = path.join(outCfg.path, outCfg.name + '_origin.png');
-
     // tools.time('Origin Main shot');
     // horseman.crop(config.wrapSelector, originImgPath);
     // tools.timeEnd('Origin Main shot');
@@ -174,6 +173,7 @@ function makeShot(config, callback) {
         id: config.id,
         outName: outCfg.name,
         outFile: outCfg.path + '/' + outCfg.name + '.png',
+        outCrop: config.wrapSelector,
         content: ''
     }, processShot(config, outCfg));
 
@@ -181,7 +181,7 @@ function makeShot(config, callback) {
     tools.time('Main shot');
 
     var wrapOutPath = path.join(outCfg.path, outCfg.name + '.png');
-    horseman.crop(config.wrapSelector, wrapOutPath);
+    horseman.crop(ret.data.outCrop, wrapOutPath);
 
     tools.timeEnd('Main shot');
 
@@ -218,11 +218,54 @@ var processers = {
         // restore
         // horseman.zoom(1);
 
-        // 比例缩放
-        // var size = config.size;
-        // if(size && size.width) {
+        // 比例缩放，裁剪
+        var outCrop;
+        var size = config.size;
+        if(size && size.width) {
+            outCrop = horseman.evaluate(function(wrapSelector, size) {
+                var $ = window.jQuery;
+                var wrapElem = $(wrapSelector);
 
-        // }
+                wrapElem.css('transform', 'none');
+
+                var wrapWidth = wrapElem.width();
+                var wrapHeight = wrapElem.height();
+
+                var heightRatio = size.height / wrapHeight;
+                var widthRatio = size.width / wrapWidth;
+                var ratio = widthRatio;
+
+                // 短边裁剪
+                if(widthRatio < heightRatio) {
+                    ratio = heightRatio;
+                }
+
+                wrapElem.css('transform', 'scale('+ ratio +')');
+
+                var rect = wrapElem[0].getBoundingClientRect();
+
+                // 默认左上角开始裁剪
+                var outCrop = {
+                    height: size.height,
+                    width: size.width,
+                    left: rect.left,
+                    top: rect.top
+                };
+
+                // 居中裁剪
+                // outCrop.left += (rect.width - size.width) / 2;
+                // outCrop.top += (rect.height - size.height) / 2;
+
+                // debug
+                // outCrop.html = document.documentElement.outerHTML;
+
+                return outCrop;
+            }, config.wrapSelector, size);
+        }
+
+        return {
+            outCrop: outCrop
+        };
     },
     // 新关联列表（待完善）
     makelist: function() {
