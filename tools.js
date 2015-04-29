@@ -53,10 +53,12 @@ var tools = {
         delete this.timeCache[name];
 
         if(forceLog) {
-            console.log(name, 'elapsed(ms):', elapsed);
+            console.info(name, 'elapsed(ms):', elapsed);
 
             return;
         }
+
+        this.info(name, 'elapsed(ms):', elapsed);
     },
     // fs
     mkDeepDir: function(destPath) {
