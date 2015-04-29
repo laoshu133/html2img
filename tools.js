@@ -47,18 +47,19 @@ var tools = {
             return;
         }
 
-        var now = Date.now();
-        var elapsed = now - cache;
-
         delete this.timeCache[name];
 
+        var now = Date.now();
+        var elapsed = now - cache;
+        var msg = 'elapsed: ' + elapsed + 'ms';
+
         if(forceLog) {
-            console.info(name, 'elapsed(ms):', elapsed);
+            console.info(name, msg);
 
             return;
         }
 
-        this.info(name, 'elapsed(ms):', elapsed);
+        this.info(name, msg);
     },
     // fs
     mkDeepDir: function(destPath) {
