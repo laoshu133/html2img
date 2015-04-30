@@ -15,18 +15,18 @@ var tools = require('./tools');
 // default config
 var defaultConfig = require('./config.json');
 
-// init Horseman(phantomjs)
-console.log('Start Horseman...');
-
-tools.time('Load Horseman(phantomjs)');
-var horseman = new Horseman(defaultConfig.horsemanConfig);
-tools.timeEnd('Load Horseman(phantomjs)');
-
+var horseman = null;
 var actions = {
-    hello: function(client, config, callback) {
-        var data = new Buffer('Hello~');
+    // init
+    init: function() {
+        if(horseman) {
+            return;
+        }
 
-        client.write(data, callback);
+        // init Horseman(phantomjs)
+        tools.time('Load Horseman(phantomjs)');
+        horseman = new Horseman(defaultConfig.horsemanConfig);
+        tools.timeEnd('Load Horseman(phantomjs)');
     },
     // 取文件
     getfile: function(client, config, callback) {
@@ -37,7 +37,14 @@ var actions = {
         var rs = fs.createReadStream(config.url);
 
         rs.pipe(client);
-        rs.on('end', callback);
+        rs.on('end', function() {
+            callback();
+
+            // clean files
+            if(!config.keepOutFile) {
+                fs.unlink(config.url);
+            }
+        });
     },
     // 缩略图
     makeshot: function(client, config, callback) {
@@ -56,7 +63,19 @@ var actions = {
                 var rs = fs.createReadStream(retFilePath);
 
                 rs.pipe(client);
-                rs.on('end', callback);
+                rs.on('end', function() {
+                    callback();
+
+                    // clean files
+                    if(!config.keepOutFile) {
+                        fs.unlink(retFilePath);
+
+                        var inFilepath= path.join(outCfg.path, 'in.html');
+                        if(fs.existsSync(inFilepath)) {
+                            fs.unlink(inFilepath);
+                        }
+                    }
+                });
             });
         });
     },

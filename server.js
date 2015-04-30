@@ -8,16 +8,19 @@
 // deps
 var fs = require('fs');
 var net = require('net');
-var path = require('path');
 var lodash = require('lodash');
-var through2 = require('through2');
 
 var tools = require('./tools');
 var actions = require('./actions');
-var Horseman = require('node-horseman');
 
 // default config
 var defaultConfig = require('./config.json');
+
+// start
+console.log('Start Server...');
+
+// init actions， 优先启动 phantomjs
+actions.init();
 
 // queue
 var queue = {
@@ -97,12 +100,10 @@ io.on('connection', function(client) {
             client: client
         });
     });
-
-    // client.on('end', function() { });
 });
 
 io.listen(defaultConfig.listenPort);
-console.info('Start server :' + defaultConfig.listenPort);
+console.info('Server Listening :' + defaultConfig.listenPort);
 
 process.on('uncaughtException', function(err) {
     console.error(err);
