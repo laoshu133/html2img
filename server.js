@@ -70,9 +70,7 @@ var queue = {
     }
 };
 
-var io = net.Server({
-    highWaterMark: 1000
-});
+var io = net.Server();
 io.on('connection', function(client) {
     tools.log('A client connectioned: [', client.remoteAddress, ']');
 
@@ -80,7 +78,59 @@ io.on('connection', function(client) {
         tools.log('A client disconnected.');
     });
 
-    client.on('data', function(data) {
+    var lastStack;
+    var timeout = 320; // ms
+
+    // 以 \n\n 结束，超时，均看做一组数据已发送完成
+    function checkData(buf) {
+        if(!lastStack) {
+            lastStack = {
+                client: client,
+                config: null,
+                timer: null,
+                dataLen: 0,
+                data: []
+            };
+        }
+
+        lastStack.dataLen += buf.length;
+        lastStack.data.push(buf);
+
+        clearTimeout(lastStack.timer);
+        lastStack.timer = setTimeout(function() {
+            var data = Buffer.concat(lastStack.data, lastStack.dataLen);
+
+            var config = null;
+            try {
+                config = JSON.parse(data);
+            }
+            catch(ex) {
+                tools.error('Config parse error');
+            }
+
+            if(!config || !config.id) {
+                tools.error('Config and config.id required');
+
+                client.end();
+                return;
+            }
+
+            lastStack.config = config;
+
+            queue.add({
+                config: config,
+                client: client
+            });
+
+        }, timeout);
+    }
+
+    client.on('data', function(buf) {
+        checkData(buf);
+
+        return;
+
+
         data = data.toString();
 
         var config = null;

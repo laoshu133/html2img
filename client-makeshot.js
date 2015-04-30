@@ -19,9 +19,8 @@ tools.time('Client process');
 
 // init
 var client = net.connect({
-    highWaterMark: 1000,
-    // host: 'localhost',
-    host: '172.16.2.198',
+    host: 'localhost',
+    // host: '172.16.2.198',
     port: 3000
 });
 
