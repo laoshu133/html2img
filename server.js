@@ -70,7 +70,9 @@ var queue = {
     }
 };
 
-var io = net.Server();
+var io = net.Server({
+    highWaterMark: 1000
+});
 io.on('connection', function(client) {
     tools.log('A client connectioned: [', client.remoteAddress, ']');
 
