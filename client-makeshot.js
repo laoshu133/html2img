@@ -13,13 +13,14 @@ var through2 = require('through2');
 
 var tools = require('./tools');
 
-var configPath = 'demos/makeshot.json';
+var configPath = 'demos/makeshot-big.json';
 
 tools.time('Client process');
 
 // init
 var client = net.connect({
-    host: 'localhost',
+    // host: 'localhost',
+    host: '172.16.2.198',
     port: 3000
 });
 
