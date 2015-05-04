@@ -52,7 +52,7 @@ var actions = {
 
             callback(null, data);
 
-            clean files
+            // clean files
             if(!config.keepOutFile) {
                 fs.unlink(config.url);
             }
