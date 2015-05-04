@@ -351,10 +351,10 @@ process.on('exit', function(err) {
 });
 
 // error catch
-// process.on('uncaughtException', function(err) {
-//     console.log('actions uncaughtException', err);
+process.on('uncaughtException', function(err) {
+    console.log('actions uncaughtException', err);
 
-//     process.exit();
-// });
+    process.exit();
+});
 
 module.exports = actions;

@@ -12,7 +12,7 @@ var lodash = require('lodash');
 
 var tools = require('./tools');
 var actions = require('./actions');
-var SocketProtocol = require('./SocketProtocol');
+var SocketAdp = require('./SocketAdp');
 
 // default config
 var defaultConfig = require('./config.json');
@@ -155,13 +155,13 @@ io.on('connectionxxxx', function(client) {
     });
 });
 
-var server = new SocketProtocol(io);
+var server = new SocketAdp(io);
 
 server.on('data', function(e) {
     console.log('\n---ondata---\n', e);
 })
 .on('error', function(e) {
-    console.log('\n---onerror---\n', e);
+    console.error('Data Error:', e.type);
 });
 
 io.listen(defaultConfig.listenPort);

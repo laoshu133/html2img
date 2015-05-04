@@ -9,7 +9,7 @@
 var fs = require('fs');
 var net = require('net');
 var async = require('async');
-var through2 = require('through2');
+var through = require('through2');
 
 var tools = require('./tools');
 
