@@ -11,6 +11,7 @@ var lodash = require('lodash');
 var Horseman = require('node-horseman');
 
 var tools = require('./tools');
+var SocketAdp = require('./SocketAdp');
 
 // default config
 var defaultConfig = require('./config.json');
@@ -25,7 +26,7 @@ var actions = {
 
         // init Horseman(phantomjs)
         tools.time('Load Horseman(phantomjs)');
-        // horseman = new Horseman(defaultConfig.horsemanConfig);
+        horseman = new Horseman(defaultConfig.horsemanConfig);
         tools.timeEnd('Load Horseman(phantomjs)');
     },
     // 取文件
@@ -49,34 +50,11 @@ var actions = {
     // 缩略图
     makeshot: function(client, config, callback) {
         makeShot(config, function(ret) {
-            var outCfg = config.out;
-            var retFilePath = path.join(outCfg.path, outCfg.name + '.json');
+            var clientAdp = new SocketAdp(client);
 
-            fs.writeFile(retFilePath, JSON.stringify(ret), function(err) {
-                if(err) {
-                    tools.error('Write file err: ', err);
+            clientAdp.send('result', ret);
 
-                    callback();
-                    return;
-                }
-
-                var rs = fs.createReadStream(retFilePath);
-
-                rs.pipe(client);
-                rs.on('end', function() {
-                    callback();
-
-                    // clean files
-                    if(!config.keepOutFile) {
-                        fs.unlink(retFilePath);
-
-                        var inFilepath= path.join(outCfg.path, 'in.html');
-                        if(fs.existsSync(inFilepath)) {
-                            fs.unlink(inFilepath);
-                        }
-                    }
-                });
-            });
+            callback();
         });
     },
     // 新关联列表（待完善）
@@ -351,10 +329,10 @@ process.on('exit', function(err) {
 });
 
 // error catch
-process.on('uncaughtException', function(err) {
-    console.log('actions uncaughtException', err);
+// process.on('uncaughtException', function(err) {
+//     console.log('actions uncaughtException', err);
 
-    process.exit();
-});
+//     process.exit();
+// });
 
 module.exports = actions;

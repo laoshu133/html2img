@@ -20,7 +20,8 @@ tools.time('Client process');
 
 var configs = [
     'demos/makeshot.json',
-    'demos/makeshot-big.json'
+    'demos/makeshot-big.json',
+    'demos/makeshot.json'
 ];
 
 var io = net.connect({
@@ -42,7 +43,8 @@ client.on('data', function(e) {
     tools.timeEnd('Process Config ['+ results.length +']', true);
     results.push(e);
 
-    console.log(e);
+    console.log('ondata', e.type, e.data.toString());
+    console.log('----\n');
 
     if(configs.length) {
         sendConfig(configs.shift());
@@ -50,11 +52,14 @@ client.on('data', function(e) {
     else {
         // end
         tools.timeEnd('Client process', true);
+
+        io.end();
     }
 });
 
 
 function sendConfig(configPath) {
+    console.log('Start Process Config ['+ results.length +']');
     tools.time('Process Config ['+ results.length +']');
 
     getConfig(configPath, function(config) {
@@ -62,20 +67,22 @@ function sendConfig(configPath) {
     });
 }
 
-function getConfig(configPath, cb) {
+function getConfig(configPath, callback) {
     var rs = fs.createReadStream(configPath);
 
     var len = 0;
     var data = [];
 
-    rs.pipe(through(function(chunk) {
+    rs.pipe(through(function(chunk, enc, cb) {
         len += chunk.length;
         data.push(chunk);
+
+        cb();
     }));
 
     rs.on('end', function() {
         var config = Buffer.concat(data, len);
 
-        cb(config);
-    })
+        callback(config);
+    });
 }

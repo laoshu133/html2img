@@ -43,23 +43,12 @@ var queue = {
         var stack = stacks.shift();
         var config = lodash.merge({}, defaultConfig, stack.config);
 
-        if(!config.id) {
-            tools.error('No config.id');
-
-            return cb();
-        }
-
-        var action = config.action;
-        var actionFn = actions[action];
-
+        var actionFn = actions[config.action];
         if(!actionFn) {
-            tools.error('No action defined, action = ', config.action);
-
             return cb();
         }
 
         this.status = 'processing';
-
         actionFn(stack.client, config, cb);
 
         function cb() {
@@ -72,6 +61,56 @@ var queue = {
 };
 
 var io = net.Server();
+var server = new SocketAdp(io);
+
+server.on('data', function(e) {
+    var config = null;
+    var client = e.target;
+
+    tools.log('ondata, type:', e.type);
+
+    if(e.data && Buffer.isBuffer(e.data)) {
+        config = e.data.toString();
+
+        try {
+            config = JSON.parse(config);
+        }
+        catch(ex) {
+            tools.error('Config parse error');
+        }
+    }
+
+    if(!config || !config.id) {
+        tools.error('Config and config.id required');
+
+        client.end();
+        return;
+    }
+
+    if(!config.action) {
+        config.action = e.type;
+    }
+
+    var action = config.action;
+    var actionFn = actions[action];
+
+    if(!actionFn) {
+        tools.error('No action defined, action =', config.action);
+
+        client.end();
+        return;
+    }
+
+    queue.add({
+        client: client,
+        config: config
+    });
+})
+.on('error', function(e) {
+    console.error('SocketAdp Error:', e.type);
+});
+
+
 io.on('connectionxxxx', function(client) {
     tools.log('A client connectioned: [', client.remoteAddress, ']');
 
@@ -155,14 +194,6 @@ io.on('connectionxxxx', function(client) {
     });
 });
 
-var server = new SocketAdp(io);
-
-server.on('data', function(e) {
-    console.log('\n---ondata---\n', e);
-})
-.on('error', function(e) {
-    console.error('Data Error:', e.type);
-});
 
 io.listen(defaultConfig.listenPort);
 console.info('Server Listening :' + defaultConfig.listenPort);

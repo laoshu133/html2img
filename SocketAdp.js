@@ -27,18 +27,6 @@ function SocketAdp(io, options) {
     this.init();
 }
 
-SocketAdp.uuid = 0;
-SocketAdp.caches = {};
-SocketAdp.getClientId = function(client) {
-    var uid = client.uid;
-
-    if(!uid) {
-        uid = client.uid = ++SocketAdp.uuid;
-    }
-
-    return uid;
-};
-
 lodash.merge(SocketAdp.prototype, {
     HEAD_TYPE: 1,
     BODY_TYPE: 2,
@@ -78,12 +66,11 @@ lodash.merge(SocketAdp.prototype, {
         var cache = SocketAdp.caches[uid];
         if(!cache) {
             cache = SocketAdp.caches[uid] = {
-                client: client,
-                type: 0,
+                target: client,
                 raw: null,
                 rawLength: 0,
-                action: '',
-                actionLength: 0,
+                type: '',
+                typeLength: 0,
                 data: null,
                 dataLength: 0,
                 nextIndex: 6,
@@ -110,31 +97,31 @@ lodash.merge(SocketAdp.prototype, {
         }
 
         var raw = cache.raw;
+        var index = cache.index;
         var len = cache.rawLength;
+        var nextIndex = cache.nextIndex;
+
         if(len < nextIndex) {
             return;
         }
 
-        var index = cache.index;
-        var nextIndex = cache.nextIndex;
-
-        // type
-        if(!cache.type) {
-            cache.type = raw.readInt16LE(0);
-            if(cache.type !== this.HEAD_TYPE) {
+        // head length
+        if(!cache.typeLength) {
+            var headCode = raw.readInt16LE(0);
+            if(headCode !== this.HEAD_TYPE) {
                 this.fireError(client, 'head_type_error');
                 return;
             }
 
-            cache.actionLength = raw.readInt32LE(2);
+            cache.typeLength = raw.readInt32LE(2);
 
             index = nextIndex;
-            nextIndex += cache.actionLength;
+            nextIndex += cache.typeLength;
         }
 
-        // action
-        if(len >= nextIndex && !cache.action) {
-            cache.action = raw.slice(index, nextIndex).toString();
+        // head
+        if(len >= nextIndex && !cache.type) {
+            cache.type = raw.slice(index, nextIndex).toString();
 
             index = nextIndex;
             nextIndex += 2;
@@ -142,7 +129,7 @@ lodash.merge(SocketAdp.prototype, {
 
         var isEnd = cache.isEnd;
 
-        // end precheck whitout data
+        // precheck end whitout body
         if(!isEnd && len >= nextIndex) {
             if(raw.readInt16LE(index) === this.FOOT_TYPE) {
                 isEnd = true;
@@ -185,9 +172,8 @@ lodash.merge(SocketAdp.prototype, {
 
             // next tick
             lodash.merge(cache, {
-                type: 0,
-                action: '',
-                actionLength: 0,
+                type: '',
+                typeLength: 0,
                 data: null,
                 dataLength: 0,
                 index: nextIndex,
@@ -258,6 +244,18 @@ lodash.merge(SocketAdp.prototype, {
     }
 });
 
+// base
+SocketAdp.uuid = 0;
+SocketAdp.caches = {};
+SocketAdp.getClientId = function(client) {
+    var uid = client.uid;
+
+    if(!uid) {
+        uid = client.uid = ++SocketAdp.uuid;
+    }
+
+    return uid;
+};
 
 // exports
 module.exports = SocketAdp;

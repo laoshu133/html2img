@@ -22,26 +22,24 @@ var client = net.connect({
 });
 
 /*-- data test --*/
-var action = 'makeshot';
+var type = 'makeshot';
 var data = '{"id":"id-01", "bar":"foo"}';
-var totalLen =  2 + 4 + action.length + 2 + 4 + data.length + 2;
+var totalLen =  2 + 4 + type.length + 2 + 4 + data.length + 2;
 
 var index = 0;
 var buf = new Buffer(totalLen);
 
-// type
+// head
 buf.writeInt16LE(1, index);
 index += 2;
 
-// action length
-buf.writeInt32LE(action.length, index);
+buf.writeInt32LE(type.length, index);
 index += 4;
 
-// action
-buf.write(action, index);
-index += action.length;
+buf.write(type, index);
+index += type.length;
 
-// data
+// body
 buf.writeInt16LE(2, index);
 index += 2;
 
@@ -51,33 +49,32 @@ index += 4;
 buf.write(data, index);
 index += data.length;
 
-// end
+// foot
 buf.writeInt16LE(3, index);
 // index += 2;
 
 client.write(buf);
 /*-- data test end --*/
 
-/*-- end test whitout data --*/
-var action = 'end_test';
-var totalLen =  2 + 4 + action.length + 2;
+
+/*-- end test whitout body --*/
+var type = 'end_test';
+var totalLen =  2 + 4 + type.length + 2;
 
 var index = 0;
 var buf = new Buffer(totalLen);
 
-// type
+// head
 buf.writeInt16LE(1, index);
 index += 2;
 
-// action length
-buf.writeInt32LE(action.length, index);
+buf.writeInt32LE(type.length, index);
 index += 4;
 
-// action
-buf.write(action, index);
-index += action.length;
+buf.write(type, index);
+index += type.length;
 
-// end
+// foot
 buf.writeInt16LE(3, index);
 // index += 2;
 
