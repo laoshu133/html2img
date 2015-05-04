@@ -107,6 +107,11 @@ lodash.merge(SocketProtocol.prototype, {
         // type
         if(!cache.type) {
             cache.type = raw.readInt16LE(0);
+            if(cache.type !== this.START_TYPE) {
+                this.fireError('start_type');
+                return;
+            }
+
             cache.actionLength = raw.readInt32LE(2);
 
             index = nextIndex;
@@ -178,6 +183,14 @@ lodash.merge(SocketProtocol.prototype, {
 
             this.checkData(client);
         }
+    },
+    fireError: function(client, type) {
+        client.end();
+
+        this.emit('error', {
+            client: client,
+            type: type
+        });
     }
 });
 

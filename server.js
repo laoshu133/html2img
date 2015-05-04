@@ -159,6 +159,9 @@ var server = new SocketProtocol(io);
 
 server.on('data', function(e) {
     console.log('\n---ondata---\n', e);
+})
+.on('error', function(e) {
+    console.log('\n---onerror---\n', e);
 });
 
 io.listen(defaultConfig.listenPort);
