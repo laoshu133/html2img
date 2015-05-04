@@ -8,6 +8,7 @@
 var fs = require('fs');
 var path = require('path');
 var lodash = require('lodash');
+var through = require('through2');
 var Horseman = require('node-horseman');
 
 var tools = require('./tools');
@@ -32,16 +33,26 @@ var actions = {
     // 取文件
     getfile: function(client, config, callback) {
         if(!fs.existsSync(config.url)) {
-            return callback();
+            return callback(new Error('File do not exists'));
         }
 
+        var len = 0;
+        var data = [];
         var rs = fs.createReadStream(config.url);
 
-        rs.pipe(client);
-        rs.on('end', function() {
-            callback();
+        rs.pipe(through(function(chunk, enc, cb) {
+            len += chunk.length;
+            data.push(chunk);
 
-            // clean files
+            cb();
+        }));
+
+        rs.on('end', function() {
+            data = Buffer.concat(data, len);
+
+            callback(null, data);
+
+            clean files
             if(!config.keepOutFile) {
                 fs.unlink(config.url);
             }
@@ -50,11 +61,7 @@ var actions = {
     // 缩略图
     makeshot: function(client, config, callback) {
         makeShot(config, function(ret) {
-            var clientAdp = new SocketAdp(client);
-
-            clientAdp.send('result', ret);
-
-            callback();
+            callback(null, ret);
         });
     },
     // 新关联列表（待完善）

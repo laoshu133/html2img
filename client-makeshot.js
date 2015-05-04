@@ -18,6 +18,7 @@ var SocketAdp = require('./SocketAdp');
 console.log('Strat client...');
 tools.time('Client process');
 
+var type = 'makeshot';
 var configs = [
     'demos/makeshot.json',
     'demos/makeshot-big.json',
@@ -63,7 +64,7 @@ function sendConfig(configPath) {
     tools.time('Process Config ['+ results.length +']');
 
     getConfig(configPath, function(config) {
-        client.send('makeshot', config);
+        client.send(type, config);
     });
 }
 

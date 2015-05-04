@@ -41,6 +41,7 @@ var queue = {
         }
 
         var stack = stacks.shift();
+        var client = stack.client;
         var config = lodash.merge({}, defaultConfig, stack.config);
 
         var actionFn = actions[config.action];
@@ -49,10 +50,19 @@ var queue = {
         }
 
         this.status = 'processing';
-        actionFn(stack.client, config, cb);
+        actionFn(client, config, cb);
 
-        function cb() {
-            // stack.client.end();
+        function cb(err, result) {
+            if(!err) {
+                var clientAdp = new SocketAdp(client);
+
+                clientAdp.send('result', result);
+            }
+            else {
+                tools.error('id:', client.uid, err);
+
+                client.end();
+            }
 
             self.status = 'ready';
             self.next();

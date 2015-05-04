@@ -1,7 +1,7 @@
 /**
  * hlg-html2img
  *
- * client-getfile
+ * client-makeshot
  *
  */
 
@@ -9,60 +9,68 @@
 var fs = require('fs');
 var net = require('net');
 var async = require('async');
-var through2 = require('through2');
+var through = require('through2');
 
 var tools = require('./tools');
-
-tools.time('Client process');
-
-// config
-var config = {
-    id: 'getfile-001',
-    action: 'getfile',
-    url: '__out/makeshot-001/out.png'
-};
+var SocketAdp = require('./SocketAdp');
 
 // init
-var client = net.connect({
+console.log('Strat client...');
+tools.time('Client process');
+
+var type = 'getfile';
+var urls = [
+    '__out/makeshot-001/out.png'
+];
+
+var io = net.connect({
     host: 'localhost',
+    // host: '172.16.2.198',
     port: 3000
 });
 
-async.waterfall([
-    function connect(cb) {
-        client.on('connect', function() {
-            console.log('Strat client...');
+var client = new SocketAdp(io);
 
-            cb();
-        });
-    },
-    function sendConfig(cb) {
-        var data = JSON.stringify(config);
+io.on('connect', function() {
+    console.log('Client connected');
 
-        client.write(data);
-
-        cb();
-    },
-    function receiveData(cb) {
-        var data = [];
-
-        client.pipe(through2(function(chunk, enc, next) {
-            data.push(chunk);
-
-            next();
-        }, function() {
-            var buf = Buffer.concat(data);
-
-            cb(null, buf);
-        }));
-    }
-], function(err, ret) {
-    // ret = ret.toString();
-
-    console.log('Client process done, ', ret);
-
-    tools.timeEnd('Client process', true);
-
-    // test
-    fs.writeFile('xxx.png', ret);
+    sendConfig(urls.shift());
 });
+
+var results = [];
+client.on('data', function(e) {
+    tools.timeEnd('Process Config ['+ results.length +']', true);
+    results.push(e);
+
+    console.log('ondata', e.type);
+    console.log('----\n');
+
+    fs.writeFileSync('getfile_test.png', e.data);
+
+    if(urls.length) {
+        sendConfig(urls.shift());
+    }
+    else {
+        // end
+        tools.timeEnd('Client process', true);
+
+        io.end();
+    }
+});
+
+
+function sendConfig(url) {
+    console.log('Start Process Config ['+ results.length +']');
+    tools.time('Process Config ['+ results.length +']');
+
+    getConfig(url, function(config) {
+        client.send(type, config);
+    });
+}
+
+function getConfig(url, callback) {
+    callback({
+        id: '001',
+        url: url
+    });
+}

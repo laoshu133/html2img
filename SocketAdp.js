@@ -49,6 +49,7 @@ lodash.merge(SocketAdp.prototype, {
     addClient: function(client) {
         var self = this;
 
+        client.uid = SocketAdp.uuid();
         this.clients.push(client);
 
         client.once('close', function() {
@@ -62,7 +63,7 @@ lodash.merge(SocketAdp.prototype, {
         });
     },
     pushData: function(client, buf) {
-        var uid = SocketAdp.getClientId(client);
+        var uid = client.uid;
         var cache = SocketAdp.caches[uid];
         if(!cache) {
             cache = SocketAdp.caches[uid] = {
@@ -75,6 +76,7 @@ lodash.merge(SocketAdp.prototype, {
                 dataLength: 0,
                 nextIndex: 6,
                 index: 0,
+                inBody: false,
                 isEnd: false
             };
         }
@@ -90,7 +92,7 @@ lodash.merge(SocketAdp.prototype, {
         this.checkData(client);
     },
     checkData: function(client) {
-        var uid = SocketAdp.getClientId(client);
+        var uid = client.uid;
         var cache = SocketAdp.caches[uid];
         if(!cache) {
             return;
@@ -130,11 +132,13 @@ lodash.merge(SocketAdp.prototype, {
         var isEnd = cache.isEnd;
 
         // precheck end whitout body
-        if(!isEnd && len >= nextIndex) {
+        if(!isEnd && len >= nextIndex && !cache.inBody) {
             if(raw.readInt16LE(index) === this.FOOT_TYPE) {
                 isEnd = true;
             }
             else {
+                cache.inBody = true;
+
                 index = nextIndex;
                 nextIndex += 4;
             }
@@ -178,6 +182,7 @@ lodash.merge(SocketAdp.prototype, {
                 dataLength: 0,
                 index: nextIndex,
                 nextIndex: nextIndex + 6,
+                inBody: false,
                 isEnd: false
             });
 
@@ -245,16 +250,10 @@ lodash.merge(SocketAdp.prototype, {
 });
 
 // base
-SocketAdp.uuid = 0;
+SocketAdp._uuid = 0;
 SocketAdp.caches = {};
-SocketAdp.getClientId = function(client) {
-    var uid = client.uid;
-
-    if(!uid) {
-        uid = client.uid = ++SocketAdp.uuid;
-    }
-
-    return uid;
+SocketAdp.uuid = function(client) {
+    return ++SocketAdp._uuid;
 };
 
 // exports
