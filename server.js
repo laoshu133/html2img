@@ -12,6 +12,7 @@ var lodash = require('lodash');
 
 var tools = require('./tools');
 var actions = require('./actions');
+var SocketProtocol = require('./SocketProtocol');
 
 // default config
 var defaultConfig = require('./config.json');
@@ -71,7 +72,7 @@ var queue = {
 };
 
 var io = net.Server();
-io.on('connection', function(client) {
+io.on('connectionxxxx', function(client) {
     tools.log('A client connectioned: [', client.remoteAddress, ']');
 
     client.on('close', function() {
@@ -154,10 +155,16 @@ io.on('connection', function(client) {
     });
 });
 
+var server = new SocketProtocol(io);
+
+server.on('data', function(e) {
+    console.log('\n---ondata---\n', e);
+});
+
 io.listen(defaultConfig.listenPort);
 console.info('Server Listening :' + defaultConfig.listenPort);
 
-process.on('uncaughtException', function(err) {
-    console.error(err);
-});
+// process.on('uncaughtException', function(err) {
+//     console.error(err);
+// });
 

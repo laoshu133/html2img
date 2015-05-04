@@ -21,144 +21,66 @@ var client = net.connect({
     port: 3000
 });
 
-async.waterfall([
-    function connect(cb) {
-        client.on('connect', function() {
-            console.log('Strat client...');
+/*-- data test --*/
+var action = 'makeshot';
+var data = '{"id":"id-01", "bar":"foo"}';
+var totalLen =  2 + 4 + action.length + 2 + 4 + data.length + 2;
 
-            cb();
-        });
-    },
-    function sendConfig(cb) {
-        var rs = fs.createReadStream(configPath);
+var index = 0;
+var buf = new Buffer(totalLen);
 
-        var len = 0;
-        var data = [];
+// type
+buf.writeInt16LE(1, index);
+index += 2;
 
-        rs.on('data', function(chunk) {
-            data.push(chunk);
-        });
+// action length
+buf.writeInt32LE(action.length, index);
+index += 4;
 
-        rs.on('end', function() {
-            var buf = Buffer.concat(data, len);
+// action
+buf.write(action, index);
+index += action.length;
 
-            client.write(buf);
+// data
+buf.writeInt16LE(2, index);
+index += 2;
 
-            cb();
-        });
-    },
-    function initOnData(cb) {
-        client.pipe(through2(function(data) {
-            cb(null, data.toString());
-        }));
-    }
-], function(err, ret) {
-    console.log('Client process done, ', ret);
-});
+buf.writeInt32LE(data.length, index);
+index += 4;
 
+buf.write(data, index);
+index += data.length;
 
+// end
+buf.writeInt16LE(3, index);
+// index += 2;
 
+client.write(buf);
+/*-- data test end --*/
 
+/*-- end test whitout data --*/
+var action = 'end_test';
+var totalLen =  2 + 4 + action.length + 2;
 
-return;
+var index = 0;
+var buf = new Buffer(totalLen);
 
+// type
+buf.writeInt16LE(1, index);
+index += 2;
 
+// action length
+buf.writeInt32LE(action.length, index);
+index += 4;
 
-// configs
-var configs = [
-    require('./demos/thumb.json'),
-    require('./demos/thumb_whit_replace.json'),
+// action
+buf.write(action, index);
+index += action.length;
 
-    // repeat test
-    require('./demos/thumb_whit_replace.json'),
-    require('./demos/thumb.json'),
-];
+// end
+buf.writeInt16LE(3, index);
+// index += 2;
 
-// count
-var counts = {
-    count: 0,
-    cfg: null
-};
+client.write(buf);
 
-// init
-var client = net.connect({
-    // allowHalfOpen: true,
-    host: 'localhost',
-    port: 3000
-});
-
-
-client.on('connect', function() {
-    console.log('Strat client...');
-
-    // tools.time('All shots');
-
-    // sendConfig();
-
-    var readStream = fs.createReadStream('demos/hello.json');
-
-    readStream.pipe(client);
-    return;
-
-    readStream.on('data', function(chunk) {
-        client.write(chunk);
-    });
-
-    readStream.on('end', function() {
-        console.log('data send finished');
-    });
-});
-
-client.on('data', function(data) {
-    console.log('data', data);
-    // data = data.toString();
-
-    // var ret = null;
-    // try{
-    //     ret = JSON.parse(data);
-    // }
-    // catch(ex) {
-    //     console.error('Data parse error:', ex);
-    // }
-
-    // if(!ret) {
-    //     console.error('No result');
-
-    //     client.end();
-    //     return;
-    // }
-
-    // console.log('----Shot Success----');
-    // console.log(ret.message);
-
-
-    // sendConfig();
-});
-
-// funs
-function sendConfig() {
-    // Count
-    if(counts.count > 0) {
-        tools.timeEnd('Start Shot['+ counts.count +']');
-
-        // pipe
-        console.log(' ');
-    }
-
-    if(!configs.length) {
-        client.end();
-
-        tools.timeEnd('All shots');
-
-        return;
-    }
-
-    var cfg = configs.shift();
-    var cfgJSON = JSON.stringify(cfg);
-
-    // Count
-    counts.count += 1;
-    tools.time('Start Shot['+ counts.count +']');
-
-    client.write(cfgJSON);
-}
+/*-- end test whitout data end --*/

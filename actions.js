@@ -25,7 +25,7 @@ var actions = {
 
         // init Horseman(phantomjs)
         tools.time('Load Horseman(phantomjs)');
-        horseman = new Horseman(defaultConfig.horsemanConfig);
+        // horseman = new Horseman(defaultConfig.horsemanConfig);
         tools.timeEnd('Load Horseman(phantomjs)');
     },
     // 取文件
@@ -351,8 +351,10 @@ process.on('exit', function(err) {
 });
 
 // error catch
-process.on('uncaughtException', function(err) {
-    process.exit();
-});
+// process.on('uncaughtException', function(err) {
+//     console.log('actions uncaughtException', err);
+
+//     process.exit();
+// });
 
 module.exports = actions;
