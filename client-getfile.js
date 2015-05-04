@@ -42,10 +42,14 @@ client.on('data', function(e) {
     tools.timeEnd('Process Config ['+ results.length +']', true);
     results.push(e);
 
-    console.log('ondata', e.type);
+    var outPath = 'getfile_test.png';
+    console.log('ondata', e.type, outPath);
     console.log('----\n');
 
-    fs.writeFileSync('getfile_test.png', e.data);
+    console.log(e.data.length);
+    fs.writeFileSync(outPath, e.data, {
+        encoding: 'binary'
+    });
 
     if(urls.length) {
         sendConfig(urls.shift());

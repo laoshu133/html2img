@@ -62,6 +62,15 @@ var actions = {
     makeshot: function(client, config, callback) {
         makeShot(config, function(ret) {
             callback(null, ret);
+
+            // clean files
+            if(!config.keepOutFile) {
+                var inFilePath = path.join(config.out.path, 'in.html');
+
+                if(fs.existsSync(inFilePath)) {
+                    fs.unlink(inFilePath);
+                }
+            }
         });
     },
     // 新关联列表（待完善）
