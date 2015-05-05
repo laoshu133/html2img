@@ -57,6 +57,12 @@ lodash.merge(SocketAdp.prototype, {
             lodash.remove(self.clients, client);
         });
 
+        client.once('error', function(e) {
+            tools.error('client_error', e);
+
+            self.fireError('client_error');
+        });
+
         client.on('data', function(buf) {
             self.pushData(client, buf);
         });
@@ -111,7 +117,7 @@ lodash.merge(SocketAdp.prototype, {
         if(!cache.typeLength) {
             var headCode = raw.readInt16LE(0);
             if(headCode !== this.HEAD_CODE) {
-                this.fireError(client, 'head_CODE_error');
+                this.fireError(client, 'head_code_error');
                 return;
             }
 
