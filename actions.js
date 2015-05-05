@@ -7,6 +7,7 @@
 // deps
 var fs = require('fs');
 var path = require('path');
+var rimraf = require('rimraf');
 var lodash = require('lodash');
 var through = require('through2');
 var Horseman = require('node-horseman');
@@ -29,6 +30,18 @@ var actions = {
         tools.time('Load Horseman(phantomjs)');
         horseman = new Horseman(defaultConfig.horsemanConfig);
         tools.timeEnd('Load Horseman(phantomjs)');
+    },
+    // 清理目录
+    clean: function(client, config, callback) {
+        var outCfg = getOutConfig(config);
+
+        rimraf(outCfg.path, function(err) {
+            if(err) {
+                callback(err);
+            }
+
+            callback(null, 'clean_result');
+        });
     },
     // 取文件
     getfile: function(client, config, callback) {
@@ -62,9 +75,6 @@ var actions = {
     },
     // 缩略图
     makeshot: function(client, config, callback) {
-        // callback(null, 'makeshot_result', '-----');
-        // return;
-
         makeShot(config, function(ret) {
             callback(null, 'makeshot_result', ret);
 

@@ -222,11 +222,11 @@ lodash.merge(SocketAdp.prototype, {
         var io = this.io;
 
         if(!io.write(buf)) {
-            // io.once('drain', function() {
-            //     io.resume();
-            // });
+            io.once('drain', function() {
+                io.resume();
+            });
 
-            // io.pause();
+            io.pause();
         }
     },
     fireError: function(client, type) {

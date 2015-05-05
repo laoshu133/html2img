@@ -18,10 +18,8 @@ var SocketAdp = require('./SocketAdp');
 console.log('Strat client...');
 tools.time('Client process');
 
-var type = 'getfile';
-var urls = [
-    '__out/makeshot-001/out.png'
-];
+var id = 'makeshot-001';
+var url = '__out/makeshot-001/out.png';
 
 var io = net.connect({
     host: 'localhost',
@@ -29,53 +27,42 @@ var io = net.connect({
     port: 3000
 });
 
+var results = [];
 var client = new SocketAdp(io);
 
 io.on('connect', function() {
     console.log('Client connected');
 
-    sendConfig(urls.shift());
+    console.log('Start getfile');
+    tools.time('Process getfile');
+    client.send('getfile', {
+        id: id,
+        url: url
+    });
 });
 
-var results = [];
 client.on('data', function(e) {
-    tools.timeEnd('Process Config ['+ results.length +']', true);
-    results.push(e);
+    console.log('ondata', e.type);
 
-    var outPath = 'getfile_test.png';
-    console.log('ondata', e.dataLength, outPath);
-    console.log('----\n');
+    if(e.type === 'file') {
+        var outPath = 'getfile_test.png';
 
-    // debug, preview
-    var data = e.data;
-    fs.writeFileSync(outPath, data, {
-        encoding: 'binary'
-    });
+        fs.writeFileSync(outPath, e.data, {
+            encoding: 'binary'
+        });
 
-    if(urls.length) {
-        sendConfig(urls.shift());
+        console.log('ondata,' + outPath + ', file length:', e.dataLength);
+        console.log('----\n');
+
+        tools.timeEnd('Process getfile', true);
+
+        client.send('clean', {
+            id: id
+        });
     }
-    else {
-        // end
-        tools.timeEnd('Client process', true);
+    else if(e.type === 'clean_result') {
+        console.log('clean_result', e.data);
 
         io.end();
     }
 });
-
-
-function sendConfig(url) {
-    console.log('Start Process Config ['+ results.length +']');
-    tools.time('Process Config ['+ results.length +']');
-
-    getConfig(url, function(config) {
-        client.send(type, config);
-    });
-}
-
-function getConfig(url, callback) {
-    callback({
-        id: '001',
-        url: url
-    });
-}
