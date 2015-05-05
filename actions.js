@@ -50,7 +50,7 @@ var actions = {
         rs.on('end', function() {
             data = Buffer.concat(data, len);
 
-            callback(null, data);
+            callback(null, 'file', data);
 
             // clean files
             if(!config.keepOutFile) {
@@ -61,7 +61,7 @@ var actions = {
     // 缩略图
     makeshot: function(client, config, callback) {
         makeShot(config, function(ret) {
-            callback(null, ret);
+            callback(null, 'makeshot_result', ret);
 
             // clean files
             if(!config.keepOutFile) {

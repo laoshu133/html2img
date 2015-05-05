@@ -52,11 +52,12 @@ var queue = {
         this.status = 'processing';
         actionFn(client, config, cb);
 
-        function cb(err, result) {
+        function cb(err, type, result) {
             if(!err) {
                 var clientAdp = new SocketAdp(client);
 
-                clientAdp.send('result', result);
+                type = type || 'result';
+                clientAdp.send(type, result);
             }
             else {
                 tools.error('id:', client.uid, err);
