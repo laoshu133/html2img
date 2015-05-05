@@ -43,7 +43,7 @@ client.on('data', function(e) {
     results.push(e);
 
     var outPath = 'getfile_test.png';
-    console.log('ondata', e.type, outPath);
+    console.log('ondata', e.dataLength, outPath);
     console.log('----\n');
 
     // debug, preview

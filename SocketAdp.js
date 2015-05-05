@@ -30,7 +30,6 @@ function SocketAdp(io, options) {
 lodash.merge(SocketAdp.prototype, {
     HEAD_CODE: 1,
     BODY_CODE: 2,
-    FOOT_CODE: 3,
 
     init: function() {
         var self = this;
@@ -127,52 +126,35 @@ lodash.merge(SocketAdp.prototype, {
             cache.type = raw.slice(index, nextIndex).toString();
 
             index = nextIndex;
-            nextIndex += 2;
-        }
-
-        var isEnd = cache.isEnd;
-
-        // precheck end whitout body
-        if(!isEnd && len >= nextIndex && !cache.inBody) {
-            if(raw.readInt16LE(index) === this.FOOT_CODE) {
-                isEnd = true;
-            }
-            else {
-                cache.inBody = true;
-
-                index = nextIndex;
-                nextIndex += 4;
-            }
+            nextIndex += 6;
         }
 
         // data length
-        if(!isEnd && len >= nextIndex && !cache.dataLength) {
-            cache.dataLength = raw.readInt32LE(index);
+        if(len >= nextIndex && !cache.dataLength) {
+            cache.dataLength = raw.readInt32LE(index + 2);
 
             index = nextIndex;
             nextIndex += cache.dataLength;
         }
 
         // data
-        if(!isEnd && len >= nextIndex && !cache.data) {
+        if(len >= nextIndex && !cache.data) {
             cache.data = raw.slice(index, nextIndex);
 
             index = nextIndex;
-            nextIndex += 2;
         }
 
         // end
-        if(!isEnd && len >= nextIndex) {
-            isEnd = true;
+        if(len >= nextIndex) {
+            cache.isEnd = true;
         }
 
         // store
-        cache.isEnd = isEnd;
         cache.index = index;
         cache.nextIndex = nextIndex;
 
         // evt
-        if(isEnd) {
+        if(cache.isEnd) {
             this.emit('data', cache);
             // console.log(len, index, nextIndex);
             // next tick
@@ -201,8 +183,8 @@ lodash.merge(SocketAdp.prototype, {
         head.write(type, 2 + 4);
 
         // body
-        var bodyLen = 0;
-        var body = null;
+        var bodyLen = 2 + 4;
+        var body = new Buffer(2 + 4);
 
         if(typeof data !== 'string' && !Buffer.isBuffer(data)) {
             data = JSON.stringify(data);
@@ -213,24 +195,16 @@ lodash.merge(SocketAdp.prototype, {
         }
 
         if(Buffer.isBuffer(data)) {
-            bodyLen = 2 + 4 + data.length;
-            // body = new Buffer(bodyLen);
-            body = Buffer.concat([new Buffer(2 + 4), data], bodyLen);
-
-            body.writeInt16LE(this.BODY_CODE, 0);
-            body.writeInt32LE(data.length, 2);
-
-            // body.write(data.toString(), 2 + 4);
+            bodyLen += data.length;
+            body = Buffer.concat([body, data], bodyLen);
         }
 
-        // foot
-        var footLen = 2;
-        var foot = new Buffer(footLen);
-        foot.writeInt16LE(this.FOOT_CODE, 0);
+        body.writeInt16LE(this.BODY_CODE, 0);
+        body.writeInt32LE(data.length, 2);
 
         // write
-        var totalLen = headLen + bodyLen + footLen;
-        var buf = Buffer.concat([head, body, foot], totalLen);
+        var totalLen = headLen + bodyLen;
+        var buf = Buffer.concat([head, body], totalLen);
 
         // this.io.write(buf);
         this._send(buf);
