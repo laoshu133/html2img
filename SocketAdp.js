@@ -28,9 +28,9 @@ function SocketAdp(io, options) {
 }
 
 lodash.merge(SocketAdp.prototype, {
-    HEAD_TYPE: 1,
-    BODY_TYPE: 2,
-    FOOT_TYPE: 3,
+    HEAD_CODE: 1,
+    BODY_CODE: 2,
+    FOOT_CODE: 3,
 
     init: function() {
         var self = this;
@@ -49,7 +49,7 @@ lodash.merge(SocketAdp.prototype, {
     addClient: function(client) {
         var self = this;
 
-        client.uid = SocketAdp.uuid();
+        client.uid = SocketAdp.uuid(client);
         this.clients.push(client);
 
         client.once('close', function() {
@@ -103,6 +103,7 @@ lodash.merge(SocketAdp.prototype, {
         var len = cache.rawLength;
         var nextIndex = cache.nextIndex;
 
+        console.log(len, index, nextIndex);
         if(len < nextIndex) {
             return;
         }
@@ -110,8 +111,8 @@ lodash.merge(SocketAdp.prototype, {
         // head length
         if(!cache.typeLength) {
             var headCode = raw.readInt16LE(0);
-            if(headCode !== this.HEAD_TYPE) {
-                this.fireError(client, 'head_type_error');
+            if(headCode !== this.HEAD_CODE) {
+                this.fireError(client, 'head_CODE_error');
                 return;
             }
 
@@ -133,7 +134,7 @@ lodash.merge(SocketAdp.prototype, {
 
         // precheck end whitout body
         if(!isEnd && len >= nextIndex && !cache.inBody) {
-            if(raw.readInt16LE(index) === this.FOOT_TYPE) {
+            if(raw.readInt16LE(index) === this.FOOT_CODE) {
                 isEnd = true;
             }
             else {
@@ -173,7 +174,7 @@ lodash.merge(SocketAdp.prototype, {
         // evt
         if(isEnd) {
             this.emit('data', cache);
-
+            // console.log(len, index, nextIndex);
             // next tick
             lodash.merge(cache, {
                 type: '',
@@ -192,20 +193,17 @@ lodash.merge(SocketAdp.prototype, {
     // client silde
     send: function(type, data) {
         // head
-        var len = 2 + 4 + type.length + 2 + 4;
-        var buf = new Buffer(len);
-        var index = 0;
+        var headLen = 2 + 4 + type.length;
+        var head = new Buffer(headLen);
 
-        buf.writeInt16LE(this.HEAD_TYPE, index);
-        index += 2;
-
-        buf.writeInt32LE(type.length, index);
-        index += 4;
-
-        buf.write(type, index);
-        index += type.length;
+        head.writeInt16LE(this.HEAD_CODE, 0);
+        head.writeInt32LE(type.length, 2);
+        head.write(type, 2 + 4);
 
         // body
+        var bodyLen = 0;
+        var body = null;
+
         if(typeof data !== 'string' && !Buffer.isBuffer(data)) {
             data = JSON.stringify(data);
         }
@@ -214,31 +212,38 @@ lodash.merge(SocketAdp.prototype, {
             data = new Buffer(data);
         }
 
-        // body head
-        buf.writeInt16LE(this.BODY_TYPE, index);
-        index += 2;
+        if(Buffer.isBuffer(data)) {
+            bodyLen = 2 + 4 + data.length;
+            // body = new Buffer(bodyLen);
+            body = Buffer.concat([new Buffer(2 + 4), data], bodyLen);
 
-        buf.writeInt32LE(data.length, index);
-        index += 4;
+            body.writeInt16LE(this.BODY_CODE, 0);
+            body.writeInt32LE(data.length, 2);
 
-        this._send(buf);
-        this._send(data);
+            // body.write(data.toString(), 2 + 4);
+        }
 
         // foot
-        buf = new Buffer(2);
-        buf.writeInt16LE(this.FOOT_TYPE, 0);
+        var footLen = 2;
+        var foot = new Buffer(footLen);
+        foot.writeInt16LE(this.FOOT_CODE, 0);
 
+        // write
+        var totalLen = headLen + bodyLen + footLen;
+        var buf = Buffer.concat([head, body, foot], totalLen);
+
+        // this.io.write(buf);
         this._send(buf);
     },
     _send: function(buf) {
         var io = this.io;
 
         if(!io.write(buf)) {
-            io.once('drain', function() {
-                io.resume();
-            });
+            // io.once('drain', function() {
+            //     io.resume();
+            // });
 
-            io.pause();
+            // io.pause();
         }
     },
     fireError: function(client, type) {
@@ -254,7 +259,11 @@ lodash.merge(SocketAdp.prototype, {
 // base
 SocketAdp._uuid = 0;
 SocketAdp.caches = {};
-SocketAdp.uuid = function(client) {
+SocketAdp.uuid = function(target) {
+    if(target && target.uid) {
+        return target.uid;
+    }
+
     return ++SocketAdp._uuid;
 };
 
