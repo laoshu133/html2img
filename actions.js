@@ -52,6 +52,8 @@ var actions = {
 
             callback(null, 'file', data);
 
+            // client.end();
+
             // clean files
             if(!config.keepOutFile) {
                 fs.unlink(config.url);
