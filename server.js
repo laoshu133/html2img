@@ -54,7 +54,7 @@ var queue = {
 
         function cb(err, type, result) {
             if(!err) {
-                var clientAdp = new SocketAdp(client);
+                var clientAdp = new SocketAdp.Client(client);
 
                 type = type || 'result';
                 clientAdp.send(type, result);
