@@ -162,20 +162,23 @@ lodash.merge(SocketAdp.prototype, {
         // evt
         if(cache.isEnd) {
             this.emit('data', cache);
+
+            delete SocketAdp.caches[uid];
+
             // console.log(len, index, nextIndex);
             // next tick
-            lodash.merge(cache, {
-                type: '',
-                typeLength: 0,
-                data: null,
-                dataLength: 0,
-                index: nextIndex,
-                nextIndex: nextIndex + 6,
-                inBody: false,
-                isEnd: false
-            });
+            // lodash.merge(cache, {
+            //     type: '',
+            //     typeLength: 0,
+            //     data: null,
+            //     dataLength: 0,
+            //     index: nextIndex,
+            //     nextIndex: nextIndex + 6,
+            //     inBody: false,
+            //     isEnd: false
+            // });
 
-            this.checkData(client);
+            // this.checkData(client);
         }
     },
     // client silde
