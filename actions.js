@@ -27,7 +27,7 @@ var actions = {
 
         // init Horseman(phantomjs)
         tools.time('Load Horseman(phantomjs)');
-        horseman = new Horseman(defaultConfig.horsemanConfig);
+        // horseman = new Horseman(defaultConfig.horsemanConfig);
         tools.timeEnd('Load Horseman(phantomjs)');
     },
     // 取文件
@@ -54,7 +54,7 @@ var actions = {
 
             // clean files
             if(!config.keepOutFile) {
-                fs.unlink(config.url);
+                // fs.unlink(config.url);
             }
         });
     },

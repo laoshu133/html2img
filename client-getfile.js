@@ -46,8 +46,9 @@ client.on('data', function(e) {
     console.log('ondata', e.type, outPath);
     console.log('----\n');
 
-    console.log(e.data.length);
-    fs.writeFileSync(outPath, e.data, {
+    // debug, preview
+    var data = e.data;
+    fs.writeFileSync(outPath, data, {
         encoding: 'binary'
     });
 

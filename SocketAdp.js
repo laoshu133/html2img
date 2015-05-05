@@ -191,27 +191,11 @@ lodash.merge(SocketAdp.prototype, {
     },
     // client silde
     send: function(type, data) {
-        if(typeof data !== 'string' && !Buffer.isBuffer(data)) {
-            data = JSON.stringify(data);
-        }
-
-        if(typeof data === 'string') {
-            data = new Buffer(data);
-        }
-
-        var bufLen = 2 + 4 + type.length; // head
-
-        if(data !== null) {
-            bufLen += 2 + 4 + data.length; // body
-        }
-
-        bufLen += 2; // foot
-
-        var buf = new Buffer(bufLen);
-
+        // head
+        var len = 2 + 4 + type.length + 2 + 4;
+        var buf = new Buffer(len);
         var index = 0;
 
-        // head
         buf.writeInt16LE(this.HEAD_TYPE, index);
         index += 2;
 
@@ -222,22 +206,31 @@ lodash.merge(SocketAdp.prototype, {
         index += type.length;
 
         // body
-        if(data !== null) {
-            buf.writeInt16LE(this.BODY_TYPE, index);
-            index += 2;
-
-            buf.writeInt32LE(data.length, index);
-            index += 4;
-
-            buf.write(data.toString(), index);
-            index += data.length;
+        if(typeof data !== 'string' && !Buffer.isBuffer(data)) {
+            data = JSON.stringify(data);
         }
 
+        if(typeof data === 'string') {
+            data = new Buffer(data);
+        }
+
+        // body head
+        buf.writeInt16LE(this.BODY_TYPE, index);
+        index += 2;
+
+        buf.writeInt32LE(data.length, index);
+        index += 4;
+
+        this._send(buf);
+        this._send(data);
+
         // foot
-        buf.writeInt16LE(this.FOOT_TYPE, index);
+        buf = new Buffer(2);
+        buf.writeInt16LE(this.FOOT_TYPE, 0);
 
-
-        // do write
+        this._send(buf);
+    },
+    _send: function(buf) {
         var io = this.io;
 
         if(!io.write(buf)) {
