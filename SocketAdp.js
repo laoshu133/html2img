@@ -103,7 +103,7 @@ lodash.merge(SocketAdp.prototype, {
         var len = cache.rawLength;
         var nextIndex = cache.nextIndex;
 
-        console.log(len, index, nextIndex);
+        // console.log(len < nextIndex, len, index, nextIndex);
         if(len < nextIndex) {
             return;
         }

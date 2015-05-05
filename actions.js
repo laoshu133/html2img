@@ -60,6 +60,9 @@ var actions = {
     },
     // 缩略图
     makeshot: function(client, config, callback) {
+        // callback(null, 'makeshot_result', '-----');
+        // return;
+
         makeShot(config, function(ret) {
             callback(null, 'makeshot_result', ret);
 
