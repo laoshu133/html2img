@@ -236,8 +236,17 @@ lodash.merge(SocketAdp.prototype, {
         // foot
         buf.writeInt16LE(this.FOOT_TYPE, index);
 
+
         // do write
-        this.io.write(buf);
+        var io = this.io;
+
+        if(!io.write(buf)) {
+            io.once('drain', function() {
+                io.resume();
+            });
+
+            io.pause();
+        }
     },
     fireError: function(client, type) {
         client.end();
