@@ -54,7 +54,7 @@ var actions = {
 
             // clean files
             if(!config.keepOutFile) {
-                // fs.unlink(config.url);
+                fs.unlink(config.url);
             }
         });
     },
