@@ -60,7 +60,7 @@ lodash.merge(SocketAdp.prototype, {
         client.once('error', function(e) {
             tools.error('client_error', e);
 
-            self.fireError('client_error');
+            self.fireError(client, 'client_error');
         });
 
         client.on('data', function(buf) {
