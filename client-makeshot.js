@@ -44,17 +44,34 @@ client.on('data', function(e) {
     tools.timeEnd('Process Config ['+ results.length +']', true);
     results.push(e);
 
-    console.log('ondata', e.type, e.data.toString());
-    console.log('----\n');
+    console.log('ondata', e.type, '----\n');
+
+    if(e.type === 'file') {
+        var outPath = 'getfile_test.png';
+        fs.writeFileSync(outPath, e.data, {
+            encoding: 'binary'
+        });
+
+        console.log('ondata,' + outPath + ', file length:', e.dataLength);
+        console.log('----\n');
+
+        io.end();
+
+        // end
+        tools.timeEnd('Client process', true);
+
+        return;
+    }
 
     if(configs.length) {
         sendConfig(configs.shift());
     }
     else {
-        // end
-        tools.timeEnd('Client process', true);
-
-        io.end();
+        // getfile
+        client.send('getfile', {
+            id: '001',
+            url: '__out/makeshot-001/out.png'
+        });
     }
 });
 
