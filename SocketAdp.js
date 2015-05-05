@@ -192,6 +192,7 @@ lodash.merge(SocketAdp.prototype, {
         head.write(type, 2 + 4);
 
         // body
+        var dataLen = 0;
         var bodyLen = 2 + 4;
         var body = new Buffer(2 + 4);
 
@@ -204,12 +205,14 @@ lodash.merge(SocketAdp.prototype, {
         }
 
         if(Buffer.isBuffer(data)) {
-            bodyLen += data.length;
+            dataLen = data.length;
+            bodyLen += dataLen;
+
             body = Buffer.concat([body, data], bodyLen);
         }
 
         body.writeInt16LE(this.BODY_CODE, 0);
-        body.writeInt32LE(data.length, 2);
+        body.writeInt32LE(dataLen, 2);
 
         // write
         var totalLen = headLen + bodyLen;

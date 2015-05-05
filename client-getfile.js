@@ -61,7 +61,7 @@ client.on('data', function(e) {
         });
     }
     else if(e.type === 'clean_result') {
-        console.log('clean_result', e.data);
+        console.log('clean_result', e.data.length, e.data);
 
         io.end();
     }
