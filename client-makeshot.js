@@ -44,7 +44,10 @@ client.on('data', function(e) {
     tools.timeEnd('Process Config ['+ results.length +']', true);
     results.push(e);
 
-    console.log('ondata', e.type, '----\n');
+    if(e.type === 'makeshot_result') {
+        console.log('ondata, type:', e.type);
+        console.log(e.data.toString() + '\n');
+    }
 
     if(e.type === 'file') {
         var outPath = 'getfile_test.png';
