@@ -37,10 +37,12 @@ var actions = {
 
         rimraf(outCfg.path, function(err) {
             if(err) {
-                callback(err);
+                callback(err, 'clean_result',  '0');
+
+                return;
             }
 
-            callback(null, 'clean_result');
+            callback(null, 'clean_result', '1');
         });
     },
     // 取文件
