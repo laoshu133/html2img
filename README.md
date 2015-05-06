@@ -14,11 +14,12 @@ node server.js
 node client-makeshot.js
 ```
 
-取文件
+取文件/清理文件
 
 ```
 node client-getfile.js
 ```
+
 
 ## Support Actions
 
@@ -66,6 +67,7 @@ node client-getfile.js
 id - 必填，标识，用于区分唯一性
 action - 必填，任务类型
 description - 选填，任务说明
+outPath - 相对路径、绝对路径均支持，需要有读写权限
 htmlTpl - 选填，HTML模板，用于包装 `content`，默认 tb_desc
 viewport - 选填，浏览器视窗大小，如果需要导出的图片大小大于默认视窗大小，需要手动指定，默认 [1024, 800]
 size - 选填，导出图片大小，裁剪类型，详见 `size`参数说明
@@ -89,3 +91,17 @@ size - 选填，导出图片大小，裁剪类型，详见 `size`参数说明
 }
 ```
 
+## Scoket 流协议
+
+*规则*
+
+```
+{ HEAD_CODE }-{ TYPE_LENGTH }-{ TYPE }-{ BODY_CODE }-{ BODY_LENGTH }-{ BODY }
+-----------------------------------------------------------------
+|  Int16LE  |-|   Int32LE   |-|String|-|  Int16LE  |-|   Int32LE   |-|Buffer|
+```
+
+*说明*
+
+1. `HEAD_CODE` 始终为 `1`
+2. `BODY_LENGTH` 可以为 `0`，即 `BODY` 可以为空
