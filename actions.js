@@ -174,7 +174,7 @@ function makeShot(config, callback) {
 
     // headers
     if(config.horsemanHeaders) {
-        horseman.horsemanHeaders(config.horsemanHeaders);
+        horseman.headers(config.horsemanHeaders);
     }
 
     // open url
