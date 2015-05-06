@@ -125,7 +125,7 @@ server.on('data', function(e) {
 io.listen(defaultConfig.listenPort);
 console.info('Server Listening :' + defaultConfig.listenPort);
 
-// process.on('uncaughtException', function(err) {
-//     console.error(err);
-// });
+process.on('uncaughtException', function(err) {
+    console.error(err);
+});
 

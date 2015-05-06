@@ -386,10 +386,12 @@ process.on('exit', function(err) {
 });
 
 // error catch
-// process.on('uncaughtException', function(err) {
-//     console.log('actions uncaughtException', err);
+process.on('uncaughtException', function(err) {
+    console.error('actions uncaughtException', err);
 
-//     process.exit();
-// });
+    if(horseman) {
+        horseman.close();
+    }
+});
 
 module.exports = actions;
