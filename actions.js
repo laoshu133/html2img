@@ -249,8 +249,18 @@ var processers = {
         var outCrop;
         var size = config.size;
         if(size && size.width) {
+            /**
+             * 裁剪类型
+             * 10 - 长边裁剪，圆点中心，不足补白
+             * 11 - 长边裁剪，圆点左上，不足补白
+             * 12 - 长边裁剪，圆点左上，不足不处理
+             * 20 - 短边裁剪，圆点中心，不足补白
+             * 21 - 短边裁剪，圆点左上，不足补白
+             * 22 - 短边裁剪，圆点左上，不足不处理
+             */
             outCrop = horseman.evaluate(function(wrapSelector, size) {
                 var $ = window.jQuery;
+                var type = ~~size.type || 10;
                 var wrapElem = $(wrapSelector);
 
                 wrapElem.css('transform', 'none');
@@ -262,8 +272,13 @@ var processers = {
                 var widthRatio = size.width / wrapWidth;
                 var ratio = widthRatio;
 
-                // 短边裁剪
-                if(widthRatio < heightRatio) {
+                // 选边
+                if(
+                    // 长边裁剪
+                    (type < 20 && widthRatio > heightRatio) ||
+                    // 短边裁剪
+                    (type >= 20 && widthRatio > heightRatio)
+                ) {
                     ratio = heightRatio;
                 }
 
@@ -279,9 +294,11 @@ var processers = {
                     top: rect.top
                 };
 
-                // 居中裁剪
-                // outCrop.left += (rect.width - size.width) / 2;
-                // outCrop.top += (rect.height - size.height) / 2;
+                // 是否居中裁剪
+                if(type % 10 === 0) {
+                    outCrop.left += (rect.width - size.width) / 2;
+                    outCrop.top += (rect.height - size.height) / 2;
+                }
 
                 // debug
                 // outCrop.html = document.documentElement.outerHTML;

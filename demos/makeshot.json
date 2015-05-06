@@ -2,8 +2,9 @@
   "id": "makeshot-001",
   "action": "makeshot",
   "size": {
-    "width": 320,
-    "height": 180
+    "type": 10,
+    "width": 200,
+    "height": 400
   },
   "_comment_viewport": "如果需要导出的图片大小大于1024*800，需要手动指定 viewport",
   "viewport": [1024, 1024],

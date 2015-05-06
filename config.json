@@ -15,5 +15,6 @@
   "headers": {
     "Referer": "http://tbgr.huanleguang.com/_thumb"
   },
-  "viewport": null
+  "viewport": null,
+  "size": null
 }
