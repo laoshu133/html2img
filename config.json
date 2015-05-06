@@ -1,10 +1,11 @@
 {
   "id": null,
-  "action": "hello",
+  "action": "makeshot",
   "description": "任务说明",
   "listenPort": 3000,
   "htmlTpl": "tb_desc.html",
   "url": null,
+  "content": "",
   "outPath": "__out",
   "keepOutFile": true,
   "wrapSelector": ".hlg_flag_wrap_panel",
@@ -12,7 +13,7 @@
   "horsemanConfig": {
     "phantomPath": "/usr/local/bin/phantomjs"
   },
-  "headers": {
+  "horsemanHeaders": {
     "Referer": "http://tbgr.huanleguang.com/_thumb"
   },
   "viewport": null,

@@ -173,8 +173,8 @@ function makeShot(config, callback) {
     horseman.viewport(width, height);
 
     // headers
-    if(config.headers) {
-        horseman.headers(config.headers);
+    if(config.horsemanHeaders) {
+        horseman.horsemanHeaders(config.horsemanHeaders);
     }
 
     // open url

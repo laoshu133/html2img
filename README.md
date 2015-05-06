@@ -23,28 +23,69 @@ node client-getfile.js
 ## Support Actions
 
 - makeshot
+
+  生成缩略图
+
 - getfile
 
-## config 参数说明
+  获取生成的文件
+
+- clean
+
+  清理生成的文件(夹)
+
+
+## config 所有参数
 
 ```
 {
   "id": null,
-  "action": "hello",
+  "action": "makeshot",
   "description": "任务说明",
-  "listenPort": 3000,
   "htmlTpl": "tb_desc.html",
   "url": null,
+  "content": "",
   "outPath": "__out",
+  "keepOutFile": true,
   "wrapSelector": ".hlg_flag_wrap_panel",
   "replaceSelector": ".hlg_flag_replace_place",
   "horsemanConfig": {
     "phantomPath": "/usr/local/bin/phantomjs"
   },
+  "horsemanHeaders": {
+    "Referer": "http://tbgr.huanleguang.com/_thumb"
+  },
   "viewport": null,
-  "size": {
-    "width": 620,
-    "height": 590
-  }
+  "size": null
 }
 ```
+
+*部分参数说明*
+
+```
+id - 必填，标识，用于区分唯一性
+action - 必填，任务类型
+description - 选填，任务说明
+htmlTpl - 选填，HTML模板，用于包装 `content`，默认 tb_desc
+viewport - 选填，浏览器视窗大小，如果需要导出的图片大小大于默认视窗大小，需要手动指定，默认 [1024, 800]
+size - 选填，导出图片大小，裁剪类型，详见 `size`参数说明
+```
+
+*`size`参数说明*
+
+```
+/**
+ * type - 裁剪类型，默认  10
+ * 10 - 长边裁剪，圆点中心，不足补白
+ * 11 - 长边裁剪，圆点左上，不足补白
+ * 12 - 长边裁剪，圆点左上，不足不处理
+ * 20 - 短边裁剪，圆点中心，不足不处理
+ * 21 - 短边裁剪，圆点左上，不足不处理
+ */
+{
+  type: 10,
+  width: 320, // 如果为空不处理宽高，默认空
+  height: 180 // 指定 width 时必须指定 height，默认空
+}
+```
+
