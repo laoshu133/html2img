@@ -44,6 +44,12 @@ SocketAdp.fn = {
 
     // send
     send: function(type, data) {
+        var io = this.io;
+        if(!io.writable) {
+            this.fireError(io, 'io_not_writable');
+            return;
+        }
+
         // head
         var headLen = 2 + 4 + type.length;
         var head = new Buffer(headLen);
