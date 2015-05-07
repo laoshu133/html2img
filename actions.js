@@ -13,7 +13,6 @@ var through = require('through2');
 var Horseman = require('node-horseman');
 
 var tools = require('./tools');
-var SocketAdp = require('./SocketAdp');
 
 // default config
 var defaultConfig = require('./config.json');
@@ -381,7 +380,7 @@ var processers = {
 
 
 // clean horseman
-process.on('exit', function(err) {
+process.on('exit', function() {
     if(horseman) {
         horseman.close();
     }
@@ -389,11 +388,11 @@ process.on('exit', function(err) {
 
 // error catch
 process.on('uncaughtException', function(err) {
-    console.error('actions uncaughtException', err);
-
     if(horseman) {
         horseman.close();
     }
+
+    console.error('actions uncaughtException', err);
 });
 
 module.exports = actions;
