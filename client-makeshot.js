@@ -37,6 +37,11 @@ io.on('connect', function() {
     console.log('Client connected');
 
     sendConfig(configs.shift());
+
+    // setTimeout(function() {
+    //     io.end();
+    //     io.destroy();
+    // }, 10);
 });
 
 var results = [];

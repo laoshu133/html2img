@@ -56,6 +56,10 @@ var queue = {
             if(!err) {
                 var clientAdp = new SocketAdp.Client(client);
 
+                clientAdp.on('error', function(e) {
+                    tools.error('SocketAdp Error:', e.type);
+                });
+
                 type = type || 'result';
                 clientAdp.send(type, result);
             }
@@ -118,7 +122,7 @@ server.on('data', function(e) {
     });
 })
 .on('error', function(e) {
-    console.error('SocketAdp Error:', e.type);
+    tools.error('SocketAdp Error:', e.type);
 });
 
 
