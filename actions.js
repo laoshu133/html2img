@@ -35,6 +35,11 @@ var actions = {
         // page, phantomjs page
         var page = horseman.page;
 
+        // clean fix, not store request
+        page.onResourceReceived = function(res) {
+            // tools.log('ResourceReceived', res.status, res.url);
+        };
+
         // custom settings
         if(horsemanConfig.resourceTimeout) {
             var customSettings = {
