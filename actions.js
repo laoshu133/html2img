@@ -25,10 +25,30 @@ var actions = {
             return;
         }
 
+        var horsemanConfig = defaultConfig.horsemanConfig;
+
         // init Horseman(phantomjs)
         tools.time('Load Horseman(phantomjs)');
-        horseman = new Horseman(defaultConfig.horsemanConfig);
+        horseman = new Horseman(horsemanConfig);
         tools.timeEnd('Load Horseman(phantomjs)');
+
+        // page, phantomjs page
+        var page = horseman.page;
+
+        // custom settings
+        if(horsemanConfig.resourceTimeout) {
+            var customSettings = {
+                resourceTimeout: horsemanConfig.resourceTimeout
+            };
+
+            page.get('settings', function(err, settings) {
+                settings = lodash.merge(settings, customSettings);
+
+                page.set('settings', settings, function() {
+                    tools.log('write custom settings');
+                });
+            });
+        }
     },
     // 清理目录
     clean: function(client, config, callback) {
