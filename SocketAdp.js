@@ -261,7 +261,7 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
             // next tick
             delete SocketAdp.caches[uid];
 
-            console.log('\n----\n', cache.isEnd);
+            console.log('\n----\n');
             console.log('-zzzz-', len > nextIndex, len, nextIndex)
             if(len > nextIndex) {
                 raw = raw.slice(nextIndex);
