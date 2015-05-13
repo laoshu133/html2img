@@ -90,16 +90,6 @@ SocketAdp.fn = {
     _send: function(buf) {
         var io = this.io;
 
-        console.log('xxx', io.uid, buf.slice(0, 96).toString());
-
-        // io.write(buf, function(err) {
-        //     console.log('write callbakc', arguments);
-
-        //     if(callback) {
-        //         callback(err);
-        //     }
-        // });
-
         if(!io.write(buf)) {
             io.once('drain', function() {
                 io.resume();
@@ -110,8 +100,6 @@ SocketAdp.fn = {
     },
     fireError: function(client, type) {
         client.end();
-
-        console.log('client_eeee', client.uid, type);
 
         this.emit('error', {
             client: client,
@@ -147,11 +135,9 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
             lodash.remove(self.clients, client);
         });
 
-        // client.once('error', function(e) {
-        //     console.error('client_error', e);
-
-        //     self.fireError(client, 'client_error');
-        // });
+        client.once('error', function(e) {
+            self.fireError(client, 'client_error');
+        });
 
         client.on('data', function(buf) {
             self.pushData(client, buf);
@@ -202,7 +188,6 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
         var len = cache.rawLength;
         var nextIndex = cache.nextIndex;
 
-        // console.log('cc-1', len < nextIndex, len, index, nextIndex);
         if(len < nextIndex) {
             return;
         }
@@ -261,14 +246,10 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
             // next tick
             delete SocketAdp.caches[uid];
 
-            console.log('\n----\n');
-            console.log('-zzzz-', len > nextIndex, len, nextIndex)
             if(len > nextIndex) {
                 raw = raw.slice(nextIndex);
-                console.log(raw);
-                console.log(raw.toString());
 
-                // this.pushData(client, raw);
+                this.pushData(client, raw);
             }
         }
     }

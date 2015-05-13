@@ -21,13 +21,13 @@ tools.time('Client process');
 var type = 'makeshot';
 var configs = [
     // 'demos/makeshot.json',
-    'demos/makeshot-big.json',
+    // 'demos/makeshot-big.json',
     'demos/makeshot.json'
 ];
 
 var io = net.connect({
     // host: 'localhost',
-    host: '172.16.2.198',
+    host: '192.168.10.134',
     port: 3000
 });
 
@@ -35,6 +35,7 @@ var client = new SocketAdp(io);
 
 var lastConfig;
 var lastResult;
+
 client.on('data', function(e) {
     lastResult = e.data;
 
@@ -46,11 +47,18 @@ client.on('data', function(e) {
         getFile();
     }
     else {
-        console.log(e.raw.slice(0, 40).toString());
+        // console.log(e.raw.slice(0, 40).toString());
         // console.log(e.data.slice(0, 40));
+        console.log('\n');
 
         makeShot();
     }
+});
+
+io.on('connect', function() {
+    console.log('Client connected');
+
+    makeShot();
 });
 
 var count = 0;
@@ -89,77 +97,6 @@ function getFile() {
     client.send('getfile', {
         id: cfg.id,
         url: res.data.outFile
-    });
-}
-
-io.on('connect', function() {
-    console.log('Client connected');
-
-    makeShot();
-});
-
-
-return;
-
-
-
-io.on('connect', function() {
-    console.log('Client connected');
-
-    sendConfig(configs.shift());
-
-    // setTimeout(function() {
-    //     io.end();
-    //     io.destroy();
-    // }, 10);
-});
-
-var results = [];
-client.on('data', function(e) {
-    tools.timeEnd('Process Config ['+ results.length +']', true);
-    results.push(e);
-
-    if(e.type === 'makeshot_result') {
-        console.log('ondata, type:', e.type);
-        console.log(e.data.toString() + '\n');
-    }
-
-    if(e.type === 'file') {
-        var outPath = 'getfile_test.png';
-        fs.writeFileSync(outPath, e.data, {
-            encoding: 'binary'
-        });
-
-        console.log('ondata,' + outPath + ', file length:', e.dataLength);
-        console.log('----\n');
-
-        io.end();
-
-        // end
-        tools.timeEnd('Client process', true);
-
-        return;
-    }
-
-    if(configs.length) {
-        sendConfig(configs.shift());
-    }
-    else {
-        // getfile
-        client.send('getfile', {
-            id: '001',
-            url: '__out/makeshot-001/out.png'
-        });
-    }
-});
-
-
-function sendConfig(configPath) {
-    console.log('Start Process Config ['+ results.length +']');
-    tools.time('Process Config ['+ results.length +']');
-
-    getConfig(configPath, function(config) {
-        client.send(type, config);
     });
 }
 
