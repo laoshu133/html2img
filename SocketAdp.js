@@ -90,7 +90,7 @@ SocketAdp.fn = {
     _send: function(buf) {
         var io = this.io;
 
-        console.log('xxx', io.uid, buf.slice(0, 96).toString());
+        console.log('sendto', io.uid, buf.slice(0, 90).toString());
 
         // io.write(buf, function(err) {
         //     console.log('write callbakc', arguments);
@@ -99,6 +99,9 @@ SocketAdp.fn = {
         //         callback(err);
         //     }
         // });
+
+        io.write(buf);
+        return;
 
         if(!io.write(buf)) {
             io.once('drain', function() {
@@ -159,6 +162,7 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
     },
     pushData: function(client, buf) {
         var uid = client.uid;
+        // console.log('pushData', client.uid, buf.slice(0, 40).toString());
         var cache = SocketAdp.caches[uid];
         if(!cache) {
             cache = SocketAdp.caches[uid] = {
