@@ -43,7 +43,7 @@ SocketAdp.fn = {
     BODY_CODE: 2,
 
     // send
-    send: function(type, data) {
+    send: function(type, data, callback) {
         var io = this.io;
         if(!io.writable) {
             // this.fireError(io, 'io_not_writable');
@@ -85,19 +85,28 @@ SocketAdp.fn = {
         var totalLen = headLen + bodyLen;
         var buf = Buffer.concat([head, body], totalLen);
 
-        // this.io.write(buf);
-        this._send(buf);
+        this._send(buf, callback);
     },
-    _send: function(buf) {
+    _send: function(buf, callback) {
         var io = this.io;
 
-        if(!io.write(buf)) {
-            io.once('drain', function() {
-                io.resume();
-            });
+        console.log('xxx', io.uid, buf.slice(0, 80).toString());
 
-            io.pause();
-        }
+        io.write(buf, function(err) {
+            console.log('write callbakc', arguments);
+
+            if(callback) {
+                callback(err);
+            }
+        });
+
+        // if(!io.write(buf)) {
+        //     io.once('drain', function() {
+        //         io.resume();
+        //     });
+
+        //     io.pause();
+        // }
     },
     fireError: function(client, type) {
         client.end();
