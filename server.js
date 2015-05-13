@@ -69,6 +69,7 @@ var queue = {
                 client.end();
             }
 
+            // 异步处理，规避粘包
             setTimeout(function() {
                 self.status = 'ready';
                 self.next();
