@@ -20,7 +20,7 @@ tools.time('Client process');
 
 var type = 'makeshot';
 var configs = [
-    'demos/makeshot.json',
+    // 'demos/makeshot.json',
     'demos/makeshot-big.json',
     'demos/makeshot.json'
 ];
@@ -32,6 +32,76 @@ var io = net.connect({
 });
 
 var client = new SocketAdp(io);
+
+var lastConfig;
+var lastResult;
+client.on('data', function(e) {
+    lastResult = e.data;
+
+    console.log('\n---'+ e.type +'--'+ e.data.length + '---');
+
+    if(e.type === 'makeshot_result') {
+        console.log(e.data.toString());
+
+        getFile();
+    }
+    else {
+        console.log(e.raw.slice(0, 40).toString());
+        // console.log(e.data.slice(0, 40));
+
+        makeShot();
+    }
+});
+
+var count = 0;
+function makeShot() {
+    var cfgPath = configs.shift();
+
+    if(!cfgPath) {
+        console.log('Makeshot, No cfg...');
+        io.end();
+
+        return;
+    }
+
+    console.log('start makeshot ['+ (count++) +']');
+
+    getConfig(cfgPath, function(data) {
+        var cfg = JSON.parse(data.toString());
+
+        lastConfig = cfg;
+        client.send('makeshot', cfg);
+    });
+}
+
+function getFile() {
+    var cfg = lastConfig;
+    if(!cfg) {
+        console.log('Getfile, No cfg...');
+        io.end();
+
+        return;
+    }
+
+    var res = JSON.parse(lastResult.toString());
+
+    console.log(cfg.id, res.data.outFile);
+    client.send('getfile', {
+        id: cfg.id,
+        url: res.data.outFile
+    });
+}
+
+io.on('connect', function() {
+    console.log('Client connected');
+
+    makeShot();
+});
+
+
+return;
+
+
 
 io.on('connect', function() {
     console.log('Client connected');

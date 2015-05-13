@@ -12,8 +12,10 @@ var debugLog = debugFactor(debugPrefix);
 var debugInfo = debugFactor(debugPrefix);
 var debugError = debugFactor(debugPrefix);
 debugLog.log = console.log.bind(console);
-debugInfo.info = console.info.bind(console);
-debugError.error = console.error.bind(console);
+debugInfo.log = console.info.bind(console);
+debugError.log = console.error.bind(console);
+
+var slice = [].slice;
 
 var tools = {
     getConfig: function(path) {
@@ -84,13 +86,19 @@ var tools = {
     },
     // log
     log: function() {
-        debugLog.apply(null, arguments);
+        var msg = slice.call(arguments).join(' ');
+
+        debugLog(msg);
     },
     info: function() {
-        debugInfo.apply(null, arguments);
+        var msg = slice.call(arguments).join(' ');
+
+        debugInfo(msg);
     },
     error: function() {
-        debugError.apply(null, arguments);
+        var msg = slice.call(arguments).join(' ');
+
+        debugError(msg);
     },
     // events
     fireEvent: function(config, type) {
@@ -100,7 +108,7 @@ var tools = {
             return;
         }
 
-        var args = [].call(arguments, 2);
+        var args = slice.call(arguments, 2);
 
         return callback.apply(null, args);
     }

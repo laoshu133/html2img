@@ -46,8 +46,8 @@ SocketAdp.fn = {
     send: function(type, data) {
         var io = this.io;
         if(!io.writable) {
-            this.fireError(io, 'io_not_writable');
-            return;
+            // this.fireError(io, 'io_not_writable');
+            // return;
         }
 
         // head
@@ -92,15 +92,17 @@ SocketAdp.fn = {
         var io = this.io;
 
         if(!io.write(buf)) {
-            // io.once('drain', function() {
-            //     io.resume();
-            // });
+            io.once('drain', function() {
+                io.resume();
+            });
 
-            // io.pause();
+            io.pause();
         }
     },
     fireError: function(client, type) {
         client.end();
+
+        console.log('client_eeee', client.uid, type);
 
         this.emit('error', {
             client: client,
@@ -136,11 +138,11 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
             lodash.remove(self.clients, client);
         });
 
-        client.once('error', function(e) {
-            tools.error('client_error', e);
+        // client.once('error', function(e) {
+        //     console.error('client_error', e);
 
-            self.fireError(client, 'client_error');
-        });
+        //     self.fireError(client, 'client_error');
+        // });
 
         client.on('data', function(buf) {
             self.pushData(client, buf);
