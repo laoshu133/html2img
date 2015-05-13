@@ -70,10 +70,10 @@ var queue = {
             }
 
             // 异步处理，规避粘包
-            setTimeout(function() {
+            process.nextTick(function() {
                 self.status = 'ready';
                 self.next();
-            }, 0);
+            });
         }
     }
 };
