@@ -90,7 +90,7 @@ SocketAdp.fn = {
     _send: function(buf) {
         var io = this.io;
 
-        console.log('xxx', io.uid, buf.slice(0, 80).toString());
+        console.log('xxx', io.uid, buf.slice(0, 96).toString());
 
         // io.write(buf, function(err) {
         //     console.log('write callbakc', arguments);
