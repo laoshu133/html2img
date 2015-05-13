@@ -26,8 +26,8 @@ var configs = [
 ];
 
 var io = net.connect({
-    host: 'localhost',
-    // host: '172.16.2.198',
+    // host: 'localhost',
+    host: '172.16.2.198',
     port: 3000
 });
 
