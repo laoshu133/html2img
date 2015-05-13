@@ -20,14 +20,14 @@ tools.time('Client process');
 
 var type = 'makeshot';
 var configs = [
-    // 'demos/makeshot.json',
-    // 'demos/makeshot-big.json',
+    'demos/makeshot.json',
+    'demos/makeshot-big.json',
     'demos/makeshot.json'
 ];
 
 var io = net.connect({
-    // host: 'localhost',
-    host: '192.168.10.134',
+    host: 'localhost',
+    // host: '192.168.10.134',
     port: 3000
 });
 
