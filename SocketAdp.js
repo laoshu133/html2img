@@ -43,7 +43,7 @@ SocketAdp.fn = {
     BODY_CODE: 2,
 
     // send
-    send: function(type, data, callback) {
+    send: function(type, data) {
         var io = this.io;
         if(!io.writable) {
             // this.fireError(io, 'io_not_writable');
@@ -85,28 +85,28 @@ SocketAdp.fn = {
         var totalLen = headLen + bodyLen;
         var buf = Buffer.concat([head, body], totalLen);
 
-        this._send(buf, callback);
+        this._send(buf);
     },
-    _send: function(buf, callback) {
+    _send: function(buf) {
         var io = this.io;
 
         console.log('xxx', io.uid, buf.slice(0, 80).toString());
 
-        io.write(buf, function(err) {
-            console.log('write callbakc', arguments);
+        // io.write(buf, function(err) {
+        //     console.log('write callbakc', arguments);
 
-            if(callback) {
-                callback(err);
-            }
-        });
+        //     if(callback) {
+        //         callback(err);
+        //     }
+        // });
 
-        // if(!io.write(buf)) {
-        //     io.once('drain', function() {
-        //         io.resume();
-        //     });
+        if(!io.write(buf)) {
+            io.once('drain', function() {
+                io.resume();
+            });
 
-        //     io.pause();
-        // }
+            io.pause();
+        }
     },
     fireError: function(client, type) {
         client.end();
@@ -261,10 +261,13 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
             // next tick
             delete SocketAdp.caches[uid];
 
+            console.log('-zzzz-', len > nextIndex, len, nextIndex)
             if(len > nextIndex) {
                 raw = raw.slice(nextIndex);
+                console.log(raw);
+                console.log(raw.toString());
 
-                this.pushData(client, raw);
+                // this.pushData(client, raw);
             }
         }
     }
