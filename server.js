@@ -84,6 +84,11 @@ server.on('data', function(e) {
     var config = null;
     var client = e.target;
 
+<<<<<<< HEAD
+=======
+    tools.log('ondata, uid:', client.uid, 'type:', e.type, e.data.slice(0, 80).toString());
+
+>>>>>>> 4e25483c265c1f8903dcc407b4ce8eedc1a334af
     if(e.data && Buffer.isBuffer(e.data)) {
         config = e.data.toString();
 

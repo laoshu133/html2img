@@ -145,6 +145,7 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
     },
     pushData: function(client, buf) {
         var uid = client.uid;
+        // console.log('pushData', client.uid, buf.slice(0, 40).toString());
         var cache = SocketAdp.caches[uid];
         if(!cache) {
             cache = SocketAdp.caches[uid] = {
