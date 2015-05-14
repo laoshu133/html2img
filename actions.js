@@ -7,10 +7,12 @@
 // deps
 var fs = require('fs');
 var path = require('path');
+var async = require('async');
 var rimraf = require('rimraf');
 var lodash = require('lodash');
-var through = require('through2');
 var Horseman = require('node-horseman');
+var ExecBuffer = require('exec-buffer');
+var pngquantPath = require('pngquant-bin');
 
 var tools = require('./tools');
 
@@ -75,43 +77,41 @@ var actions = {
             return callback(new Error('File do not exists'));
         }
 
-        var len = 0;
-        var data = [];
-        var rs = fs.createReadStream(config.url);
-
-        rs.pipe(through(function(chunk, enc, cb) {
-            len += chunk.length;
-            data.push(chunk);
-
-            cb();
-        }));
-
-        rs.on('end', function() {
-            data = Buffer.concat(data, len);
-
-            callback(null, 'file', data);
-
-            // client.end();
-
-            // clean files
-            if(!config.keepOutFile) {
-                fs.unlink(config.url);
+        fs.readFile(config.url, function(err, buf) {
+            if(err) {
+                callback(err);
+                return;
             }
+
+            callback(null, 'file', buf);
         });
     },
     // 缩略图
     makeshot: function(client, config, callback) {
+        tools.time('Make_shot');
+
         makeShot(config, function(ret) {
-            callback(null, 'makeshot_result', ret);
+            var outFile = ret.data.outFile;
+            var outFileOpt = path.join(path.dirname(outFile), 'out_opt.png');
 
-            // clean files
-            if(!config.keepOutFile) {
-                var inFilePath = path.join(config.out.path, 'in.html');
-
-                if(fs.existsSync(inFilePath)) {
-                    fs.unlink(inFilePath);
+            async.waterfall([
+                function optPng(cb) {
+                    optimizePng(outFile, cb);
+                },
+                function writeFile(buf, cb) {
+                    fs.writeFile(outFileOpt, buf, cb);
                 }
-            }
+            ], function done(err) {
+                tools.timeEnd('Make_shot');
+
+                if(err) {
+                    callback(err);
+                    return;
+                }
+
+                ret.data.outFile = outFileOpt;
+                callback(null, 'makeshot_result', ret);
+            });
         });
     },
     // 新关联列表（待完善）
@@ -175,7 +175,7 @@ function getOutConfig(config) {
  */
 function makeShot(config, callback) {
     // all process timestamp start
-    tools.time('All Shot process');
+    // tools.time('All Shot process');
 
     // result
     var ret = {
@@ -239,7 +239,7 @@ function makeShot(config, callback) {
     tools.timeEnd('Main shot');
 
     // all process timestamp end
-    tools.timeEnd('All Shot process');
+    // tools.timeEnd('All Shot process');
 
     ret.message = 'done';
     callback(ret);
@@ -402,6 +402,29 @@ var processers = {
         };
     }
 };
+
+// optimizePng
+function optimizePng(src, callback) {
+    fs.readFile(src, function(err, buf) {
+        if(err) {
+            callback(err);
+            return;
+        }
+
+        var exec = new ExecBuffer();
+        var args = ['-o', exec.dest(), exec.src()];
+
+        exec.use(pngquantPath, args)
+        .run(buf, function(err, buf) {
+            if(err || !buf || !buf.length) {
+                callback(err);
+                return;
+            }
+
+            callback(null, buf);
+        });
+    });
+}
 
 
 // clean horseman

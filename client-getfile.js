@@ -19,7 +19,7 @@ console.log('Strat client...');
 tools.time('Client process');
 
 var id = 'makeshot-001';
-var url = '__out/makeshot-001/out.png';
+var url = '__out/makeshot-001/out_opt.png';
 
 var io = net.connect({
     host: 'localhost',
