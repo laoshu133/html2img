@@ -46,8 +46,8 @@ SocketAdp.fn = {
     send: function(type, data) {
         var io = this.io;
         if(!io.writable) {
-            // this.fireError(io, 'io_not_writable');
-            // return;
+            this.fireError(io, 'io_not_writable');
+            return;
         }
 
         // head
