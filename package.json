@@ -13,7 +13,9 @@
     "rimraf": "^2.3.3",
     "lodash": "^3.7.0",
     "through2": "^0.6.5",
-    "node-horseman": "^1.5.1"
+    "node-horseman": "^1.5.1",
+    "exec-buffer": "^2.0.1",
+    "pngquant-bin": "^3.0.0"
   },
   "readmeFilename": "README.md",
   "scripts": {
