@@ -126,9 +126,9 @@ server.on('data', function(e) {
     tools.error('SocketAdp Error:', e.type);
 });
 
+io.listen(defaultConfig.listenPort, defaultConfig.listenHost);
+console.info('Server Listening, port:', defaultConfig.listenPort, defaultConfig.listenHost ? ', host: ' + defaultConfig.listenHost : '');
 
-io.listen(defaultConfig.listenPort);
-console.info('Server Listening :' + defaultConfig.listenPort);
 
 process.on('uncaughtException', function(err) {
     console.error(err);

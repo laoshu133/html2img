@@ -2,6 +2,7 @@
   "id": null,
   "action": "makeshot",
   "description": "任务说明",
+  "listenHost": null,
   "listenPort": 3000,
   "htmlTpl": "tb_desc.html",
   "url": null,
