@@ -240,15 +240,18 @@ lodash.merge(SocketAdp.prototype, SocketAdp.fn, {
         cache.index = index;
         cache.nextIndex = nextIndex;
 
-        // evt
+        // one tick
         if(cache.isEnd) {
+            // clean
+            delete SocketAdp.caches[uid];
+            raw = null;
+
+            // evt
             this.emit('data', cache);
 
             // next tick
-            delete SocketAdp.caches[uid];
-
             if(len > nextIndex) {
-                raw = raw.slice(nextIndex);
+                raw = cache.raw.slice(nextIndex);
 
                 this.pushData(client, raw);
             }
