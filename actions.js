@@ -91,6 +91,14 @@ var actions = {
         tools.time('Make_shot');
 
         makeShot(config, function(ret) {
+            if(!config.optimizeImage) {
+                tools.timeEnd('Make_shot');
+
+                callback(null, 'makeshot_result', ret);
+                return;
+            }
+
+            // recommend client slide optimizeImage
             var outFile = ret.data.outFile;
             var outFileOpt = path.join(path.dirname(outFile), 'out_opt.png');
 
