@@ -88,11 +88,11 @@ var actions = {
     },
     // 缩略图
     makeshot: function(client, config, callback) {
-        tools.time('Make_shot');
+        tools.time('All shot process');
 
         makeShot(config, function(ret) {
             if(!config.optimizeImage) {
-                tools.timeEnd('Make_shot');
+                tools.timeEnd('All shot process');
 
                 callback(null, 'makeshot_result', ret);
                 return;

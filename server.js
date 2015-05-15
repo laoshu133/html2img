@@ -64,7 +64,7 @@ var queue = {
                 clientAdp.send(type, result);
             }
             else {
-                tools.error('id:', client.uid, err);
+                tools.error('id:',  config.id, ', uid:', client.uid, err);
 
                 client.end();
             }
