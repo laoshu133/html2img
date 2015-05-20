@@ -233,7 +233,7 @@ function makeShot(config, callback) {
     ret.data = lodash.merge({
         id: config.id,
         outName: outCfg.name,
-        outFile: path.join(outCfg.path, outCfg.name + '.jpg'),
+        outFile: path.join(outCfg.path, outCfg.name + '.png'),
         outCrop: config.wrapSelector,
         content: ''
     }, processShot(config, outCfg));
@@ -241,7 +241,7 @@ function makeShot(config, callback) {
     // 正文截图
     tools.time('Main shot');
 
-    var wrapOutPath = path.join(outCfg.path, outCfg.name + '.jpg');
+    var wrapOutPath = path.join(outCfg.path, outCfg.name + '.png');
     horseman.crop(ret.data.outCrop, wrapOutPath);
 
     tools.timeEnd('Main shot');
