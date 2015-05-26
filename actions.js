@@ -170,7 +170,7 @@ function getOutConfig(config) {
         createImgFilename: function() {
             var name = this.count++;
 
-            name += defaultConfig.imageExtname;
+            name += config.imageExtname;
             return name;
         }
     };
@@ -226,7 +226,7 @@ function makeShot(config, callback) {
     }
 
     // 截原图
-    // var originImgPath = path.join(outCfg.path, outCfg.name + '_origin' + defaultConfig.imageExtname);
+    // var originImgPath = path.join(outCfg.path, outCfg.name + '_origin' + config.imageExtname);
     // tools.time('Origin Main shot');
     // horseman.crop(config.wrapSelector, originImgPath);
     // tools.timeEnd('Origin Main shot');
@@ -235,7 +235,7 @@ function makeShot(config, callback) {
     ret.data = lodash.merge({
         id: config.id,
         outName: outCfg.name,
-        outFile: path.join(outCfg.path, outCfg.name + defaultConfig.imageExtname),
+        outFile: path.join(outCfg.path, outCfg.name + config.imageExtname),
         outCrop: config.wrapSelector,
         content: ''
     }, processShot(config, outCfg));

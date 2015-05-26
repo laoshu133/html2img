@@ -8,7 +8,7 @@
 var fs = require('fs');
 var ExecBuffer = require('exec-buffer');
 
-function doOptimize(binPath, args, callback) {
+function doOptimize(binPath, args, src, callback) {
     if(!Array.isArray(args)) {
         args = [];
     }
@@ -51,7 +51,7 @@ var optimizers = {
             '{src}'
         ];
 
-        doOptimize(pngquantPath, args, callback);
+        doOptimize(pngquantPath, args, src, callback);
     },
     jpg: function(src, callback) {
         var jpegtranPath = require('jpegtran-bin').path;
@@ -64,7 +64,7 @@ var optimizers = {
             '{src}'
         ];
 
-        doOptimize(jpegtranPath, args, callback);
+        doOptimize(jpegtranPath, args, src, callback);
     }
 };
 
