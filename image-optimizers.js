@@ -1,3 +1,11 @@
+/**
+ * hlg-html2img
+ *
+ * image-optimizers
+ */
+
+// deps
+var fs = require('fs');
 var ExecBuffer = require('exec-buffer');
 
 function doOptimize(binPath, args, callback) {
