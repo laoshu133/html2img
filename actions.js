@@ -11,10 +11,9 @@ var async = require('async');
 var rimraf = require('rimraf');
 var lodash = require('lodash');
 var Horseman = require('node-horseman');
-var ExecBuffer = require('exec-buffer');
-var pngquantPath = require('pngquant-bin');
 
 var tools = require('./tools');
+var imageOptimizers = require('./image-optimizers');
 
 // default config
 var defaultConfig = require('./config.json');
@@ -91,20 +90,23 @@ var actions = {
         tools.time('All shot process');
 
         makeShot(config, function(ret) {
-            if(!config.optimizeImage) {
+            var outFile = ret.data.outFile;
+            var outFileExt = path.extname(outFile);
+            var imageOptimizer = imageOptimizers[outFileExt.slice(1)];
+
+            // recommend client slide optimizeImage
+            if(!config.optimizeImage || !imageOptimizer) {
                 tools.timeEnd('All shot process');
 
                 callback(null, 'makeshot_result', ret);
                 return;
             }
 
-            // recommend client slide optimizeImage
-            var outFile = ret.data.outFile;
-            var outFileOpt = path.join(path.dirname(outFile), 'out_opt.png');
+            var outFileOpt = path.join(path.dirname(outFile), 'out_opt' + outFileExt);
 
             async.waterfall([
-                function optPng(cb) {
-                    optimizePng(outFile, cb);
+                function optImage(cb) {
+                    imageOptimizer(outFile, cb);
                 },
                 function writeFile(buf, cb) {
                     fs.writeFile(outFileOpt, buf, cb);
@@ -168,7 +170,7 @@ function getOutConfig(config) {
         createImgFilename: function() {
             var name = this.count++;
 
-            name += '.png';
+            name += defaultConfig.imageExtname;
             return name;
         }
     };
@@ -216,7 +218,7 @@ function makeShot(config, callback) {
 
     // check wrapSelector
     if(!horseman.count(config.wrapSelector)) {
-        ret.message = 'Wrap element not found: ', config.wrapSelector;
+        ret.message = 'Wrap element not found: ' + config.wrapSelector;
         ret.status = 'error';
 
         callback(ret);
@@ -224,7 +226,7 @@ function makeShot(config, callback) {
     }
 
     // 截原图
-    // var originImgPath = path.join(outCfg.path, outCfg.name + '_origin.png');
+    // var originImgPath = path.join(outCfg.path, outCfg.name + '_origin' + defaultConfig.imageExtname);
     // tools.time('Origin Main shot');
     // horseman.crop(config.wrapSelector, originImgPath);
     // tools.timeEnd('Origin Main shot');
@@ -233,7 +235,7 @@ function makeShot(config, callback) {
     ret.data = lodash.merge({
         id: config.id,
         outName: outCfg.name,
-        outFile: path.join(outCfg.path, outCfg.name + '.png'),
+        outFile: path.join(outCfg.path, outCfg.name + defaultConfig.imageExtname),
         outCrop: config.wrapSelector,
         content: ''
     }, processShot(config, outCfg));
@@ -241,8 +243,7 @@ function makeShot(config, callback) {
     // 正文截图
     tools.time('Main shot');
 
-    var wrapOutPath = path.join(outCfg.path, outCfg.name + '.png');
-    horseman.crop(ret.data.outCrop, wrapOutPath);
+    horseman.crop(ret.data.outCrop, ret.data.outFile);
 
     tools.timeEnd('Main shot');
 
@@ -410,30 +411,6 @@ var processers = {
         };
     }
 };
-
-// optimizePng
-function optimizePng(src, callback) {
-    fs.readFile(src, function(err, buf) {
-        if(err) {
-            callback(err);
-            return;
-        }
-
-        var exec = new ExecBuffer();
-        var args = ['-o', exec.dest(), exec.src()];
-
-        exec.use(pngquantPath, args)
-        .run(buf, function(err, buf) {
-            if(err || !buf || !buf.length) {
-                callback(err);
-                return;
-            }
-
-            callback(null, buf);
-        });
-    });
-}
-
 
 // clean horseman
 process.on('exit', function() {

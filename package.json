@@ -15,7 +15,8 @@
     "through2": "^0.6.5",
     "node-horseman": "^1.5.1",
     "exec-buffer": "^2.0.1",
-    "pngquant-bin": "^3.0.0"
+    "pngquant-bin": "^3.0.0",
+    "jpegtran-bin": "^2.0.2"
   },
   "readmeFilename": "README.md",
   "scripts": {
