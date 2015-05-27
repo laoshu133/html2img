@@ -2,7 +2,7 @@
   "id": "makeshot-001",
   "action": "makeshot",
   "size": {
-    "type": 10,
+    "type": 20,
     "width": 300,
     "height": 180
   },
