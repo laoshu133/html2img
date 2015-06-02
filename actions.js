@@ -90,6 +90,11 @@ var actions = {
         tools.time('All shot process');
 
         makeShot(config, function(ret) {
+            if(ret.status !== 'success') {
+                callback(new Error(ret.message));
+                return;
+            }
+
             var outFile = ret.data.outFile;
             var outFileExt = path.extname(outFile);
             var imageOptimizer = imageOptimizers[outFileExt.slice(1)];
