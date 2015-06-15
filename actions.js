@@ -288,7 +288,7 @@ var processers = {
         // 比例缩放，裁剪
         var outCrop;
         var size = config.size;
-        if(size && size.width) {
+        if(size && (size.width || size.height)) {
             /**
              * 裁剪类型
              * 10 - 长边裁剪，圆点中心，不足补白
@@ -306,6 +306,15 @@ var processers = {
 
                 var wrapWidth = wrapElem.width();
                 var wrapHeight = wrapElem.height();
+                var wrapWHRatio = wrapWidth / wrapHeight;
+
+                // padding, height/width
+                if(!size.height) {
+                    size.height = size.width / wrapWHRatio;
+                }
+                else if(!size.width) {
+                    size.width = size.height * wrapWHRatio;
+                }
 
                 var heightRatio = size.height / wrapHeight;
                 var widthRatio = size.width / wrapWidth;
