@@ -318,7 +318,7 @@ var processers = {
 
                 var heightRatio = size.height / wrapHeight;
                 var widthRatio = size.width / wrapWidth;
-                var ratio = widthRatio;
+                var scale = widthRatio;
 
                 // 选边
                 if(
@@ -327,10 +327,10 @@ var processers = {
                     // 短边裁剪
                     (type >= 20 && widthRatio < heightRatio)
                 ) {
-                    ratio = heightRatio;
+                    scale = heightRatio;
                 }
 
-                wrapElem.css('transform', 'scale('+ ratio +')');
+                wrapElem.css('transform', 'scale('+ scale +')');
 
                 var rect = wrapElem[0].getBoundingClientRect();
 
