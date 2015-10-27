@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+    body{
+        font: 14px/1.5 tahoma,arial,"Microsoft Yahei";
+        margin: 0;
+    }
+    p{
+        margin: 0 1.12em;
+    }
+    img{
+        border: 0;
+    }
+
+    table{
+        margin: 0;
+        border-collapse: collapse;
+    }
+    td{
+        padding: 0;
+    }
+
+    .hlg_flag_wrap_panel{
+        /*display: table-cell;*/
+        background: #F1F1F1;
+        margin: 0;
+        padding: 0;
+        min-width: 10px;
+        min-height: 10px;
+        position: absolute;
+        left: 0;
+        top: 100px;
+
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+    }
+
+    /* phantomjs css fix */
+    .hlg_flag_wrap_panel img:only-child{
+        vertical-align: top;
+    }
+
+    .preview_orig a > *{
+        visibility: hidden;
+    }
+    .preview_orig a{
+        position: relative;
+    }
+    .preview_orig a:before{
+        background: green;
+        color: #FFF;
+        content: attr(href);
+        font-size: 16px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+    .preview_layout a{
+        position: relative;
+    }
+    .preview_layout a:before{
+        color: red;
+        content: attr(href);
+        font-size: 16px;
+        line-height: 1.2;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .preview_layout > table{
+        background: green;
+    }
+    .preview_layout a{
+        background: #FFF;
+    }
+    </style>
+</head>
+<body>
+<div class="code_panel" style="padding:20px 20px 5px">
+    <textarea id="J_code"><div class="liebiao-templet" style="width: 750px;">
+    <table width="100%" background="http://sc.huanleguang.com/list/10935371/bg.png" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto; text-align: left; font-size: 12px; line-height: normal; color: #fff; font-family: 微软雅黑; word-wrap: normal;background-repeat: repeat;">
+        <tbody><tr>
+            <td height="7" style="line-height: 0;"></td>
+        </tr>
+        <tr>
+            <td>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tbody><tr>
+                        <td width="7" style="line-height: 0;"></td>
+                        <td height="40" style="background-color: #704f16;padding-left: 11px;font-size: 20px;color: #f4dcb1;">
+                            <img src="http://sc.huanleguang.com/list/10935371/head-bg.png" width="28" height="28" style="vertical-align: middle;margin-right: 10px;">更多人气宝贝
+                        </td>
+                        <td style="text-align: right;background-color: #704f16;padding-top: 8px;padding-right: 11px;">
+                            <a href="http://shop#tbShopId#.taobao.com/search.htm" target="_blank" style="font-size: 12px;color: #f4dcb1;text-decoration: none;font-family: Arial;">More</a>
+                        </td>
+                        <td width="7" style="line-height: 0;"></td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="padding: 7px 7px 0;width: 736px;overflow: hidden;">
+                    <table cellpadding="0" cellspacing="0" border="0" width="748">
+                        <tbody><tr>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i4/771035553/TB2JSb7epXXXXchXXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i1/771035553/TB23t6ZepXXXXaFXpXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i2/771035553/TB2IQD3epXXXXXQXpXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i2/771035553/TB2E4D9epXXXXa4XXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                        </tr>
+                        <tr>
+                            <td height="12" style="line-height: 0;"></td>
+                        </tr>
+                        <tr>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i2/771035553/TB2cvH_epXXXXcCXXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i4/771035553/TB289EkepXXXXXlXXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i1/771035553/TB2GJcjepXXXXXFXXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i3/771035553/TB2QA2.epXXXXbIXXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                        </tr>
+                        <tr>
+                            <td height="12" style="line-height: 0;"></td>
+                        </tr>
+                        <tr>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i4/771035553/TB2QKY.epXXXXb.XXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i2/771035553/TB2DyPPepXXXXcIXpXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i1/771035553/TB2VIr4epXXXXXDXpXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                            <td width="175" background="http://sc.huanleguang.com/list/10940447/btn-bg.png" style="background-repeat: no-repeat;background-position: 103px 189px;background-color: #704f16;">
+                                <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: block;width: 175px;height: 175px;overflow: hidden;">
+                                    <img src="https://img.alicdn.com/imgextra/i3/771035553/TB2n67kepXXXXXlXXXXXXXXXXXX_!!771035553.jpg" width="175">
+                                </a>
+                                <div style="width: 175px;height: 41px;line-height: 41px;color: #f4dcb1;">
+                                    <span style="margin-left: 5px;font-size: 13px;">￥<span style="font-size: 25px;">1999</span></span>
+                                    <a href="http://item.taobao.com/item.htm?id=#id#" target="_blank" style="display: inline-block;float: right;margin-right: 7px;text-indent: 24px;width: 65px;font-size: 16px;white-space: nowrap;overflow: hidden;text-decoration: none;color: #f4dcb1;">抢购</a>
+                                </div>
+                            </td>
+                            <td width="12"></td>
+                        </tr>
+                        <tr>
+                            <td height="12" style="line-height: 0;"></td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </td>
+        </tr>
+    </tbody></table>
+</div></textarea>
+</div>
+
+<form class="hlg_flag_wrap_panel preview_orig" id="J_preview_orig">
+    {content}
+</form>
+
+<form class="hlg_flag_wrap_panel preview_layout" id="J_preview_layout" style="left:auto;right:10px">
+    {preivew}
+</form>
+
+<div class="btns" style="padding:0 20px;">
+    <button id="J_test">Test</button>
+</div>
+
+<script src="http://wscdn.huanleguang.com/js_lib/jquery-1.11.1/jquery.min.js"></script>
+<script>
+jQuery(function($) {
+    $('#J_test').on('click', renderLayout);
+
+    setTimeout(renderLayout, 100);
+
+    var codeElem = $('#J_code');
+    var previewOrig = $('#J_preview_orig');
+    var previewLayout = $('#J_preview_layout');
+
+    function renderLayout() {
+        previewOrig.html(codeElem.val());
+
+        // test
+        previewOrig.find('a').each(function(i) {
+            this.href = '#' + i;
+        });
+
+        setTimeout(function() {
+            var html = _renderLayout();
+
+            var tested = /(margin\s*:[^;]*?\-[^;"']*?)/.test(html);
+            var matched = RegExp.$1;
+
+            console.log('test margin:', tested, matched);
+
+            previewLayout.html(html);
+        }, 240);
+    }
+
+    function _renderLayout() {
+        var baseRect = $.extend({}, previewOrig[0].getBoundingClientRect());
+
+        var links = previewOrig.find('a').toArray();
+
+        links.forEach(function(elem, i) {
+            var rect = $.extend({}, elem.getBoundingClientRect());
+
+            rect.top -= baseRect.top;
+            rect.right -= baseRect.left;
+            rect.bottom -= baseRect.top;
+            rect.left -= baseRect.left;
+
+            links[i] = {
+                elem: elem,
+                rect: rect
+            };
+        });
+
+        // sort, y, asc
+        links.sort(function(a, b) {
+            return a.rect.top - b.rect.top;
+        });
+
+        var maxY = 0;
+        var rows = [];
+        var rowInx = 0;
+
+        links.forEach(function(item, i) {
+            var rect = item.rect;
+            var row = rows[rowInx];
+
+            if(row && maxY > 0 && maxY <= rect.top) {
+                row = rows[++rowInx];
+            }
+
+            if(!rows[rowInx]) {
+                row = rows[rowInx] = [];
+            }
+
+            if(maxY < rect.top + rect.height) {
+                maxY = rect.top + rect.height;
+            }
+
+            // maxY
+            if(!row.maxY || row.maxY < rect.bottom) {
+                row.maxY = rect.bottom;
+            }
+
+            // minY, the first item
+            if(row.minY === undefined) {
+                row.minY = rect.top;
+            }
+
+            row.push(item);
+        });
+
+        // sort, x, asc
+        rows.forEach(function(row, i) {
+            row.sort(function(a, b) {
+                return a.rect.left - b.rect.left;
+            });
+        });
+
+        return renderLayoutHTML({
+            rect: baseRect,
+            rows: rows
+        });
+    }
+
+    function renderLayoutHTML(data) {
+        console.log(data);
+        var mainTpl = '<table border="0" background="#080" width="{width}" style="line-height:0">{tbody}</table>';
+        var placeStr = '<i style="font-size:0px">&nbsp;</i>';
+        var buildPlaceTr = function(height) {
+            var tpl = '<tr><td valign="top" height="{height}">{content}</td></tr>';
+
+            return fill(tpl, {
+                content: placeStr,
+                height: height
+            });
+        };
+
+        var y = 0;
+        var tbody = '';
+        var rows = data.rows;
+        var itemTpl = '<a href="{href}" target="{target}" title="{title}" style="display:inline-block;margin:{margin}px;height:{height}px;width:{width}px;vertical-align:top"><img src="//wscdn.huanleguang.com/assets/img/place.png" alt="{title}" style="width:{width}px;height:{height}px;vertical-align:top"></a>';
+
+        var c=0;
+        rows.forEach(function(row) {
+            if(row.minY - y > 0) {
+                tbody += buildPlaceTr(row.minY - y);
+                y = row.minY;
+            }
+
+            tbody += '<tr><td valign="top">';
+
+            var x = 0;
+            var tpl = '';
+            row.forEach(function(item) {
+                var elem = item.elem;
+                var rect = item.rect;
+                var margin = (rect.top-y) + 'px 0 0 ' + (rect.left-x);
+
+                tbody += fill(itemTpl, {
+                    href: elem.getAttribute('href'),
+                    title: elem.title,
+                    target: elem.target,
+                    height: rect.height,
+                    width: rect.width,
+                    margin: margin,
+                });
+
+                x = rect.right;
+            });
+
+            tbody += '</td></tr>';
+            y = row.maxY;
+        });
+
+        var baseRect = data.rect;
+        if(y < baseRect.height) {
+            tbody += buildPlaceTr(baseRect.height - y);
+        }
+
+        return fill(mainTpl, $.extend({
+            tbody: tbody
+        }, baseRect));
+    }
+
+    // funs
+    function fill(tmpl, data) {
+        for(var k in data) {
+            tmpl = tmpl.replace(new RegExp('\\{'+ k +'\\}', 'g'), data[k]);
+        }
+
+        return tmpl;
+    }
+});
+</script>
+</body>
+</html>
+
