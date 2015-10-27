@@ -148,7 +148,7 @@ function processConfig(config) {
     config.out = outCfg;
 
     if(config.content) {
-        var htmlTplPath = path.join('tpl', config.htmlTpl);
+        var htmlTplPath = path.join(__dirname, 'tpl', config.htmlTpl);
         var htmlTpl = fs.readFileSync(htmlTplPath);
 
         var html = htmlTpl.toString().replace('{content}', config.content);
