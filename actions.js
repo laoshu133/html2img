@@ -23,38 +23,52 @@ var actions = {
     // init
     init: function() {
         if(horseman) {
-            return;
+            return horseman.ready;
         }
 
         var horsemanConfig = config.horsemanConfig;
 
         // init Horseman(phantomjs)
+        console.log('Start Load Horseman(phantomjs)...');
         tools.time('Load Horseman(phantomjs)');
+
         horseman = new Horseman(horsemanConfig);
-        tools.timeEnd('Load Horseman(phantomjs)');
 
-        // page, phantomjs page
-        var page = horseman.page;
+        // old version
+        if(!horseman.ready) {
+            var df = Promise.defer();
+            df.resolve();
 
-        // clean fix, not store request
-        page.onResourceReceived = function(res) {
-            // tools.log('ResourceReceived', res.status, res.url);
-        };
+            horseman.ready = df.promise;
+        }
 
-        // custom settings
-        if(horsemanConfig.resourceTimeout) {
-            var customSettings = {
-                resourceTimeout: horsemanConfig.resourceTimeout
+        return horseman.ready.then(function() {
+            // page, phantomjs page
+            var page = horseman.page;
+
+            // clean fix, not store request
+            page.onResourceReceived = function(res) {
+                // tools.log('ResourceReceived', res.status, res.url);
             };
 
-            page.get('settings', function(err, settings) {
-                settings = lodash.merge(settings, customSettings);
+            // custom settings
+            if(horsemanConfig.resourceTimeout) {
+                var customSettings = {
+                    resourceTimeout: horsemanConfig.resourceTimeout
+                };
 
-                page.set('settings', settings, function() {
-                    tools.log('write custom settings');
+                page.get('settings', function(err, settings) {
+                    settings = lodash.merge(settings, customSettings);
+
+                    page.set('settings', settings, function() {
+                        tools.log('write custom settings');
+                    });
                 });
-            });
-        }
+            }
+
+            // timeEnd
+            tools.timeEnd('Load Horseman(phantomjs)');
+        });
     },
     // 清理目录
     clean: function(client, config, callback) {

@@ -20,9 +20,6 @@ var config = require('./config').getConfig();
 // start
 console.log('Start Server...');
 
-// init actions， 优先启动 phantomjs
-actions.init();
-
 // queue
 var queue = {
     stacks: [],
@@ -126,9 +123,19 @@ server.on('data', function(e) {
     tools.error('SocketAdp Error:', e.type);
 });
 
-io.listen(config.listenPort, config.listenHost);
-console.info('Server Listening, port:', config.listenPort, config.listenHost ? ', host: ' + config.listenHost : '');
+// init actions， 优先启动 phantomjs
+actions.init().then(function() {
+    io.listen(config.listenPort, config.listenHost);
 
+    var msgLabel = 'Server Listening,';
+    var msgPort = 'port: ' + config.listenPort;
+    var msgHost = config.listenHost ? ', host: ' + config.listenHost : '';
+
+    console.info(msgLabel, msgPort, msgHost);
+
+}, function(ex) {
+    console.error('Server start error', ex);
+});
 
 process.on('uncaughtException', function(err) {
     console.error(err);
