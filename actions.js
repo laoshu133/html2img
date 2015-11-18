@@ -15,8 +15,8 @@ var Horseman = require('node-horseman');
 var tools = require('./tools');
 var imageOptimizers = require('./image-optimizers');
 
-// default config
-var defaultConfig = require('./config.json');
+// config
+var config = require('./config').getConfig();
 
 var horseman = null;
 var actions = {
@@ -26,7 +26,7 @@ var actions = {
             return;
         }
 
-        var horsemanConfig = defaultConfig.horsemanConfig;
+        var horsemanConfig = config.horsemanConfig;
 
         // init Horseman(phantomjs)
         tools.time('Load Horseman(phantomjs)');

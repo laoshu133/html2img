@@ -11,9 +11,9 @@
     "async": "^0.9.0",
     "debug": "^2.1.3",
     "rimraf": "^2.3.3",
-    "lodash": "^3.7.0",
+    "lodash": "^3.10.0",
     "through2": "^0.6.5",
-    "node-horseman": "^1.5.1",
+    "node-horseman": "^2.8.1",
     "exec-buffer": "^2.0.1",
     "pngquant-bin": "^3.0.0",
     "jpegtran-bin": "^2.0.2"

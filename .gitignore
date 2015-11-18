@@ -10,7 +10,6 @@ __build
 # IDE
 .idea
 
-*.sublime-project
 *.sublime-workspace
 sftp-config.json
 sftp-settings.json

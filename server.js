@@ -14,8 +14,8 @@ var tools = require('./tools');
 var actions = require('./actions');
 var SocketAdp = require('./SocketAdp');
 
-// default config
-var defaultConfig = require('./config.json');
+// config
+var config = require('./config').getConfig();
 
 // start
 console.log('Start Server...');
@@ -42,15 +42,15 @@ var queue = {
 
         var stack = stacks.shift();
         var client = stack.client;
-        var config = lodash.merge({}, defaultConfig, stack.config);
+        var cfg = lodash.merge({}, config, stack.config);
 
-        var actionFn = actions[config.action];
+        var actionFn = actions[cfg.action];
         if(!actionFn) {
             return cb();
         }
 
         this.status = 'processing';
-        actionFn(client, config, cb);
+        actionFn(client, cfg, cb);
 
         function cb(err, type, result) {
             if(!err) {
@@ -64,7 +64,7 @@ var queue = {
                 clientAdp.send(type, result);
             }
             else {
-                tools.error('id:',  config.id, ', uid:', client.uid, err);
+                tools.error('id:',  cfg.id, ', uid:', client.uid, err);
 
                 client.end();
             }
@@ -126,8 +126,8 @@ server.on('data', function(e) {
     tools.error('SocketAdp Error:', e.type);
 });
 
-io.listen(defaultConfig.listenPort, defaultConfig.listenHost);
-console.info('Server Listening, port:', defaultConfig.listenPort, defaultConfig.listenHost ? ', host: ' + defaultConfig.listenHost : '');
+io.listen(config.listenPort, config.listenHost);
+console.info('Server Listening, port:', config.listenPort, config.listenHost ? ', host: ' + config.listenHost : '');
 
 
 process.on('uncaughtException', function(err) {
