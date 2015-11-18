@@ -14,7 +14,7 @@ __build
 *.sublime-workspace
 sftp-config.json
 sftp-settings.json
-
+config.json
 
 #atrTemplate
 .cache/
