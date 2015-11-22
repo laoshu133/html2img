@@ -55,9 +55,10 @@ var actions = {
             };
 
             // custom settings
-            if(horsemanConfig.resourceTimeout) {
+            var resourceTimeout = horsemanConfig.resourceTimeout;
+            if(resourceTimeout) {
                 var customSettings = {
-                    resourceTimeout: horsemanConfig.resourceTimeout
+                    resourceTimeout: resourceTimeout
                 };
 
                 tools.time('Actions.init.setting');
@@ -84,6 +85,9 @@ var actions = {
         var outDir = config.id || 'tmp';
         var outName = config.name || 'out';
         var outPath = path.join(config.outPath, outDir);
+
+        // mkdir
+        tools.mkDeepDir(outPath);
 
         config.out = {
             name: '',
