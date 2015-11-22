@@ -46,12 +46,22 @@ var actions = {
         });
 
         return horseman.ready.then(function() {
+            var slice = Array.prototype.slice;
+
             // page, phantomjs page
             var page = horseman.page;
 
             // clean fix, not store request
             page.onResourceReceived = function(res) {
                 // tools.log('ResourceReceived', res.status, res.url);
+            };
+
+            // debug
+            page.onConsoleMessage = function() {
+                var args = slice.call(arguments);
+                args.unshift('Actions.page.console');
+
+                tools.log.apply(tools, args);
             };
 
             // custom settings
@@ -99,11 +109,14 @@ var actions = {
 
         // content
         if(config.content && !config.url) {
+            var inPath = path.join(outPath, 'in.html');
             var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
             var htmlTpl = fs.readFileSync(htmlTplPath);
 
-            var html = String(htmlTpl).replace('{content}', config.content);
-            var inPath = path.join(outPath, 'in.html');
+            var html = tools.fill(htmlTpl, {
+                content: config.content,
+                cwd: cwd
+            });
 
             fs.writeFileSync(inPath, html);
 
@@ -163,7 +176,6 @@ var actions = {
             });
         })
         .then(function(res) {
-            console.log('makeshot_result', res);
             callback(null, 'makeshot_result', res);
         })
         .catch(function(err) {
@@ -176,6 +188,56 @@ var actions = {
     }
 };
 
+
+// Horseman shim
+(function() {
+    // var HorsemanPromise = require('node-horseman/lib/HorsemanPromise');
+    // var _pageMaker = Horseman.prototype.pageMaker;
+
+    // Horseman.prototype.pageMaker = function() {
+    //     var self = this;
+    //     var cwd = process.cwd();
+    //     var options = this.options;
+    //     var scripts = options.clientScripts;
+
+    //     console.log('xxx000', typeof _pageMaker);
+
+    //     return _pageMaker.apply(this, arguments)
+    //     .then(function() {
+    //         if(!scripts || !scripts.length) {
+    //             return;
+    //         }
+
+    //         var page = self.page;
+    //         var _onLoadFinished = page.onLoadFinished;
+
+    //         page.onLoadFinished = function() {
+    //             console.log('xxx', typeof _onLoadFinished);
+    //             _onLoadFinished.apply(this, arguments);
+
+    //             self.ready.then(function() {
+    //                 var dfs = scripts.map(function(js) {
+    //                     var p = path.join(cwd, js);
+
+    //                     return new HorsemanPromise(function(resolve) {
+    //                         page.injectJs(p, function(err) {
+    //                             if(err) {
+    //                                 tools.error(err);
+    //                             }
+
+    //                             resolve();
+    //                         });
+    //                     });
+    //                 });
+
+    //                 var promise = HorsemanPromise.all(dfs);
+
+    //                 self.ready = promise;
+    //             });
+    //         };
+    //     });
+    // };
+})();
 
 
 // clean horseman
@@ -191,59 +253,10 @@ process.on('uncaughtException', function(err) {
         horseman.close();
     }
 
-    console.error('actions uncaughtException', err);
+    console.error('Actions uncaughtException', err);
+    throw err;
 });
 
-// Horseman shim
-(function() {
-    var fn = Horseman.prototype;
-    var _pageMaker = fn.pageMaker;
-
-    fn.pageMaker = function() {
-        var self = this;
-        var cwd = process.cwd();
-        var options = this.options;
-        var scripts = options.clientScripts;
-
-        return _pageMaker.apply(this, arguments)
-        .then(function() {
-            if(!scripts || !scripts.length) {
-                return;
-            }
-
-            var page = self.page;
-            var _onLoadFinished = page.onLoadFinished;
-
-            page.onLoadFinished = function() {
-                _onLoadFinished.apply(this, arguments);
-
-                self.ready.then(function() {
-                    var dfs = scripts.map(function(js) {
-                        var p = path.join(cwd, js);
-
-                        return new Promise(function(resolve) {
-                            page.injectJs(p, function(err) {
-                                if(err) {
-                                    tools.error(err);
-                                }
-
-                                resolve();
-                            });
-                        });
-                    });
-
-                    var promise = Promise.all(dfs);
-
-                    promise.finally = function(handler) {
-                        return this.then(handler, handler);
-                    };
-
-                    self.ready = promise;
-                });
-            };
-        });
-    };
-})();
 
 actions.init();
 

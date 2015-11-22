@@ -15,7 +15,8 @@
   "horsemanConfig": {
     "phantomPath": "/usr/local/bin/phantomjs",
     "clientScripts": ["lib/client-tools.js"],
-    "resourceTimeout": 5200
+    "resourceTimeout": 5200,
+    "injectJquery": false
   },
   "horsemanHeaders": {
     "Referer": "http://tbgr.huanleguang.com/_thumb"

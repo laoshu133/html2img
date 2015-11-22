@@ -66,6 +66,7 @@ var queue = {
             }
             else {
                 tools.error('id:',  cfg.id, ', uid:', client.uid, err);
+                // throw err;
 
                 client.end();
             }
@@ -141,7 +142,9 @@ actions.init().then(function() {
     console.error('Server start error', ex);
 });
 
+// error catch
 process.on('uncaughtException', function(err) {
-    console.error(err);
+    console.error('Aerver uncaughtException', err);
+    throw err;
 });
 
