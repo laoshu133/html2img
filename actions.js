@@ -127,25 +127,46 @@ var actions = {
     },
     // 清理目录
     clean: function(client, config, callback) {
-        var outCfg = getOutConfig(config);
+        // config
+        this.processConfig(config);
 
-        rimraf(outCfg.path, function(err) {
+        var url = config.path || config.out.path;
+        var type = 'clean_result';
+
+        tools.log('Actions.clean', url);
+
+        if(!fs.existsSync(url)) {
+            var msg = 'No such file or directory, ' + url;
+            var err = new Error(msg);
+
+            return callback(err, type, -1);
+        }
+
+        rimraf(url, function(err) {
+            var code = 0;
             if(err) {
-                callback(err, 'clean_result',  '0');
-
-                return;
+                code = -2;
             }
 
-            callback(null, 'clean_result', '1');
+            callback(err, type, code);
         });
     },
     // 取文件
     getfile: function(client, config, callback) {
-        if(!fs.existsSync(config.url)) {
-            return callback(new Error('File do not exists'));
+        // config
+        this.processConfig(config);
+
+        var url = config.url;
+        if(!url) {
+            url = config.out.image;
         }
 
-        fs.readFile(config.url, function(err, buf) {
+        if(!fs.existsSync(url)) {
+            var msg = 'No such file or directory, ' + url;
+            return callback(new Error(msg));
+        }
+
+        fs.readFile(url, function(err, buf) {
             if(err) {
                 callback(err);
                 return;
