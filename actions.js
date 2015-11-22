@@ -28,7 +28,6 @@ var actions = {
         var horsemanConfig = config.horsemanConfig;
 
         // init Horseman(phantomjs)
-        console.log('Start Load Horseman(phantomjs)...');
         tools.time('Actions.init');
 
         horseman = new Horseman(horsemanConfig);
@@ -71,12 +70,13 @@ var actions = {
                     resourceTimeout: resourceTimeout
                 };
 
-                tools.time('Actions.init.setting');
+                // tools.time('Actions.init.setting');
                 page.get('settings', function(err, settings) {
                     settings = lodash.merge(settings, customSettings);
 
                     page.set('settings', settings, function() {
-                        tools.timeEnd('Actions.init.setting');
+                        // tools.timeEnd('Actions.init.setting');
+                        tools.timeEnd('Actions.init');
                     });
                 });
             }
@@ -130,6 +130,8 @@ var actions = {
         // config
         this.processConfig(config);
 
+        tools.time('Actions.clean');
+
         var url = config.path || config.out.path;
         var type = 'clean_result';
 
@@ -148,6 +150,8 @@ var actions = {
                 code = -2;
             }
 
+            tools.timeEnd('Actions.clean');
+
             callback(err, type, code);
         });
     },
@@ -155,6 +159,8 @@ var actions = {
     getfile: function(client, config, callback) {
         // config
         this.processConfig(config);
+
+        tools.time('Actions.getfile');
 
         var url = config.url;
         if(!url) {
@@ -171,6 +177,8 @@ var actions = {
                 callback(err);
                 return;
             }
+
+            tools.timeEnd('Actions.getfile');
 
             callback(null, 'file', buf);
         });
@@ -197,7 +205,13 @@ var actions = {
             });
         })
         .then(function(res) {
-            callback(null, 'makeshot_result', res);
+            var data = {
+                status: 'success',
+                message: '',
+                data: res
+            };
+
+            callback(null, 'makeshot_result', data);
         })
         .catch(function(err) {
             callback(err);

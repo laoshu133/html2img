@@ -11,7 +11,7 @@ var net = require('net');
 var through = require('through2');
 
 var tools = require('./lib/tools');
-var SocketAdp = require('./SocketAdp');
+var SocketAdp = require('./lib/SocketAdp');
 
 // init
 console.log('Strat client...');

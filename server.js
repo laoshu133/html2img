@@ -12,7 +12,7 @@ var lodash = require('lodash');
 
 var tools = require('./lib/tools');
 var actions = require('./actions');
-var SocketAdp = require('./SocketAdp');
+var SocketAdp = require('./lib/SocketAdp');
 
 // config
 var config = require('./config').getConfig();
@@ -57,12 +57,7 @@ var queue = {
                     tools.error('SocketAdp Error:', e.type);
                 });
 
-                clientAdp.send(type, {
-                    type: type || 'result',
-                    status: 'success',
-                    data: result,
-                    message: ''
-                });
+                clientAdp.send(type || 'result', result);
             }
             else {
                 tools.error('id:',  cfg.id, ', uid:', client.uid, err);

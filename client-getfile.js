@@ -11,7 +11,7 @@ var net = require('net');
 var through = require('through2');
 
 var tools = require('./lib/tools');
-var SocketAdp = require('./SocketAdp');
+var SocketAdp = require('./lib/SocketAdp');
 
 // init
 console.log('Strat client...');
@@ -60,7 +60,7 @@ client.on('data', function(e) {
         });
     }
     else if(e.type === 'clean_result') {
-        console.log('clean_result', e.data.length, e.data);
+        console.log('clean_result', e.data.length, e.data.toString());
 
         io.end();
     }
