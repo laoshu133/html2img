@@ -15,6 +15,7 @@
   "replaceSelector": ".hlg_flag_replace_place",
   "horsemanConfig": {
     "phantomPath": "/usr/local/bin/phantomjs",
+    "clientScripts": ["lib/client-tools.js"],
     "resourceTimeout": 5200
   },
   "horsemanHeaders": {

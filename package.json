@@ -1,7 +1,7 @@
 {
   "name": "hlg-html2img",
   "description": "hlg-html2img",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "app.js",
   "repository": {
     "type": "git",

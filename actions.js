@@ -7,13 +7,12 @@
 // deps
 var fs = require('fs');
 var path = require('path');
-var async = require('async');
 var rimraf = require('rimraf');
 var lodash = require('lodash');
 var Horseman = require('node-horseman');
 
-var tools = require('./tools');
-var imageOptimizers = require('./image-optimizers');
+var tools = require('./lib/tools');
+var processers = require('./lib/processers');
 
 // config
 var config = require('./config').getConfig();
@@ -30,17 +29,21 @@ var actions = {
 
         // init Horseman(phantomjs)
         console.log('Start Load Horseman(phantomjs)...');
-        tools.time('Load Horseman(phantomjs)');
+        tools.time('Actions.init');
 
         horseman = new Horseman(horsemanConfig);
 
-        // old version
-        if(!horseman.ready) {
-            var df = Promise.defer();
-            df.resolve();
+        // processers
+        processers.init({
+            horseman: horseman
+        });
 
-            horseman.ready = df.promise;
-        }
+        // error
+        horseman.on('error', function(msg, trace) {
+            tools.error('Horseman Error:', msg, trace);
+
+            process.exit(1);
+        });
 
         return horseman.ready.then(function() {
             // page, phantomjs page
@@ -57,18 +60,53 @@ var actions = {
                     resourceTimeout: horsemanConfig.resourceTimeout
                 };
 
+                tools.time('Actions.init.setting');
                 page.get('settings', function(err, settings) {
                     settings = lodash.merge(settings, customSettings);
 
                     page.set('settings', settings, function() {
-                        tools.log('write custom settings');
+                        tools.timeEnd('Actions.init.setting');
                     });
                 });
             }
-
-            // timeEnd
-            tools.timeEnd('Load Horseman(phantomjs)');
         });
+    },
+    // config
+    processConfig: function(config) {
+        if(config.out) {
+            return config;
+        }
+
+        var cwd = process.cwd();
+        var imgExt = config.imageExtname;
+
+        // out config
+        var outDir = config.id || 'tmp';
+        var outName = config.name || 'out';
+        var outPath = path.join(config.outPath, outDir);
+
+        config.out = {
+            name: '',
+            path: outPath,
+            dirname: outDir,
+            html: path.join(outPath, outName + '.html'),
+            image: path.join(outPath, outName + imgExt)
+        };
+
+        // content
+        if(config.content && !config.url) {
+            var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
+            var htmlTpl = fs.readFileSync(htmlTplPath);
+
+            var html = String(htmlTpl).replace('{content}', config.content);
+            var inPath = path.join(outPath, 'in.html');
+
+            fs.writeFileSync(inPath, html);
+
+            config.url = inPath;
+        }
+
+        return config;
     },
     // 清理目录
     clean: function(client, config, callback) {
@@ -101,46 +139,31 @@ var actions = {
     },
     // 缩略图
     makeshot: function(client, config, callback) {
-        tools.time('All shot process');
+        // config
+        this.processConfig(config);
 
-        makeShot(config, function(ret) {
-            if(ret.status !== 'success') {
-                callback(new Error(ret.message));
-                return;
+        processers.makeshot(config)
+        .then(function(res) {
+            if(!config.optimizeImage) {
+                return res;
             }
 
-            var outFile = ret.data.outFile;
-            var outFileExt = path.extname(outFile);
-            var imageOptimizer = imageOptimizers[outFileExt.slice(1)];
+            return processers.optimizeImage({
+                image: res.image
+            })
+            .then(function(newImage) {
+                res.old_image = res.image;
+                res.image = newImage;
 
-            // recommend client slide optimizeImage
-            if(!config.optimizeImage || !imageOptimizer) {
-                tools.timeEnd('All shot process');
-
-                callback(null, 'makeshot_result', ret);
-                return;
-            }
-
-            var outFileOpt = path.join(path.dirname(outFile), 'out_opt' + outFileExt);
-
-            async.waterfall([
-                function optImage(cb) {
-                    imageOptimizer(outFile, cb);
-                },
-                function writeFile(buf, cb) {
-                    fs.writeFile(outFileOpt, buf, cb);
-                }
-            ], function done(err) {
-                tools.timeEnd('Make_shot');
-
-                if(err) {
-                    callback(err);
-                    return;
-                }
-
-                ret.data.outFile = outFileOpt;
-                callback(null, 'makeshot_result', ret);
+                return res;
             });
+        })
+        .then(function(res) {
+            console.log('makeshot_result', res);
+            callback(null, 'makeshot_result', res);
+        })
+        .catch(function(err) {
+            callback(err);
         });
     },
     // 新关联列表（待完善）
@@ -149,53 +172,6 @@ var actions = {
     }
 };
 
-/**
- * 处理配置
- * content -> url
- *
- */
-function processConfig(config) {
-    // out config
-    var outCfg = getOutConfig(config);
-    tools.mkDeepDir(outCfg.path);
-
-    config.out = outCfg;
-
-    if(config.content) {
-        var htmlTplPath = path.join(__dirname, 'tpl', config.htmlTpl);
-        var htmlTpl = fs.readFileSync(htmlTplPath);
-
-        var html = htmlTpl.toString().replace('{content}', config.content);
-        var inPath = path.join(outCfg.path, 'in.html');
-
-        fs.writeFileSync(inPath, html);
-
-        config.url = inPath;
-    }
-
-    return config;
-}
-
-// outConfig
-function getOutConfig(config) {
-    var dirname = config.id;
-    // dirname = dirname.replace(/\\\/:\*\?"<>\|/g, '');
-
-    var outCfg = {
-        count: 0,
-        name: 'out',
-        dirname: dirname,
-        path: path.join(config.outPath, dirname),
-        createImgFilename: function() {
-            var name = this.count++;
-
-            name += config.imageExtname;
-            return name;
-        }
-    };
-
-    return outCfg;
-}
 
 /**
  * makeShot
@@ -273,172 +249,6 @@ function makeShot(config, callback) {
     callback(ret);
 }
 
-// 预处理（代码，区域截图），待完善
-function processShot(config, outCfg) {
-    var action  = config.action;
-
-    var ret = {};
-
-    if(processers[action]) {
-        ret = processers[action](config, outCfg);
-    }
-
-    return ret;
-}
-
-
-/**
- * processers
- *
- * 截图预处理
- *
- */
-var processers = {
-    // 标准截图
-    makeshot: function(config, outCfg) {
-        // restore
-        // horseman.zoom(1);
-
-        // 比例缩放，裁剪
-        var outCrop;
-        var size = config.size;
-        if(size && (size.width || size.height)) {
-            /**
-             * 裁剪类型
-             * 10 - 长边裁剪，圆点中心，不足补白
-             * 11 - 长边裁剪，圆点左上，不足补白
-             * 12 - 长边裁剪，圆点左上，不足不处理
-             * 20 - 短边裁剪，圆点中心，不足不处理
-             * 21 - 短边裁剪，圆点左上，不足不处理
-             */
-            outCrop = horseman.evaluate(function(wrapSelector, size) {
-                var $ = window.jQuery;
-                var type = ~~size.type || 10;
-                var wrapElem = $(wrapSelector);
-
-                wrapElem.css('transform', 'none');
-
-                var wrapWidth = wrapElem.width();
-                var wrapHeight = wrapElem.height();
-                var wrapWHRatio = wrapWidth / wrapHeight;
-
-                // padding, height/width
-                if(!size.height) {
-                    size.height = size.width / wrapWHRatio;
-                }
-                else if(!size.width) {
-                    size.width = size.height * wrapWHRatio;
-                }
-
-                var heightRatio = size.height / wrapHeight;
-                var widthRatio = size.width / wrapWidth;
-                var scale = widthRatio;
-
-                // 选边
-                if(
-                    // 长边裁剪
-                    (type < 20 && widthRatio > heightRatio) ||
-                    // 短边裁剪
-                    (type >= 20 && widthRatio < heightRatio)
-                ) {
-                    scale = heightRatio;
-                }
-
-                wrapElem.css('transform', 'scale('+ scale +')');
-
-                var rect = wrapElem[0].getBoundingClientRect();
-
-                // 默认左上角开始裁剪
-                var outCrop = {
-                    height: size.height,
-                    width: size.width,
-                    left: rect.left,
-                    top: rect.top
-                };
-
-                // 居中裁剪
-                if(type % 10 === 0) {
-                    outCrop.left += (rect.width - size.width) / 2;
-                    outCrop.top += (rect.height - size.height) / 2;
-                }
-
-                // 长边裁剪，减去补白
-                if(type === 12) {
-                    if(size.height > rect.height) {
-                        outCrop.height = rect.height;
-                    }
-                    else if(size.width > rect.width) {
-                        outCrop.width = rect.width;
-                    }
-                }
-
-                // debug
-                // outCrop.html = document.documentElement.outerHTML;
-
-                return outCrop;
-            }, config.wrapSelector, size);
-        }
-
-        return {
-            outCrop: outCrop
-        };
-    },
-    // 新关联列表（待完善）
-    makelist: function() {
-        var outHTML = '';
-        var replacePlaces = [];
-        var replacePlaceCount = horseman.count(config.replaceSelector);
-
-        if(replacePlaceCount > 0) {
-            tools.time('Replace shot');
-            for(var tmpName,i=0; i<replacePlaceCount; i++) {
-                tmpName = outCfg.createImgFilename();
-
-                replacePlaces[i] = {
-                    filename: tmpName,
-                    fullPath: path.join(outCfg.path, tmpName),
-                    selector: config.replaceSelector + ':eq('+ i +')'
-                };
-
-                horseman.crop(replacePlaces[i].selector, replacePlaces[i].fullPath);
-            }
-            tools.timeEnd('Replace shot');
-
-            // 处理代码，替换占位符
-            tools.time('Code process');
-            outHTML = horseman.evaluate(function(wrapSelector, replaceSelector, replacePlaces) {
-                var $ = window.jQuery;
-                var elems = $(replaceSelector);
-
-                elems.each(function(i) {
-                    var item = replacePlaces[i];
-
-                    $(this).html('{{'+ item.filename +'}}');
-                });
-
-                // 返回处理后代码
-                var wrapElem = $(wrapSelector || 'body');
-                var html = wrapElem.html();
-
-                if(!html) {
-                    html = document.body.innerHTML;
-                }
-
-                return html;
-
-            }, config.wrapSelector, config.replaceSelector, replacePlaces);
-            tools.timeEnd('Code process');
-
-            var outHTMLPath = path.join(outCfg.path, outCfg.name + '.html');
-            fs.writeFileSync(outHTMLPath, outHTML);
-        }
-
-        return {
-            replacePlaces: replacePlaces,
-            content: outHTML
-        };
-    }
-};
 
 // clean horseman
 process.on('exit', function() {
@@ -455,5 +265,52 @@ process.on('uncaughtException', function(err) {
 
     console.error('actions uncaughtException', err);
 });
+
+// Horseman shim
+(function() {
+    var fn = Horseman.prototype;
+    var _pageMaker = fn.pageMaker;
+
+    fn.pageMaker = function() {
+        var self = this;
+        var cwd = process.cwd();
+        var options = this.options;
+        var scripts = options.clientScripts;
+
+        return _pageMaker.apply(this, arguments)
+        .then(function() {
+            if(!scripts || !scripts.length) {
+                return;
+            }
+
+            var page = self.page;
+            var _onLoadFinished = page.onLoadFinished;
+
+            page.onLoadFinished = function() {
+                _onLoadFinished.apply(this, arguments);
+
+                self.ready.then(function() {
+                    var dfs = scripts.map(function(js) {
+                        var p = path.join(cwd, js);
+
+                        return new Promise(function(resolve) {
+                            page.injectJs(p, function(err) {
+                                if(err) {
+                                    tools.error(err);
+                                }
+
+                                resolve();
+                            });
+                        });
+                    });
+
+                    self.ready = Promise.all(dfs);
+                });
+            };
+        });
+    };
+})();
+
+actions.init();
 
 module.exports = actions;

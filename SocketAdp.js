@@ -9,7 +9,7 @@ var util = require('util');
 var lodash = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 
-var tools = require('./tools');
+var tools = require('./lib/tools');
 
 function SocketAdp(io, options) {
     if(!(this instanceof SocketAdp)) {
@@ -270,7 +270,7 @@ function Client(io, options) {
 
     this.options = options;
     this.io = io;
-};
+}
 
 util.inherits(Client, EventEmitter);
 

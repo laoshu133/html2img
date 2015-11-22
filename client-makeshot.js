@@ -8,10 +8,9 @@
 // deps
 var fs = require('fs');
 var net = require('net');
-var async = require('async');
 var through = require('through2');
 
-var tools = require('./tools');
+var tools = require('./lib/tools');
 var SocketAdp = require('./SocketAdp');
 
 // init
@@ -20,8 +19,8 @@ tools.time('Client process');
 
 var type = 'makeshot';
 var configs = [
-    'demos/makeshot.json',
-    'demos/makeshot-big.json',
+    // 'demos/makeshot.json',
+    // 'demos/makeshot-big.json',
     'demos/makeshot.json'
 ];
 

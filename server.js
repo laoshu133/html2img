@@ -10,7 +10,7 @@ var fs = require('fs');
 var net = require('net');
 var lodash = require('lodash');
 
-var tools = require('./tools');
+var tools = require('./lib/tools');
 var actions = require('./actions');
 var SocketAdp = require('./SocketAdp');
 
@@ -47,7 +47,7 @@ var queue = {
         }
 
         this.status = 'processing';
-        actionFn(client, cfg, cb);
+        actionFn.call(actions, client, cfg, cb);
 
         function cb(err, type, result) {
             if(!err) {
