@@ -8,7 +8,6 @@
   "url": null,
   "content": "",
   "outPath": "__out",
-  "keepOutFile": true,
   "optimizeImage": false,
   "imageExtname": ".png",
   "wrapSelector": ".hlg_flag_wrap_panel",

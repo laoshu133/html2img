@@ -57,8 +57,12 @@ var queue = {
                     tools.error('SocketAdp Error:', e.type);
                 });
 
-                type = type || 'result';
-                clientAdp.send(type, result);
+                clientAdp.send(type, {
+                    type: type || 'result',
+                    status: 'success',
+                    data: result,
+                    message: ''
+                });
             }
             else {
                 tools.error('id:',  cfg.id, ', uid:', client.uid, err);

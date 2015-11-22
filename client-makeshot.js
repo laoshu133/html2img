@@ -92,10 +92,10 @@ function getFile() {
 
     var res = JSON.parse(lastResult.toString());
 
-    console.log(cfg.id, res.data.outFile);
+    console.log(cfg.id, res.data.image);
     client.send('getfile', {
         id: cfg.id,
-        url: res.data.outFile
+        url: res.data.image
     });
 }
 

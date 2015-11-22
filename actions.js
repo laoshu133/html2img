@@ -177,82 +177,6 @@ var actions = {
 };
 
 
-/**
- * makeShot
- * @param  {Object} config
- * @return {Object}
- */
-function makeShot(config, callback) {
-    // all process timestamp start
-    // tools.time('All Shot process');
-
-    // result
-    var ret = {
-        status: 'success',
-        message: '',
-        data: null
-    };
-
-    // config
-    config = processConfig(config);
-
-    var outCfg = config.out;
-
-    // setup
-    var viewport = config.viewport || [];
-    var width = viewport[0] || 1024;
-    var height = viewport[1] || 800;
-
-    horseman.viewport(width, height);
-
-    // headers
-    if(config.horsemanHeaders) {
-        horseman.headers(config.horsemanHeaders);
-    }
-
-    // open url
-    tools.time('Horseman open');
-    horseman.open(config.url);
-    tools.timeEnd('Horseman open');
-
-    // check wrapSelector
-    if(!horseman.count(config.wrapSelector)) {
-        ret.message = 'Wrap element not found: ' + config.wrapSelector;
-        ret.status = 'error';
-
-        callback(ret);
-        return;
-    }
-
-    // 截原图
-    // var originImgPath = path.join(outCfg.path, outCfg.name + '_origin' + config.imageExtname);
-    // tools.time('Origin Main shot');
-    // horseman.crop(config.wrapSelector, originImgPath);
-    // tools.timeEnd('Origin Main shot');
-
-    // 处理数据
-    ret.data = lodash.merge({
-        id: config.id,
-        outName: outCfg.name,
-        outFile: path.join(outCfg.path, outCfg.name + config.imageExtname),
-        outCrop: config.wrapSelector,
-        content: ''
-    }, processShot(config, outCfg));
-
-    // 正文截图
-    tools.time('Main shot');
-
-    horseman.crop(ret.data.outCrop, ret.data.outFile);
-
-    tools.timeEnd('Main shot');
-
-    // all process timestamp end
-    // tools.timeEnd('All Shot process');
-
-    ret.message = 'done';
-    callback(ret);
-}
-
 
 // clean horseman
 process.on('exit', function() {
@@ -308,7 +232,13 @@ process.on('uncaughtException', function(err) {
                         });
                     });
 
-                    self.ready = Promise.all(dfs);
+                    var promise = Promise.all(dfs);
+
+                    promise.finally = function(handler) {
+                        return this.then(handler, handler);
+                    };
+
+                    self.ready = promise;
                 });
             };
         });

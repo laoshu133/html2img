@@ -47,7 +47,6 @@ node client-getfile.js
   "url": null,
   "content": "",
   "outPath": "__out",
-  "keepOutFile": true,
   "wrapSelector": ".hlg_flag_wrap_panel",
   "replaceSelector": ".hlg_flag_replace_place",
   "horsemanConfig": {
