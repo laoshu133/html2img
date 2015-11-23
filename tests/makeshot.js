@@ -10,8 +10,8 @@ var fs = require('fs');
 var net = require('net');
 var through = require('through2');
 
-var tools = require('./lib/tools');
-var SocketAdp = require('./lib/SocketAdp');
+var tools = require('../lib/tools');
+var SocketAdp = require('../lib/SocketAdp');
 
 // init
 console.log('Strat client...');
@@ -19,9 +19,9 @@ tools.time('Client process');
 
 var type = 'makeshot';
 var configs = [
-    'demos/makeshot.json',
-    'demos/makeshot-big.json',
-    'demos/makeshot.json'
+    '../demos/makeshot.json',
+    '../demos/makeshot-big.json',
+    '../demos/makeshot.json'
 ];
 
 var io = net.connect({

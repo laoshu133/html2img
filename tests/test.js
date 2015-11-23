@@ -10,9 +10,9 @@ var fs = require('fs');
 var net = require('net');
 var through = require('through2');
 
-var tools = require('./lib/tools');
+var tools = require('../lib/tools');
 
-var configPath = 'demos/hello.json';
+var configPath = '../demos/hello.json';
 
 // init
 var client = net.connect({
@@ -22,7 +22,7 @@ var client = net.connect({
 
 /*-- data test --*/
 var type = 'makeshot';
-var data = '{"id":"id-01", "bar":"foo"}';
+var data = '{"id":"id-01", "content":"foo"}';
 var totalLen =  2 + 4 + type.length + 2 + 4 + data.length + 2;
 
 var index = 0;

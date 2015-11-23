@@ -88,13 +88,16 @@ var actions = {
             return config;
         }
 
-        var cwd = process.cwd();
+        var cwd = __dirname;
         var imgExt = config.imageExtname;
 
         // out config
         var outDir = config.id || 'tmp';
         var outName = config.name || 'out';
         var outPath = path.join(config.outPath, outDir);
+        if(outPath.slice(0, 1) !== '/') {
+            outPath = path.join(cwd, outPath);
+        }
 
         // mkdir
         tools.mkDeepDir(outPath);
@@ -234,7 +237,7 @@ var actions = {
 
     // Horseman.prototype.pageMaker = function() {
     //     var self = this;
-    //     var cwd = process.cwd();
+    //     var cwd = __dirname;
     //     var options = this.options;
     //     var scripts = options.clientScripts;
 
