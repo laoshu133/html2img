@@ -20,6 +20,8 @@ tools.time('Client process');
 
 var type = 'makelist';
 var configs = [
+    // 'demos/makelist.json',
+    'demos/makelist-taobao.json',
     'demos/makelist.json'
 ];
 

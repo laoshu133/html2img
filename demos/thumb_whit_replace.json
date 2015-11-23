@@ -1,7 +1,0 @@
-{
-  "name": "thumb",
-  "description": "缩略图生成",
-  "version": "0.0.1",
-  "url": "./demos/list_thumb_whit_replace.html",
-  "outPath": "__out"
-}

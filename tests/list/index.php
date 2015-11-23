@@ -24,7 +24,11 @@
         top: 10px;
         z-index: 3;
     }
+    .container .mask a{
+        box-shadow: 0 0 5px green;
+    }
     </style>
+    <style id="J_Taobao_css"></style>
     <script src="../../lib/jquery.min.js"></script>
     <script src="../../lib/client-tools.js"></script>
 </head>
@@ -41,7 +45,17 @@
     }
 
     $cfg = dirname(__FILE__) .'/../../demos/'. $cfg;
-    $config = json_decode(file_get_contents($cfg));
+    $config = json_decode(file_get_contents($cfg), true);
+
+    // merge config
+    $defCfgPath = dirname(__FILE__) .'/../../config.default.json';
+    $defConfig = json_decode(file_get_contents($defCfgPath), true);
+
+    foreach ($defConfig as $key => $value) {
+        if(!isset($config[$key])) {
+            $config[$key] = $value;
+        }
+    }
     ?>
     <script>
     jQuery(function($) {
@@ -51,6 +65,7 @@
 
         var listData = dsTools.covertList({
             type: config.listOutType || 'map',
+            imageBlank: config.imageBlank,
             selector: '.main'
         });
 
