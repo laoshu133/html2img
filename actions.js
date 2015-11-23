@@ -211,6 +211,9 @@ var actions = {
                 data: res
             };
 
+            // 兼容旧接口
+            res.outFile = res.image;
+
             callback(null, 'makeshot_result', data);
         })
         .catch(function(err) {
