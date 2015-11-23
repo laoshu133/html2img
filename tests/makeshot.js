@@ -8,6 +8,7 @@
 // deps
 var fs = require('fs');
 var net = require('net');
+var path = require('path');
 var through = require('through2');
 
 var tools = require('../lib/tools');
@@ -19,9 +20,9 @@ tools.time('Client process');
 
 var type = 'makeshot';
 var configs = [
-    '../demos/makeshot.json',
-    '../demos/makeshot-big.json',
-    '../demos/makeshot.json'
+    'demos/makeshot.json',
+    'demos/makeshot-big.json',
+    'demos/makeshot.json'
 ];
 
 var io = net.connect({
@@ -72,6 +73,9 @@ function makeShot() {
     }
 
     console.log('start makeshot ['+ (count++) +']');
+
+    var relativePath = path.relative(process.cwd(), __dirname + '/..');
+    cfgPath = path.join(relativePath, cfgPath);
 
     getConfig(cfgPath, function(data) {
         var cfg = JSON.parse(data.toString());

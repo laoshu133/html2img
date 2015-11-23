@@ -20,7 +20,7 @@
   },
   "readmeFilename": "README.md",
   "scripts": {
-    "test": "node app.js demos/thumb.json",
-    "test_replace": "node app.js demos/thumb_whit_replace.json"
+    "test": "node tests/makeshot.js",
+    "test_list": "node tests/makelist.js"
   }
 }
