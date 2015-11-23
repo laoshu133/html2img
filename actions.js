@@ -186,27 +186,35 @@ var actions = {
             callback(null, 'file', buf);
         });
     },
+    // 压缩图片
+    optimizeImage: function(ret, config) {
+        if(!config || !config.optimizeImage) {
+            return ret;
+        }
+
+        return processers.optimizeImage({
+            image: ret.image
+        })
+        .then(function(newImage) {
+            ret.old_image = ret.image;
+            ret.image = newImage;
+
+            return ret;
+        });
+    },
     // 缩略图
     makeshot: function(client, config, callback) {
+        var self = this;
+
         // config
         this.processConfig(config);
 
         processers.makeshot(config)
+        // optimizeImage
         .then(function(res) {
-            if(!config.optimizeImage) {
-                return res;
-            }
-
-            return processers.optimizeImage({
-                image: res.image
-            })
-            .then(function(newImage) {
-                res.old_image = res.image;
-                res.image = newImage;
-
-                return res;
-            });
+            return self.optimizeImage(res, config);
         })
+        // fit data
         .then(function(res) {
             var data = {
                 status: 'success',
@@ -224,8 +232,30 @@ var actions = {
         });
     },
     // 新关联列表（待完善）
-    makelist: function() {
-        tools.log('makelist...');
+    makelist: function(client, config, callback) {
+        var self = this;
+
+        // config
+        this.processConfig(config);
+
+        processers.makelist(config)
+        // optimizeImage
+        .then(function(res) {
+            return self.optimizeImage(res, config);
+        })
+        // fit data
+        .then(function(res) {
+            var data = {
+                status: 'success',
+                message: '',
+                data: res
+            };
+
+            callback(null, 'makelist_result', data);
+        })
+        .catch(function(err) {
+            callback(err);
+        });
     }
 };
 
