@@ -8,6 +8,7 @@
   "url": null,
   "content": "",
   "outPath": "__out",
+  "listOutType": "taobao",
   "optimizeImage": false,
   "imageExtname": ".png",
   "wrapSelector": ".hlg_flag_wrap_panel",

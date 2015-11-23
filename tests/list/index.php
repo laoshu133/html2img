@@ -24,9 +24,6 @@
         top: 10px;
         z-index: 3;
     }
-    .container .mask area{
-        outline: 1px green;
-    }
     </style>
     <script src="../../lib/jquery.min.js"></script>
     <script src="../../lib/client-tools.js"></script>
@@ -39,30 +36,22 @@
 
     <?php
     $cfg = isset($_GET['cfg']) ? $_GET['cfg'] : '';
-    $type = isset($_GET['type']) ? $_GET['type'] : '';
     if(!$cfg) {
         $cfg = 'makelist.json';
     }
-    if(!$type) {
-        $type = 'map';
-    }
-
-    $data = array();
-    $data['type'] = $type;
 
     $cfg = dirname(__FILE__) .'/../../demos/'. $cfg;
-    $data['config'] = json_decode(file_get_contents($cfg));
+    $config = json_decode(file_get_contents($cfg));
     ?>
     <script>
     jQuery(function($) {
-        var data = <?php echo json_encode($data);?>;
-        var config = data.config;
+        var config = <?php echo json_encode($config);?>;
 
         $('.main').html(config.content);
 
         var listData = dsTools.covertList({
-            selector: '.main',
-            type: 'map'
+            type: config.listOutType || 'map',
+            selector: '.main'
         });
 
         console.log(listData);
