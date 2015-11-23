@@ -38,10 +38,10 @@
     </div>
 
     <?php
-    $tpl = isset($_GET['tpl']) ? $_GET['tpl'] : '';
+    $cfg = isset($_GET['cfg']) ? $_GET['cfg'] : '';
     $type = isset($_GET['type']) ? $_GET['type'] : '';
-    if(!$tpl) {
-        $tpl = 'tpl.html';
+    if(!$cfg) {
+        $cfg = 'makelist.json';
     }
     if(!$type) {
         $type = 'map';
@@ -50,14 +50,15 @@
     $data = array();
     $data['type'] = $type;
 
-    $tpl = dirname(__FILE__) .'/'. $tpl;
-    $data['content'] = file_get_contents($tpl);
+    $cfg = dirname(__FILE__) .'/../../demos/'. $cfg;
+    $data['config'] = json_decode(file_get_contents($cfg));
     ?>
     <script>
     jQuery(function($) {
-        var data = <?php echo json_encode($data);?>
+        var data = <?php echo json_encode($data);?>;
+        var config = data.config;
 
-        $('.main').html(data.content);
+        $('.main').html(config.content);
 
         var listData = dsTools.covertList({
             selector: '.main',
@@ -67,7 +68,14 @@
         console.log(listData);
 
         if(listData.status === 'success') {
-            $('.mask').html(listData.html);
+            var html = listData.html;
+            var extName = config.imageExtname || '.png';
+            var imgUrl = '../../__out/' + config.id;
+            imgUrl += '/out' + extName;
+
+            html = html.replace('{imgUrl}', imgUrl);
+
+            $('.mask').html(html);
         }
         else {
             $('.mask').html('Covert error!!!');
