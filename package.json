@@ -2,7 +2,7 @@
   "name": "hlg-html2img",
   "description": "hlg-html2img",
   "version": "0.1.0",
-  "main": "app.js",
+  "main": "server.js",
   "repository": {
     "type": "git",
     "url": "git@git.huanleguang.com:static/html2img.git"
