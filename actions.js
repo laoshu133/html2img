@@ -50,6 +50,22 @@ var actions = {
             // page, phantomjs page
             var page = horseman.page;
 
+            // render, support quality
+            var _render = page.render;
+            page.render = function(dest, options, callback) {
+                if(typeof options === 'function') {
+                    callback = options;
+                    options = null;
+                }
+
+                // default quality: 100
+                options = lodash.merge({
+                    quality: 100
+                }, options);
+
+                return _render.call(page, dest, options, callback);
+            };
+
             // clean fix, not store request
             page.onResourceReceived = function(res) {
                 // tools.log('ResourceReceived', res.status, res.url);
