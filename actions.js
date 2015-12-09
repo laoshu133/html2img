@@ -58,9 +58,9 @@ var actions = {
                     options = null;
                 }
 
-                // default quality: 100
+                // default quality
                 options = lodash.merge({
-                    quality: 100
+                    quality: 90
                 }, options);
 
                 return _render.call(page, dest, options, callback);
