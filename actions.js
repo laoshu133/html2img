@@ -60,7 +60,7 @@ var actions = {
 
                 // default quality
                 options = lodash.merge({
-                    quality: 90
+                    quality: config.imageQuality
                 }, options);
 
                 return _render.call(page, dest, options, callback);

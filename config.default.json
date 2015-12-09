@@ -11,6 +11,7 @@
   "listOutType": "taobao",
   "optimizeImage": false,
   "imageExtname": ".png",
+  "imageQuality": 90,
   "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
   "wrapSelector": ".hlg_flag_wrap_panel",
   "replaceSelector": ".hlg_flag_replace_place",
