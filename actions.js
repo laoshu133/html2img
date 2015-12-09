@@ -132,8 +132,9 @@ var actions = {
             var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
             var htmlTpl = fs.readFileSync(htmlTplPath);
 
+            var content = tools.processHTML(config.content);
             var html = tools.fill(htmlTpl, {
-                content: config.content,
+                content: content,
                 cwd: cwd
             });
 
