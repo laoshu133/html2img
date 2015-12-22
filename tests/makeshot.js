@@ -20,9 +20,9 @@ tools.time('Client process');
 
 var type = 'makeshot';
 var configs = [
-    'demos/makeshot.json',
-    'demos/makeshot-big.json',
-    'demos/makeshot.json'
+    // 'demos/makeshot.json',
+    // 'demos/makeshot-big.json',
+    'demos/makeshot-wrieless.json'
 ];
 
 var io = net.connect({
