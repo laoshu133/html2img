@@ -22,7 +22,7 @@ var type = 'makeshot';
 var configs = [
     'demos/makeshot.json',
     'demos/makeshot-big.json',
-    'demos/makeshot-wrieless.json'
+    'demos/makeshot-wireless.json'
 ];
 
 var io = net.connect({

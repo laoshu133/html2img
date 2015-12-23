@@ -1,7 +1,7 @@
 {
     "id": "makeshot-003",
     "action": "makeshot",
-    "htmlTpl": "list_wrieless.html",
+    "htmlTpl": "list_wireless.html",
     "size": {
       "type": 20,
       "width": 640
