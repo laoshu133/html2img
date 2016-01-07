@@ -108,6 +108,14 @@
     .hlg_flag_wrap_panel img:only-child{
         vertical-align: top;
     }
+
+    /* 处理 position:fixed， 以适应截图 */
+    .wireless-templet{
+        position: relative;
+    }
+    .wireless-templet .templet-menus{
+        position: absolute;
+    }
     </style>
     <script src="{cwd}/lib/jquery.min.js"></script>
     <script src="{cwd}/lib/client-tools.js"></script>
