@@ -21,9 +21,10 @@ tools.time('Client process');
 var type = 'makeshot';
 var configs = [
     'demos/makeshot.json',
-    'demos/makeshot-big.json',
+    // 'demos/makeshot-big.json',
     'demos/makeshot-wireless.json'
 ];
+
 
 var io = net.connect({
     host: 'localhost',
@@ -118,6 +119,22 @@ function getConfig(configPath, callback) {
 
     rs.on('end', function() {
         var config = Buffer.concat(data, len);
+
+        // Tmp DEBUG
+        // override wireless
+        (function() {
+            var tmpHTML = 'demos/tmp-test.html';
+            if(
+                configPath === 'demos/makeshot-wireless.json' &&
+                fs.existsSync(tmpHTML)
+            ) {
+                config = JSON.parse(config);
+
+                config.content = fs.readFileSync(tmpHTML).toString();
+
+                config = JSON.stringify(config);
+            }
+        })();
 
         callback(config);
     });

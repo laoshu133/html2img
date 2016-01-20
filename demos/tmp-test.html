@@ -1,0 +1,379 @@
+<style>
+.page-wireless{ background: #b90000;}
+.wireless-templet{ background: #b90000; font-size: 16px;}
+.wireless-templet a{ color: #666; text-decoration: none; }
+.price{
+    font-family: Arial;
+    line-height: 1.2;
+}
+.price em{
+    font-size: 1.4em;
+    font-style: normal;
+    margin-left: .2em;
+    vertical-align: baseline;
+}
+.price em > sub{
+    font-size: .8em;
+    position: static;
+    vertical-align: baseline;
+}
+
+.counter{
+    color: #FFF;
+    font-size: 2em;
+    line-height: 1.6;
+    padding: .8em 0;
+    text-align: center;
+}
+.counter .label,
+.counter .counter-main,
+.counter .counter-main > span,
+.counter .counter-main > span:after,
+.counter .counter-main b{
+    display: inline-block;
+    vertical-align: top;
+}
+.counter .counter-main{
+    white-space: nowrap;
+}
+.counter .counter-main .counter-item{
+    margin-left: .2em;
+}
+.counter .counter-main .counter-item:first-child{
+    margin-left: 0;
+}
+.counter .counter-main .counter-item:after{
+    margin-left: .2em;
+}
+.counter .counter-main .days:after{
+    content: "天";
+}
+.counter .counter-main .hours:after,
+.counter .counter-main .minutes:after{
+    content: ":";
+}
+.counter .counter-main b{
+    background: #000;
+    border-radius: 5px;
+    font-family: Arial;
+    margin: 0 .06em;
+    padding: 0 .29em;
+    position: relative;
+}
+
+
+.templet-banner{
+    margin-bottom: 0;
+}
+.templet-banner img{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.templet-main{
+    padding-bottom: 110px;
+}
+.templet-main .counter{
+    box-sizing: border-box;
+    background: #ebb71f url(http://sc.huanleguang.com/wireless/11574990/counter-bg.png) no-repeat;
+    background-size: contain;
+    color: #b90000;
+    font-size: 30px;
+    height: 54px;
+    margin-bottom: 16px;
+    padding: 0;
+    text-align: center;
+}
+.templet-main .counter .label:after{
+    content: "：";
+}
+.templet-main .counter .counter-item,
+.templet-main .counter .counter-item:after{
+    margin-left: 0;
+}
+.templet-main .counter b{
+    background: none;
+    color: #111;
+    margin: 0;
+    padding: 0;
+}
+.templet-main .counter .hours:after{
+    content: "小时";
+}
+.templet-main .counter .minutes:after{
+    content: "分";
+}
+.templet-main .counter .seconds:after{
+    content: "秒";
+}
+
+.templet-list{
+    margin: 0 2%;
+    position: relative;
+}
+.templet-list:before{
+    content: "";
+    background: url(http://sc.huanleguang.com/wireless/11574990/hot-flag.png) no-repeat;
+    background-size: contain;
+    height: 68px;
+    width: 342px;
+    position: absolute;
+    left: 0;
+    top: 14px;
+}
+.templet-list ul{
+    margin: 0;
+    padding: 14px 0 82px;
+    list-style: none;
+}
+.templet-list ul:after,
+.templet-list li a:after{
+    display: table;
+    clear: both;
+    content: "";
+}
+.templet-list li{
+    float: left;
+    background: #FFF;
+    margin: 0 0 14px 2%;
+    width: 49%;
+    position: relative;
+}
+.templet-list li:nth-child(odd){
+    margin-left: 0;
+    top: 82px;
+}
+.templet-list li a{
+    display: block;
+    box-sizing: border-box;
+}
+.templet-list .pic{
+    display: block;
+    background: #FFF no-repeat 50% 0;
+    background-size: auto 100%;
+    padding: 139% 0 0;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    position: relative;
+}
+.templet-list .pic img{
+    height: 100%;
+    width: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.templet-list .tit{
+    display: block;
+    color: #333;
+    font-size: 1.38em;
+    line-height: 1.2;
+    margin: 9px 12px 0;
+    height: 2.4em;
+    overflow: hidden;
+
+    word-break: break-all;
+    word-wrap: normal;
+}
+.templet-list .price{
+    display: block;
+    color: #333;
+    font-size: 1.6em;
+    padding: .5em;
+}
+.templet-list .price:before{
+    float: right;
+    content: "抢";
+    background: #b90000;
+    border-radius: 3px;
+    color: #ffffde;
+    font-size: 1.06em;
+    font-weight: normal;
+    line-height: 1.2;
+    margin-right: .2em;
+    padding: .2em .4em;
+}
+
+.templet-list-hot{
+    border-bottom: 12px solid #fded06;
+    /*margin-bottom: 16px;
+    padding-bottom: 16px;*/
+}
+.templet-list-hot:before{
+    display: none;
+}
+.templet-list-hot ul{
+    padding-bottom: 0;
+    padding-top: 0;
+}
+.templet-list-hot ul li{
+    display: block;
+    float: none;
+    box-sizing: border-box;
+    background: #FFF url(http://sc.huanleguang.com/wireless/11574990/hot-item-bg.png) no-repeat 100% 0;
+    background-size: auto 100%;
+    margin: 0 0 2%;
+    width: 100%;
+}
+.templet-list-hot li:nth-child(odd){
+    top: 0;
+}
+.templet-list-hot .pic{
+    padding-top: 49.2%;
+    width: 49.2%;
+}
+.templet-list-hot .pic img{
+    height: auto;
+    width: 100%;
+}
+
+.templet-list-hot .props{
+    padding-top: 70px;
+    width: 46%;
+    position: absolute;
+    left: 53.2%;
+    top: 0;
+}
+.templet-list-hot .tit{
+    font-size: 24px;
+    margin: 0 0 1.5em;
+}
+.templet-list-hot .price{
+    display: block;
+    color: #333;
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 1.2em;
+    padding-left: 0;
+}
+.templet-list-hot .price:before{
+    display: none;
+}
+.templet-list-hot .price del{
+    display: block;
+    color: #999;
+    font-size: 30px;
+    font-weight: normal;
+    padding-top: .2em;
+}
+.templet-list-hot .btn{
+    display: block;
+    float: none;
+    background: #de0500;
+    border-width: 0;
+    border-radius: 5px;
+    color: #FFF;
+    font-size: 1.5em;
+    margin: 0 auto;
+    padding: .4em 0;
+    width: 88%;
+    text-align: center;
+}
+
+.templet-menus{
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 9;
+}
+.templet-menus a{
+    display: block;
+    background: #6f0000;
+    color: #FFF;
+    font-size: 32px;
+    line-height: 3;
+    height: 96px;
+    overflow: hidden;
+    text-align: center;
+}
+.templet-menus a:before{
+    display: inline-block;
+    content: "";
+    background: url(http://sc.huanleguang.com/wireless/11574990/icon-home.png) no-repeat 50% 50%;
+    background-size: contain;
+    margin: -4px 8px 0 0;
+    height: 36px;
+    width: 40px;
+    vertical-align: middle;
+}
+</style>
+
+<div class="wireless-templet">
+    <div class="templet-banner">
+        <img src="http://sc.huanleguang.com/wireless/11574990/banner.png" alt="">
+    </div>
+    <div class="templet-main">
+        <div class="counter">
+            <span class="label">距离活动结束</span>
+            <div class="counter-main">
+                <span class="counter-item days">
+                    <b>0</b><b>1</b>
+                </span>
+                <span class="counter-item hours">
+                    <b>0</b><b>2</b>
+                </span>
+                <span class="counter-item minutes">
+                    <b>0</b><b>3</b>
+                </span>
+                <span class="counter-item seconds">
+                    <b>0</b><b>4</b>
+                </span>
+            </div>
+        </div>
+        <div class="templet-list templet-list-hot">
+            <ul>
+                <li>
+                    <a target="_blank" href="#" class="item">
+                        <span class="pic">
+                            <img src="http://sc.huanleguang.com/wireless/11574990/p1.jpg" alt="">
+                        </span>
+                        <div class="props">
+                            <span class="tit">冬新品羊毛呢大衣女宽松中长款冬新品羊毛呢大衣女宽松中长款</span>
+                            <span class="price">
+                                &yen;<em>688<sub>.88</sub></em>
+                                <del>&yen;1288.00</del>
+                            </span>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="#" class="item">
+                        <span class="pic">
+                            <img src="http://sc.huanleguang.com/wireless/11574990/p2.jpg" alt="">
+                        </span>
+                        <div class="props">
+                            <span class="tit">冬新品羊毛呢大衣女宽松中长款冬新品羊毛呢大衣女宽松中长款</span>
+                            <span class="price">
+                                &yen;<em>688<sub>.88</sub></em>
+                                <del>&yen;1288.00</del>
+                            </span>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="templet-list">
+            <ul>
+                <li>
+                    <a target="_blank" href="#" class="item">
+                        <span class="pic" style="background-image:url(http://sc.huanleguang.com/wireless/11574990/p3.jpg)"></span>
+                        <span class="tit">RoseLingLing冬新品羊毛呢上衣女短款宽松通勤百搭长袖短外宽松通勤百搭长袖短外</span>
+                        <span class="price">&yen;<em>688<sub>.88</sub></em></span>
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank" href="#" class="item">
+                        <span class="pic" style="background-image:url(http://sc.huanleguang.com/wireless/11574990/p4.jpg)"></span>
+                        <span class="tit">RoseLingLing冬新品羊毛呢上衣女短款宽松通勤百搭长袖短外宽松通勤百搭长袖短外</span>
+                        <span class="price">&yen;<em>688<sub>.88</sub></em></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="templet-menus">
+            <a target="_blank" href="//shop#shopId#.taobao.com/">店铺首页</a>
+        </div>
+    </div>
+</div>
