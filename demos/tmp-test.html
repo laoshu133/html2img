@@ -1,6 +1,6 @@
 <style>
 .page-wireless{ background: #b90000;}
-.wireless-templet{ background: #b90000; font-size: 16px;}
+.wireless-templet{ background: #b90000; font-size: 0.3413333333333334rem;}
 .wireless-templet a{ color: #666; text-decoration: none; }
 .price{
     font-family: Arial;
@@ -54,7 +54,7 @@
 }
 .counter .counter-main b{
     background: #000;
-    border-radius: 5px;
+    border-radius: 0.10666666666666666rem;
     font-family: Arial;
     margin: 0 .06em;
     padding: 0 .29em;
@@ -63,7 +63,7 @@
 
 
 .templet-banner{
-    margin-bottom: 0;
+    margin-bottom: 0.32rem;
 }
 .templet-banner img{
     display: block;
@@ -71,59 +71,31 @@
     height: auto;
 }
 .templet-main{
-    padding-bottom: 110px;
+    padding-bottom: 2.3466666666666667rem;
 }
 .templet-main .counter{
     box-sizing: border-box;
-    background: #ebb71f url(http://sc.huanleguang.com/wireless/11574990/counter-bg.png) no-repeat;
+    background: #ebb71f url(http://sc.huanleguang.com/wireless/11574463/counter-bg.png) no-repeat;
     background-size: contain;
     color: #b90000;
-    font-size: 30px;
-    height: 54px;
-    margin-bottom: 16px;
-    padding: 0;
+    font-size: 0.5333333333333333rem;
+    height: 1.6rem;
+    margin-bottom: 0.3413333333333334rem;
+    padding: 0.36266666666666664rem 0 0;
     text-align: center;
 }
-.templet-main .counter .label:after{
-    content: "：";
-}
-.templet-main .counter .counter-item,
-.templet-main .counter .counter-item:after{
-    margin-left: 0;
-}
-.templet-main .counter b{
-    background: none;
-    color: #111;
-    margin: 0;
-    padding: 0;
-}
-.templet-main .counter .hours:after{
-    content: "小时";
-}
-.templet-main .counter .minutes:after{
-    content: "分";
-}
-.templet-main .counter .seconds:after{
-    content: "秒";
+.templet-main .counter .counter-main b{
+    background: #FFF;
+    color: inherit;
 }
 
 .templet-list{
+    background: #FFF;
     margin: 0 2%;
-    position: relative;
-}
-.templet-list:before{
-    content: "";
-    background: url(http://sc.huanleguang.com/wireless/11574990/hot-flag.png) no-repeat;
-    background-size: contain;
-    height: 68px;
-    width: 342px;
-    position: absolute;
-    left: 0;
-    top: 14px;
 }
 .templet-list ul{
     margin: 0;
-    padding: 14px 0 82px;
+    padding: 0.2986666666666667rem 0 0;
     list-style: none;
 }
 .templet-list ul:after,
@@ -135,13 +107,12 @@
 .templet-list li{
     float: left;
     background: #FFF;
-    margin: 0 0 14px 2%;
-    width: 49%;
+    margin: 0 0 0.2986666666666667rem 2%;
+    width: 47%;
     position: relative;
 }
 .templet-list li:nth-child(odd){
-    margin-left: 0;
-    top: 82px;
+    /*margin-left: 0;*/
 }
 .templet-list li a{
     display: block;
@@ -151,7 +122,7 @@
     display: block;
     background: #FFF no-repeat 50% 0;
     background-size: auto 100%;
-    padding: 139% 0 0;
+    padding: 167.6% 0 0;
     width: 100%;
     height: 0;
     overflow: hidden;
@@ -166,62 +137,72 @@
 }
 .templet-list .tit{
     display: block;
-    color: #333;
-    font-size: 1.38em;
+    border-bottom: 0.04266666666666667rem dotted #FFF;
+    color: #666;
+    font-size: 0.5546666666666666rem;
     line-height: 1.2;
-    margin: 9px 12px 0;
+    margin: 0.192rem 0.256rem 0;
     height: 2.4em;
     overflow: hidden;
 
     word-break: break-all;
     word-wrap: normal;
 }
-.templet-list .price{
-    display: block;
-    color: #333;
-    font-size: 1.6em;
-    padding: .5em;
+.templet-list .pic .price{
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, .32);
+    color: #111;
+    font-size: 1.8em;
+    padding: .5em .5em .2em;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
-.templet-list .price:before{
-    float: right;
-    content: "抢";
-    background: #b90000;
-    border-radius: 3px;
-    color: #ffffde;
-    font-size: 1.06em;
-    font-weight: normal;
+.templet-list .pic .price:before{
+    display: inline-block;
+    content: "新年价";
+    background: #de0500;
+    border-radius: 0.064rem;
+    color: #FFF;
+    font-size: 0.256rem;
     line-height: 1.2;
-    margin-right: .2em;
+    margin-right: .8em;
     padding: .2em .4em;
+    vertical-align: middle;
 }
-
+.templet-list .btn{
+    float: right;
+    background: #FFF;
+    border: 0.021333333333333336rem solid #97050E;
+    border-radius: 1.52em;
+    color: #97050E;
+    font-size: 0.42666666666666664rem;
+    line-height: 1.52;
+    margin: .2em 0.32rem 0 0;
+    padding: 0.04266666666666667rem 0.21333333333333332rem;
+}
 .templet-list-hot{
-    border-bottom: 12px solid #fded06;
-    /*margin-bottom: 16px;
-    padding-bottom: 16px;*/
-}
-.templet-list-hot:before{
-    display: none;
+    background: none;
 }
 .templet-list-hot ul{
-    padding-bottom: 0;
     padding-top: 0;
 }
-.templet-list-hot ul li{
+.templet-list-hot li{
     display: block;
     float: none;
     box-sizing: border-box;
-    background: #FFF url(http://sc.huanleguang.com/wireless/11574990/hot-item-bg.png) no-repeat 100% 0;
-    background-size: auto 100%;
-    margin: 0 0 2%;
+    background: #FFF;
     width: 100%;
-}
-.templet-list-hot li:nth-child(odd){
-    top: 0;
+    margin: 0 0 2%;
+    padding: 2%;
 }
 .templet-list-hot .pic{
-    padding-top: 49.2%;
-    width: 49.2%;
+    padding-top: 64%;
+    width: 64%;
+}
+.templet-list-hot li:nth-child(even) .pic{
+    margin-left: auto;
 }
 .templet-list-hot .pic img{
     height: auto;
@@ -229,40 +210,50 @@
 }
 
 .templet-list-hot .props{
-    padding-top: 70px;
-    width: 46%;
+    padding-top: 1.0666666666666667rem;
+    width: 32%;
     position: absolute;
-    left: 53.2%;
+    left: 66%;
     top: 0;
 }
+.templet-list-hot li:nth-child(even) .props{
+    left: 2.4%;
+}
+.templet-list-hot .props:before{
+    display: block;
+    content: "";
+    background: url(http://sc.huanleguang.com/wireless/11574463/hot-flag.png) no-repeat;
+    background-size: cover;
+    margin: 0 auto 1.0666666666666667rem;
+    height: 0.9386666666666666rem;
+    width: 4.266666666666667rem;
+}
 .templet-list-hot .tit{
-    font-size: 24px;
+    font-size: 0.512rem;
     margin: 0 0 1.5em;
 }
 .templet-list-hot .price{
     display: block;
-    color: #333;
+    color: #de0500;
     font-size: 2em;
     font-weight: bold;
     margin-bottom: 1.2em;
-    padding-left: 0;
 }
-.templet-list-hot .price:before{
-    display: none;
+.templet-list-hot .price em{
+    margin-left: 0;
 }
 .templet-list-hot .price del{
     display: block;
     color: #999;
-    font-size: 30px;
+    font-size: 0.64rem;
     font-weight: normal;
-    padding-top: .2em;
 }
 .templet-list-hot .btn{
     display: block;
     float: none;
     background: #de0500;
     border-width: 0;
-    border-radius: 5px;
+    border-radius: 0.10666666666666666rem;
     color: #FFF;
     font-size: 1.5em;
     margin: 0 auto;
@@ -282,98 +273,154 @@
     display: block;
     background: #6f0000;
     color: #FFF;
-    font-size: 32px;
+    font-size: 0.6826666666666668rem;
     line-height: 3;
-    height: 96px;
+    height: 2.048rem;
     overflow: hidden;
     text-align: center;
 }
 .templet-menus a:before{
     display: inline-block;
     content: "";
-    background: url(http://sc.huanleguang.com/wireless/11574990/icon-home.png) no-repeat 50% 50%;
+    background: url(http://sc.huanleguang.com/wireless/11574463/icon-home.png) no-repeat 50% 50%;
     background-size: contain;
-    margin: -4px 8px 0 0;
-    height: 36px;
-    width: 40px;
+    margin: -0.08533333333333334rem 0.1706666666666667rem 0 0;
+    height: 0.768rem;
+    width: 0.8533333333333333rem;
     vertical-align: middle;
 }
 </style>
 
 <div class="wireless-templet">
     <div class="templet-banner">
-        <img src="http://sc.huanleguang.com/wireless/11574990/banner.png" alt="">
+        <img src="http://sc.huanleguang.com/wireless/11574463/banner.png" alt="">
     </div>
     <div class="templet-main">
+        <div class="templet-list templet-list-hot">
+            <ul>
+
+
+                    <li>
+                        <a target="_blank" href="//item.taobao.com/item.htm?id=523785816058" class="item">
+                            <span class="pic">
+                                <img src="https://img.alicdn.com/bao/uploaded/i1/TB1EGcHGVXXXXXTaXXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg" alt="">
+                            </span>
+                            <div class="props">
+                                <span class="tit">123456123456123456123456123456123456123456123456123456</span>
+                                <span class="price">
+                                    <em>879<sub>.12</sub></em>
+                                    <del>&yen;888.00</del>
+                                </span>
+                                <span class="btn">立即购买</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+
+                    <li>
+                        <a target="_blank" href="//item.taobao.com/item.htm?id=522873236567" class="item">
+                            <span class="pic">
+                                <img src="https://img.alicdn.com/bao/uploaded/i3/TB1oNuxJVXXXXa_XVXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg" alt="">
+                            </span>
+                            <div class="props">
+                                <span class="tit">也许是东半球最好的鞋子也许是东半球最好的鞋子</span>
+                                <span class="price">
+                                    <em>121<sub>.77</sub></em>
+                                    <del>&yen;123.00</del>
+                                </span>
+                                <span class="btn">立即购买</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+
+
+
+
+
+
+
+
+            </ul>
+        </div>
         <div class="counter">
-            <span class="label">距离活动结束</span>
-            <div class="counter-main">
+            <span class="label">距离活动结束：</span>
+            <div class="counter-main J_CounterMain">
                 <span class="counter-item days">
-                    <b>0</b><b>1</b>
+                    <b>-</b><b>-</b>
                 </span>
                 <span class="counter-item hours">
-                    <b>0</b><b>2</b>
+                    <b>-</b><b>-</b>
                 </span>
                 <span class="counter-item minutes">
-                    <b>0</b><b>3</b>
+                    <b>-</b><b>-</b>
                 </span>
                 <span class="counter-item seconds">
-                    <b>0</b><b>4</b>
+                    <b>-</b><b>-</b>
                 </span>
             </div>
         </div>
-        <div class="templet-list templet-list-hot">
+        <div class="templet-list" >
             <ul>
-                <li>
-                    <a target="_blank" href="#" class="item">
-                        <span class="pic">
-                            <img src="http://sc.huanleguang.com/wireless/11574990/p1.jpg" alt="">
-                        </span>
-                        <div class="props">
-                            <span class="tit">冬新品羊毛呢大衣女宽松中长款冬新品羊毛呢大衣女宽松中长款</span>
-                            <span class="price">
-                                &yen;<em>688<sub>.88</sub></em>
-                                <del>&yen;1288.00</del>
+
+
+
+
+
+
+                    <li>
+                        <a target="_blank" href="//item.taobao.com/item.htm?id=520400514466" class="item">
+                            <span class="pic" style="background-image:url(https://img.alicdn.com/bao/uploaded/i1/TB1r0coIpXXXXXMXFXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg)">
+                                <!-- <img src="https://img.alicdn.com/bao/uploaded/i1/TB1r0coIpXXXXXMXFXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg" alt=""> -->
+                                <span class="price">&yen;<em>1099<sub>.89</sub></em></span>
                             </span>
-                        </div>
-                    </a>
-                </li>
-                <li>
-                    <a target="_blank" href="#" class="item">
-                        <span class="pic">
-                            <img src="http://sc.huanleguang.com/wireless/11574990/p2.jpg" alt="">
-                        </span>
-                        <div class="props">
-                            <span class="tit">冬新品羊毛呢大衣女宽松中长款冬新品羊毛呢大衣女宽松中长款</span>
-                            <span class="price">
-                                &yen;<em>688<sub>.88</sub></em>
-                                <del>&yen;1288.00</del>
+                            <span class="tit">第三个宝贝。测试用第三个宝贝。测试用第三个宝贝。测试用</span>
+                        </a>
+                    </li>
+
+
+
+                    <li>
+                        <a target="_blank" href="//item.taobao.com/item.htm?id=521238612421" class="item">
+                            <span class="pic" style="background-image:url(https://img.alicdn.com/bao/uploaded/i3/TB1Wh4KKXXXXXcWXFXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg)">
+                                <!-- <img src="https://img.alicdn.com/bao/uploaded/i3/TB1Wh4KKXXXXXcWXFXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg" alt=""> -->
+                                <span class="price">&yen;<em>111110<sub>.67</sub></em></span>
                             </span>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="templet-list">
-            <ul>
-                <li>
-                    <a target="_blank" href="#" class="item">
-                        <span class="pic" style="background-image:url(http://sc.huanleguang.com/wireless/11574990/p3.jpg)"></span>
-                        <span class="tit">RoseLingLing冬新品羊毛呢上衣女短款宽松通勤百搭长袖短外宽松通勤百搭长袖短外</span>
-                        <span class="price">&yen;<em>688<sub>.88</sub></em></span>
-                    </a>
-                </li>
-                <li>
-                    <a target="_blank" href="#" class="item">
-                        <span class="pic" style="background-image:url(http://sc.huanleguang.com/wireless/11574990/p4.jpg)"></span>
-                        <span class="tit">RoseLingLing冬新品羊毛呢上衣女短款宽松通勤百搭长袖短外宽松通勤百搭长袖短外</span>
-                        <span class="price">&yen;<em>688<sub>.88</sub></em></span>
-                    </a>
-                </li>
+                            <span class="tit">这不是一双鞋</span>
+                        </a>
+                    </li>
+
+
+
+                    <li>
+                        <a target="_blank" href="//item.taobao.com/item.htm?id=523938132525" class="item">
+                            <span class="pic" style="background-image:url(https://img.alicdn.com/bao/uploaded/i2/TB1iJgnHXXXXXcgaXXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg)">
+                                <!-- <img src="https://img.alicdn.com/bao/uploaded/i2/TB1iJgnHXXXXXcgaXXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg" alt=""> -->
+                                <span class="price">&yen;<em>98<sub>.99</sub></em></span>
+                            </span>
+                            <span class="tit">最新鞋子3.0最新鞋子3.0最新鞋子3.0最新鞋子3.0最新鞋子3.0</span>
+                        </a>
+                    </li>
+
+
+
+                    <li>
+                        <a target="_blank" href="//item.taobao.com/item.htm?id=520488386390" class="item">
+                            <span class="pic" style="background-image:url(https://img.alicdn.com/bao/uploaded/i4/TB155XXIFXXXXXZXVXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg)">
+                                <!-- <img src="https://img.alicdn.com/bao/uploaded/i4/TB155XXIFXXXXXZXVXXXXXXXXXX_!!0-item_pic.jpg_600x600.jpg" alt=""> -->
+                                <span class="price">&yen;<em>88<sub>.11</sub></em></span>
+                            </span>
+                            <span class="tit">[包邮]酷衣购 男士长袖迷彩t恤 男弹力修身体恤 工装军旅男装1193</span>
+                        </a>
+                    </li>
+
+
             </ul>
         </div>
         <div class="templet-menus">
-            <a target="_blank" href="//shop#shopId#.taobao.com/">店铺首页</a>
+            <a target="_blank" href="//shop126016853.taobao.com/">店铺首页</a>
         </div>
     </div>
 </div>
