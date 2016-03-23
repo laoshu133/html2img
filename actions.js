@@ -6,11 +6,11 @@
 'use strict';
 
 // deps
-var fs = require('fs');
 var path = require('path');
 var rimraf = require('rimraf');
 var lodash = require('lodash');
 var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs'));
 
 var tools = require('./lib/tools');
 var Horseman = require('./lib/horseman');
@@ -106,7 +106,6 @@ var actions = {
         // content
         if(config.content) {
             var inPath = path.join(outPath, 'in.html');
-            console.log('xxx', config.htmlTpl);
             var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
             var htmlTpl = fs.readFileSync(htmlTplPath);
 
@@ -154,31 +153,36 @@ var actions = {
         });
     },
     // 取文件
-    getfile: function(client, config, callback) {
-        // config
-        this.processConfig(config);
-
+    getfile: function(config) {
         tools.log('Actions.getfile');
 
-        var url = config.url;
-        if(!url) {
-            url = config.out.image;
-        }
+        var url = config.path;
+        // if(!url) {
+        //     url = config.out.image;
+        // }
 
-        if(!fs.existsSync(url)) {
-            var msg = 'No such file or directory, ' + url;
-            return callback(new Error(msg));
-        }
+        console.log(111, url, fs.existsSync(url));
 
-        fs.readFile(url, function(err, buf) {
-            if(err) {
-                callback(err);
-                return;
+        return new Promise(resolve => {
+            fs.exists(url, exists => {
+                console.log(2333, exists);
+                resolve(exists);
+            });
+        })
+        .then(exists => {
+            console.log('xx', exists);
+            if(!exists) {
+                var msg = 'No such file or directory, ' + url;
+
+                throw new Error(msg);
             }
 
+            return fs.readFileAsync(url);
+        })
+        .then(buf => {
             tools.log('Actions.getfile.done');
 
-            callback(null, 'file', buf);
+            return buf;
         });
     },
     // 压缩图片
@@ -204,6 +208,8 @@ var actions = {
         // config
         this.processConfig(config);
 
+        tools.log('Actions.makeshot');
+
         return processers.makeshot(config)
         // optimizeImage
         .then(function(ret) {
@@ -213,6 +219,8 @@ var actions = {
         .then(function(ret) {
             // 兼容旧接口
             ret.outFile = ret.image;
+
+            tools.log('Actions.makeshot.done');
 
             return ret;
         });

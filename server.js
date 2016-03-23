@@ -83,7 +83,11 @@ server.on('data', e => {
                 });
             })
             .catch(ex => {
-                tools.error('id:',  cfg.id, ', uid:', client.uid, ex);
+                tools.error(ex, {
+                    client_id: client.uid,
+                    config: cfg
+                });
+                // tools.info('Action invoke error, uid=', client.uid);
 
                 replyAction({
                     status: 'error',

@@ -34,12 +34,16 @@ console.log('Strat client...');
 var client = new SocketAdp(io);
 
 client.on('data', function(e) {
-    lastResult = e.data;
+    var ret = JSON.parse(e.data);
 
     console.log('\n---'+ e.type +'--'+ e.data.length + '---');
 
+    if(ret.status !== 'success') {
+        console.error('Got an error!');
+        console.error(JSON.stringify(ret));
+    }
+
     if(e.type === 'makeshot_result') {
-        var ret = JSON.parse(e.data);
         console.log(JSON.stringify(ret));
 
         getFile(ret.data.image);
@@ -80,11 +84,12 @@ function makeShot() {
     client.send('makeshot', cfg);
 }
 
-function getFile(url) {
-    console.log('Getfile, url=', url);
+function getFile(path) {
+    console.log('\n-------Getfile-------\n path=', path);
 
     client.send('getfile', {
-        url: url
+        action: 'getfile',
+        path: path
     });
 }
 
