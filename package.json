@@ -7,19 +7,21 @@
     "type": "git",
     "url": "git@git.huanleguang.com:static/html2img.git"
   },
-  "devDependencies": {
-    "debug": "^2.1.3",
-    "rimraf": "^2.4.4",
-    "lodash": "^3.10.0",
-    "through2": "^0.6.5",
-    "node-horseman": "^2.8.1",
-    "exec-buffer": "^2.0.1",
-    "pngquant-bin": "^3.0.0",
-    "jpegtran-bin": "^2.0.2"
-  },
+  "devDependencies": {},
   "readmeFilename": "README.md",
   "scripts": {
     "test": "node tests/makeshot.js",
     "test_list": "node tests/makelist.js"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "rimraf": "^2.5.2",
+    "lodash": "^4.6.1",
+    "through2": "^2.0.1",
+    "node-horseman": "^2.8.2",
+    "exec-buffer": "^2.0.1",
+    "pngquant-bin": "^3.1.0",
+    "jpegtran-bin": "^3.0.6",
+    "dotenv-safe": "^2.2.0"
   }
 }
