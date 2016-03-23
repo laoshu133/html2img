@@ -29,9 +29,7 @@ var config = {
     getConfig: function(cfg) {
         var ret = {};
 
-        lodash.merge(ret, this.currConfig, cfg || {});
-
-        return ret;
+        return lodash.merge(ret, this.currConfig, cfg);
     }
 };
 

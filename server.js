@@ -4,9 +4,12 @@
  * server
  *
  */
+'use strict';
+
+// env
+require('dotenv-safe').load();
 
 // deps
-var fs = require('fs');
 var net = require('net');
 var lodash = require('lodash');
 

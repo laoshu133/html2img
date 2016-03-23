@@ -1,20 +1,21 @@
 .DS_Store
 
 # node
+npm-debug.log
 node_modules
+.env
 
 # build
-__out
 __build
+__build.lock
 
 # IDE
 .idea
 
+*.sublime-project
 *.sublime-workspace
+
 sftp-config.json
 sftp-settings.json
-config.json
 
-#atrTemplate
-.cache/
-
+__out

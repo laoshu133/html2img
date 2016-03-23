@@ -40,20 +40,20 @@ node client-getfile.js
 
 ```
 {
-  "id": null,
-  "action": "makeshot",
-  "description": "任务说明",
-  "htmlTpl": "tb_desc.html",
   "url": null,
   "content": "",
-  "outPath": "__out",
-  "wrapSelector": ".hlg_flag_wrap_panel",
-  "replaceSelector": ".hlg_flag_replace_place",
+  "action": "makeshot",
+  "htmlTpl": "tb_desc.html",
+  "actionOptions": null,
+  "optimizeImage": false,
+  "imageType": "png",
+  "imageQuality": 90,
+  "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
+  "wrapSelector": ".shot_flag_wrap_panel",
   "horsemanConfig": {
-    "phantomPath": "/usr/local/bin/phantomjs"
-  },
-  "horsemanHeaders": {
-    "Referer": "http://tbgr.huanleguang.com/_thumb"
+    "clientScripts": ["lib/client-tools.js"],
+    "resourceTimeout": 5200,
+    "injectJquery": false
   },
   "viewport": null,
   "size": null
