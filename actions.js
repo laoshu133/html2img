@@ -3,13 +3,14 @@
  *
  * actions
  */
+'use strict';
 
 // deps
 var fs = require('fs');
 var path = require('path');
 var rimraf = require('rimraf');
 var lodash = require('lodash');
-var Horseman = require('node-horseman');
+var Horseman = require('./horseman');
 
 var tools = require('./lib/tools');
 var processers = require('./lib/processers');
@@ -42,50 +43,19 @@ var actions = {
         });
 
         return horseman.ready.then(function() {
-            var slice = Array.prototype.slice;
-
             // page, phantomjs page
             var page = horseman.page;
 
-            // render, support quality
-            var _render = page.render;
-            page.render = function(dest, options, callback) {
-                if(typeof options === 'function') {
-                    callback = options;
-                    options = null;
-                }
-
-                // default quality
-                options = lodash.merge({
-                    quality: config.imageQuality
-                }, options);
-
-                return _render.call(page, dest, options, callback);
-            };
-
-            // clean fix, not store request
-            page.onResourceReceived = function(/* res */) {
-                // tools.log('ResourceReceived', res.status, res.url);
-            };
-
             // debug
             page.onConsoleMessage = function() {
-                var args = slice.call(arguments);
+                var args = lodash.toArray(arguments);
                 args.unshift('Actions.page.console');
 
                 tools.log.apply(tools, args);
             };
 
-            // custom settings
-            page.get('settings', function(err, settings) {
-                settings = lodash.merge(settings, {
-                    resourceTimeout: process.env.RESOURCE_TIMEOUT
-                });
-
-                page.set('settings', settings, function() {
-                    tools.log('Actions.init.done');
-                });
-            });
+            // ready
+            tools.log('Actions.init.done');
         });
     },
     // config
@@ -225,7 +195,7 @@ var actions = {
         // config
         this.processConfig(config);
 
-        processers.makeshot(config)
+        return processers.makeshot(config)
         // optimizeImage
         .then(function(res) {
             return self.optimizeImage(res, config);
@@ -254,7 +224,7 @@ var actions = {
         // config
         this.processConfig(config);
 
-        processers.makelist(config)
+        return processers.makelist(config)
         // optimizeImage
         .then(function(res) {
             return self.optimizeImage(res, config);
@@ -274,57 +244,6 @@ var actions = {
         });
     }
 };
-
-
-// Horseman shim
-(function() {
-    // var HorsemanPromise = require('node-horseman/lib/HorsemanPromise');
-    // var _pageMaker = Horseman.prototype.pageMaker;
-
-    // Horseman.prototype.pageMaker = function() {
-    //     var self = this;
-    //     var cwd = __dirname;
-    //     var options = this.options;
-    //     var scripts = options.clientScripts;
-
-    //     console.log('xxx000', typeof _pageMaker);
-
-    //     return _pageMaker.apply(this, arguments)
-    //     .then(function() {
-    //         if(!scripts || !scripts.length) {
-    //             return;
-    //         }
-
-    //         var page = self.page;
-    //         var _onLoadFinished = page.onLoadFinished;
-
-    //         page.onLoadFinished = function() {
-    //             console.log('xxx', typeof _onLoadFinished);
-    //             _onLoadFinished.apply(this, arguments);
-
-    //             self.ready.then(function() {
-    //                 var dfs = scripts.map(function(js) {
-    //                     var p = path.join(cwd, js);
-
-    //                     return new HorsemanPromise(function(resolve) {
-    //                         page.injectJs(p, function(err) {
-    //                             if(err) {
-    //                                 tools.error(err);
-    //                             }
-
-    //                             resolve();
-    //                         });
-    //                     });
-    //                 });
-
-    //                 var promise = HorsemanPromise.all(dfs);
-
-    //                 self.ready = promise;
-    //             });
-    //         };
-    //     });
-    // };
-})();
 
 
 // clean horseman

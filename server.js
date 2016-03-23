@@ -1,8 +1,7 @@
 /**
- * hlg-html2img
+ * html2img
  *
  * server
- *
  */
 'use strict';
 
@@ -12,9 +11,11 @@ require('dotenv-safe').load();
 // deps
 var net = require('net');
 
+var queue = require('./lib/queue');
 var tools = require('./lib/tools');
-var actions = require('./actions');
 var SocketAdp = require('./lib/SocketAdp');
+
+var actions = require('./actions');
 
 // config
 var configUtils = require('./config');
@@ -22,65 +23,10 @@ var configUtils = require('./config');
 // start
 console.log('Start Server...');
 
-// queue
-var queue = {
-    stacks: [],
-    status: 'ready',
-    add: function(stack) {
-        this.stacks.push(stack);
-
-        this.next();
-    },
-    next: function() {
-        var self = this;
-        var stacks = this.stacks;
-
-        if(this.status !== 'ready' || !stacks.length) {
-            return;
-        }
-
-        var stack = stacks.shift();
-        var client = stack.client;
-        var cfg = stack.config;
-
-        var actionFn = actions[cfg.action];
-        if(!actionFn) {
-            return cb();
-        }
-
-        this.status = 'processing';
-        actionFn.call(actions, client, cfg, cb);
-
-        function cb(err, type, result) {
-            if(!err) {
-                var clientAdp = new SocketAdp.Client(client);
-
-                clientAdp.on('error', function(e) {
-                    tools.error('SocketAdp Error:', e.type);
-                });
-
-                clientAdp.send(type || 'result', result);
-            }
-            else {
-                tools.error('id:',  cfg.id, ', uid:', client.uid, err);
-                // throw err;
-
-                client.end();
-            }
-
-            // 异步处理，规避粘包
-            process.nextTick(function() {
-                self.status = 'ready';
-                self.next();
-            });
-        }
-    }
-};
-
 var io = net.Server();
 var server = new SocketAdp(io);
 
-server.on('data', function(e) {
+server.on('data', e => {
     var config = null;
     var client = e.target;
 
@@ -109,17 +55,42 @@ server.on('data', function(e) {
     // fill config
     config = configUtils.getConfig(config);
 
+    // add to queue
     queue.add({
         client: client,
-        config: config
+        config: config,
+        handle: () => {
+            var cfg = config;
+
+            return actions.invoke(cfg.action, client, cfg)
+            .then(result => {
+                var clientAdp = new SocketAdp.Client(client);
+
+                clientAdp.on('error', function(e) {
+                    tools.error('SocketAdp Error:', e.type);
+                });
+
+                var replyAction = result && result.action;
+                if(!replyAction) {
+                    cfg.action + '_result';
+                }
+
+                clientAdp.send(replyAction, result);
+            })
+            .catch(ex => {
+                tools.error('id:',  cfg.id, ', uid:', client.uid, ex);
+
+                client.end();
+            });
+        }
     });
 })
-.on('error', function(e) {
+.on('error', e => {
     tools.error('SocketAdp Error:', e.type);
 });
 
 // init actions， 优先启动 phantomjs
-actions.init().then(function() {
+actions.init().then(() => {
     var env = process.env;
     var hostname = env.NODE_HOST.replace('*', '').trim();
 
@@ -131,12 +102,12 @@ actions.init().then(function() {
 
     console.info(msgLabel, msgPort, msgHost);
 
-}, function(ex) {
+}, ex => {
     console.error('Server start error', ex);
 });
 
 // error catch
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', err => {
     console.error('Server uncaughtException', err);
     throw err;
 });
