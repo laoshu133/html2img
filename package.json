@@ -24,6 +24,7 @@
     "pngquant-bin": "^3.1.0",
     "jpegtran-bin": "^3.0.6",
     "dotenv-safe": "^2.2.0",
-    "bluebird": "^3.3.4"
+    "bluebird": "^3.3.4",
+    "winston": "^2.2.0"
   }
 }

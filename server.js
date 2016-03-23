@@ -61,26 +61,40 @@ server.on('data', e => {
         config: config,
         handle: () => {
             var cfg = config;
-
-            return actions.invoke(cfg.action, cfg, client)
-            .then(result => {
+            var replyAction = function(result, action) {
                 var clientAdp = new SocketAdp.Client(client);
 
                 clientAdp.on('error', function(e) {
                     tools.error('SocketAdp Error:', e.type);
                 });
 
-                var replyAction = result && result.action;
-                if(!replyAction) {
-                    cfg.action + '_result';
+                if(!action) {
+                    action = cfg.action + '_result';
                 }
 
-                clientAdp.send(replyAction, result);
+                clientAdp.send(action, result);
+            };
+
+            return actions.invoke(cfg.action, cfg, client)
+            .then(result => {
+                replyAction({
+                    status: 'success',
+                    data: result
+                });
             })
             .catch(ex => {
                 tools.error('id:',  cfg.id, ', uid:', client.uid, ex);
 
-                client.end();
+                replyAction({
+                    status: 'error',
+                    // code: ex.code || -1,
+                    message: ex.message,
+                    data: null
+                });
+
+                if(process.env.NODE_ENV === 'development') {
+                    console.error(ex);
+                }
             });
         }
     });
