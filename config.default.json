@@ -11,7 +11,6 @@
   "wrapSelector": ".shot_flag_wrap_panel",
   "horsemanConfig": {
     "clientScripts": ["lib/client-tools.js"],
-    "resourceTimeout": 5200,
     "injectJquery": false
   },
   "viewport": null,

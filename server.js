@@ -11,14 +11,13 @@ require('dotenv-safe').load();
 
 // deps
 var net = require('net');
-var lodash = require('lodash');
 
 var tools = require('./lib/tools');
 var actions = require('./actions');
 var SocketAdp = require('./lib/SocketAdp');
 
 // config
-var config = require('./config').getConfig();
+var configUtils = require('./config');
 
 // start
 console.log('Start Server...');
@@ -42,7 +41,7 @@ var queue = {
 
         var stack = stacks.shift();
         var client = stack.client;
-        var cfg = lodash.merge({}, config, stack.config);
+        var cfg = stack.config;
 
         var actionFn = actions[cfg.action];
         if(!actionFn) {
@@ -86,36 +85,29 @@ server.on('data', function(e) {
     var client = e.target;
 
     if(e.data && Buffer.isBuffer(e.data)) {
-        config = e.data.toString();
+        var cfg = e.data.toString();
 
         try {
-            config = JSON.parse(config);
+            config = JSON.parse(cfg);
         }
         catch(ex) {
             tools.error('Config parse error');
         }
     }
 
-    if(!config || !config.id) {
-        tools.error('Config and config.id required');
-
-        client.end();
-        return;
-    }
-
-    if(!config.action) {
-        config.action = e.type;
-    }
-
-    var action = config.action;
+    var action = config ? config.action : null;
     var actionFn = actions[action];
 
-    if(!actionFn) {
-        tools.error('No action defined, action =', config.action);
+    if(!action || !actionFn) {
+        var msg = 'No config.action, or config.action error, config.action=';
+        tools.error(msg, action);
 
         client.end();
         return;
     }
+
+    // fill config
+    config = configUtils.getConfig(config);
 
     queue.add({
         client: client,
@@ -128,11 +120,14 @@ server.on('data', function(e) {
 
 // init actions， 优先启动 phantomjs
 actions.init().then(function() {
-    io.listen(config.listenPort, config.listenHost);
+    var env = process.env;
+    var hostname = env.NODE_HOST.replace('*', '').trim();
+
+    io.listen(env.NODE_PORT, hostname || false);
 
     var msgLabel = 'Server Listening,';
-    var msgPort = 'port: ' + config.listenPort;
-    var msgHost = config.listenHost ? ', host: ' + config.listenHost : '';
+    var msgPort = 'port: ' + env.NODE_PORT;
+    var msgHost = hostname ? ', host: ' + hostname : '';
 
     console.info(msgLabel, msgPort, msgHost);
 
@@ -142,7 +137,7 @@ actions.init().then(function() {
 
 // error catch
 process.on('uncaughtException', function(err) {
-    console.error('Aerver uncaughtException', err);
+    console.error('Server uncaughtException', err);
     throw err;
 });
 

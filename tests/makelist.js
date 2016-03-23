@@ -11,14 +11,11 @@ var net = require('net');
 var path = require('path');
 var through = require('through2');
 
-var tools = require('../lib/tools');
 var SocketAdp = require('../lib/SocketAdp');
 
 // init
 console.log('Strat client...');
-tools.time('Client process');
 
-var type = 'makelist';
 var configs = [
     // 'demos/makelist.json',
     'demos/makelist-taobao.json',

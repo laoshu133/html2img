@@ -14,9 +14,6 @@ var Horseman = require('node-horseman');
 var tools = require('./lib/tools');
 var processers = require('./lib/processers');
 
-// config
-var config = require('./config').getConfig();
-
 var horseman = null;
 var actions = {
     // init
@@ -25,12 +22,12 @@ var actions = {
             return horseman.ready;
         }
 
-        var horsemanConfig = config.horsemanConfig;
+        // init Horseman (phantomjs)
+        tools.log('Actions.init');
 
-        // init Horseman(phantomjs)
-        tools.time('Actions.init');
-
-        horseman = new Horseman(horsemanConfig);
+        horseman = new Horseman({
+            Referer: process.env.REQUEST_REFERER
+        });
 
         // processers
         processers.init({
@@ -67,7 +64,7 @@ var actions = {
             };
 
             // clean fix, not store request
-            page.onResourceReceived = function(res) {
+            page.onResourceReceived = function(/* res */) {
                 // tools.log('ResourceReceived', res.status, res.url);
             };
 
@@ -80,22 +77,15 @@ var actions = {
             };
 
             // custom settings
-            var resourceTimeout = horsemanConfig.resourceTimeout;
-            if(resourceTimeout) {
-                var customSettings = {
-                    resourceTimeout: resourceTimeout
-                };
-
-                // tools.time('Actions.init.setting');
-                page.get('settings', function(err, settings) {
-                    settings = lodash.merge(settings, customSettings);
-
-                    page.set('settings', settings, function() {
-                        // tools.timeEnd('Actions.init.setting');
-                        tools.timeEnd('Actions.init');
-                    });
+            page.get('settings', function(err, settings) {
+                settings = lodash.merge(settings, {
+                    resourceTimeout: process.env.RESOURCE_TIMEOUT
                 });
-            }
+
+                page.set('settings', settings, function() {
+                    tools.log('Actions.init.done');
+                });
+            });
         });
     },
     // config
@@ -105,12 +95,20 @@ var actions = {
         }
 
         var cwd = __dirname;
+        var imgExtMap = {
+            'jpeg': '.jpg',
+            'jpg': '.jpg',
+            'png': '.png'
+        };
         var imgExt = config.imageExtname;
+        if(!imgExt) {
+            imgExt = imgExtMap[config.imageType || 'png'];
+        }
 
         // out config
         var outDir = config.id || 'tmp';
         var outName = config.name || 'out';
-        var outPath = path.join(config.outPath, outDir);
+        var outPath = path.join(process.env.OUT_PATH, outDir);
         if(outPath.slice(0, 1) !== '/') {
             outPath = path.join(cwd, outPath);
         }
@@ -127,8 +125,9 @@ var actions = {
         };
 
         // content
-        if(config.content && !config.url) {
+        if(config.content) {
             var inPath = path.join(outPath, 'in.html');
+            console.log('xxx', config.htmlTpl);
             var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
             var htmlTpl = fs.readFileSync(htmlTplPath);
 
@@ -150,7 +149,7 @@ var actions = {
         // config
         this.processConfig(config);
 
-        tools.time('Actions.clean');
+        tools.log('Actions.clean');
 
         var url = config.path || config.out.path;
         var type = 'clean_result';
@@ -170,7 +169,7 @@ var actions = {
                 code = -2;
             }
 
-            tools.timeEnd('Actions.clean');
+            tools.log('Actions.clean.done');
 
             callback(err, type, code);
         });
@@ -180,7 +179,7 @@ var actions = {
         // config
         this.processConfig(config);
 
-        tools.time('Actions.getfile');
+        tools.log('Actions.getfile');
 
         var url = config.url;
         if(!url) {
@@ -198,7 +197,7 @@ var actions = {
                 return;
             }
 
-            tools.timeEnd('Actions.getfile');
+            tools.log('Actions.getfile.done');
 
             callback(null, 'file', buf);
         });
