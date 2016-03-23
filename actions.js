@@ -10,9 +10,10 @@ var fs = require('fs');
 var path = require('path');
 var rimraf = require('rimraf');
 var lodash = require('lodash');
-var Horseman = require('./horseman');
+var Promise = require('bluebird');
 
 var tools = require('./lib/tools');
+var Horseman = require('./lib/horseman');
 var processers = require('./lib/processers');
 
 var horseman = null;
@@ -57,6 +58,14 @@ var actions = {
             // ready
             tools.log('Actions.init.done');
         });
+    },
+    // invoke
+    invoke: function(action, config, client) {
+        if(!this[action]) {
+            return Promise.reject(new Error('No action defined'));
+        }
+
+        return this[action](config, client);
     },
     // config
     processConfig: function(config) {
@@ -182,14 +191,14 @@ var actions = {
             image: ret.image
         })
         .then(function(newImage) {
-            ret.old_image = ret.image;
+            ret.full_image = ret.image;
             ret.image = newImage;
 
             return ret;
         });
     },
     // 缩略图
-    makeshot: function(client, config, callback) {
+    makeshot: function(config) {
         var self = this;
 
         // config
@@ -197,24 +206,15 @@ var actions = {
 
         return processers.makeshot(config)
         // optimizeImage
-        .then(function(res) {
-            return self.optimizeImage(res, config);
+        .then(function(ret) {
+            return self.optimizeImage(ret, config);
         })
         // fit data
-        .then(function(res) {
-            var data = {
-                status: 'success',
-                message: '',
-                data: res
-            };
-
+        .then(function(ret) {
             // 兼容旧接口
-            res.outFile = res.image;
+            ret.outFile = ret.image;
 
-            callback(null, 'makeshot_result', data);
-        })
-        .catch(function(err) {
-            callback(err);
+            return ret;
         });
     },
     // 新关联列表（待完善）

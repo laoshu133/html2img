@@ -62,7 +62,7 @@ server.on('data', e => {
         handle: () => {
             var cfg = config;
 
-            return actions.invoke(cfg.action, client, cfg)
+            return actions.invoke(cfg.action, cfg, client)
             .then(result => {
                 var clientAdp = new SocketAdp.Client(client);
 
