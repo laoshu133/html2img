@@ -17,9 +17,9 @@ var SocketAdp = require('../lib/SocketAdp');
 
 var configs = [
     'demos/makeshot.json',
-    'demos/makeshot-big.json',
-    'demos/makeshot-wireless.json',
-    'demos/makeshot-html-test.html'
+    // 'demos/makeshot-big.json',
+    // 'demos/makeshot-wireless.json',
+    // 'demos/makeshot-html-test.html'
 ];
 
 var io = net.connect({

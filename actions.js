@@ -28,7 +28,8 @@ var actions = {
         tools.log('Actions.init');
 
         horseman = new Horseman({
-            Referer: process.env.REQUEST_REFERER
+            phantomPath: process.env.PHANTOMJS_PATH
+            // Referer: process.env.REQUEST_REFERER
         });
 
         // processers
@@ -38,7 +39,10 @@ var actions = {
 
         // error
         horseman.on('error', function(msg, trace) {
-            tools.error('Horseman Error:', msg, trace);
+            var err = new Error('[Horseman Error] ' + msg);
+            err.trace = trace;
+
+            tools.error(err);
 
             process.exit(1);
         });
@@ -73,7 +77,6 @@ var actions = {
             return config;
         }
 
-        var cwd = __dirname;
         var imgExtMap = {
             'jpeg': '.jpg',
             'jpg': '.jpg',
@@ -87,10 +90,8 @@ var actions = {
         // out config
         var outDir = config.id || 'tmp';
         var outName = config.name || 'out';
-        var outPath = path.join(process.env.OUT_PATH, outDir);
-        if(outPath.slice(0, 1) !== '/') {
-            outPath = path.join(cwd, outPath);
-        }
+        var cwd = path.relative(__dirname, '.');
+        var outPath = path.join(cwd,  process.env.OUT_PATH, outDir);
 
         // mkdir
         tools.mkDeepDir(outPath);

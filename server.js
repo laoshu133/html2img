@@ -37,7 +37,8 @@ server.on('data', e => {
             config = JSON.parse(cfg);
         }
         catch(ex) {
-            tools.error('Config parse error');
+            tools.error(ex);
+            tools.log('Config parse error');
         }
     }
 
@@ -46,7 +47,7 @@ server.on('data', e => {
 
     if(!action || !actionFn) {
         var msg = 'No config.action, or config.action error, config.action=';
-        tools.error(msg, action);
+        tools.error(new Error(msg + action));
 
         client.end();
         return;
@@ -64,8 +65,8 @@ server.on('data', e => {
             var replyAction = function(result, action) {
                 var clientAdp = new SocketAdp.Client(client);
 
-                clientAdp.on('error', function(e) {
-                    tools.error('SocketAdp Error:', e.type);
+                clientAdp.on('error', function(ex) {
+                    tools.error(ex);
                 });
 
                 if(!action) {
