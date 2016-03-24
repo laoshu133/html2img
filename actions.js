@@ -112,8 +112,8 @@ var actions = {
 
             var content = tools.processHTML(config.content);
             var html = tools.fill(htmlTpl, {
-                content: content,
-                cwd: cwd
+                cwd: path.resolve(cwd),
+                content: content
             });
 
             fs.writeFileSync(inPath, html);
@@ -158,20 +158,13 @@ var actions = {
         tools.log('Actions.getfile');
 
         var url = config.path;
-        // if(!url) {
-        //     url = config.out.image;
-        // }
-
-        console.log(111, url, fs.existsSync(url));
 
         return new Promise(resolve => {
             fs.exists(url, exists => {
-                console.log(2333, exists);
                 resolve(exists);
             });
         })
         .then(exists => {
-            console.log('xx', exists);
             if(!exists) {
                 var msg = 'No such file or directory, ' + url;
 
@@ -222,6 +215,7 @@ var actions = {
             ret.outFile = ret.image;
 
             tools.log('Actions.makeshot.done');
+            tools.log('mmmm', fs.existsSync(ret.image));
 
             return ret;
         });
