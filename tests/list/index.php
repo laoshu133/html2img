@@ -73,9 +73,9 @@
 
         if(listData.status === 'success') {
             var html = listData.html;
-            var extName = config.imageExtname || '.png';
+            var extName = config.imageType || 'png';
             var imgUrl = '../../__out/' + config.id;
-            imgUrl += '/out' + extName;
+            imgUrl += '/out.' + extName;
 
             html = html.replace('{imgUrl}', imgUrl);
 

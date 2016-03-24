@@ -44,12 +44,12 @@ server.on('data', e => {
         }
     }
 
-    var action = config ? config.action : null;
+    var action = config && config.action || e.type;
     var actionFn = actions[action];
 
-    if(!action || !actionFn) {
-        var msg = 'No config.action, or config.action error, config.action=';
-        tools.error(new Error(msg + action));
+    if(!actionFn) {
+        var msg = 'No action defined, action=' + action;
+        tools.error(new Error(msg));
 
         client.end();
         return;
@@ -57,6 +57,7 @@ server.on('data', e => {
 
     // fill config
     config = configUtils.getConfig(config);
+    config.action = action;
 
     // add to queue
     queue.add({
