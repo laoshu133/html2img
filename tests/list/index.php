@@ -63,7 +63,7 @@
 
         $('.main').html(config.content);
 
-        var listData = dsTools.covertList({
+        var listData = shotTools.covertList({
             type: config.listOutType || 'map',
             imageBlank: config.imageBlank,
             selector: '.main'

@@ -1,6 +1,5 @@
 {
   "extName": ".jpg",
-  "viewport": [1920, 1024],
-  "wrapSelector": ".editor-canvas",
-  "url": "http://www.danchaofan.dev/design/mirror?templet_id=1"
+  "wrapSelector": ".editor-layout",
+  "url": "http://www.danchaofan.dev/design/mirror?templet_id=5"
 }

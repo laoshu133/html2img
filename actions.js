@@ -55,10 +55,10 @@ var actions = {
 
             // debug
             page.onConsoleMessage = function() {
-                var args = lodash.toArray(arguments);
-                args.unshift('Actions.page.console');
+                // var args = lodash.toArray(arguments);
+                // args.unshift('Actions.page.console');
 
-                tools.log.apply(tools, args);
+                // tools.log.apply(tools, args);
             };
 
             // ready
