@@ -26,6 +26,7 @@
     "dotenv-safe": "^2.2.0",
     "bluebird": "^3.3.4",
     "winston": "^2.2.0",
-    "filesize": "^3.2.1"
+    "filesize": "^3.2.1",
+    "jquery": "^2.2.2"
   }
 }

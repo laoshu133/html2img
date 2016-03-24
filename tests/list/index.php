@@ -29,7 +29,7 @@
     }
     </style>
     <style id="J_Taobao_css"></style>
-    <script src="../../lib/jquery.min.js"></script>
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../../lib/client-tools.js"></script>
 </head>
 <body>

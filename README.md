@@ -43,18 +43,14 @@ node client-getfile.js
   "url": null,
   "content": "",
   "action": "makeshot",
-  "htmlTpl": "tb_desc.html",
   "actionOptions": null,
+  "htmlTpl": "taobao_desc.html",
   "optimizeImage": false,
   "imageType": "png",
   "imageQuality": 90,
   "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
   "wrapSelector": ".shot_flag_wrap_panel",
-  "horsemanConfig": {
-    "clientScripts": ["lib/client-tools.js"],
-    "resourceTimeout": 5200,
-    "injectJquery": false
-  },
+  "requestHeaders": null,
   "viewport": null,
   "size": null
 }

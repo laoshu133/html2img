@@ -99,7 +99,7 @@ var actions = {
         tools.mkDeepDir(outPath);
 
         config.out = {
-            name: '',
+            // name: '',
             path: outPath,
             dirname: outDir,
             html: path.join(outPath, outName + '.html'),
@@ -199,10 +199,10 @@ var actions = {
     makeshot: function(config) {
         var self = this;
 
+        tools.log('Actions.makeshot');
+
         // config
         this.processConfig(config);
-
-        tools.log('Actions.makeshot');
 
         return processers.makeshot(config)
         // optimizeImage
@@ -210,39 +210,30 @@ var actions = {
             return self.optimizeImage(ret, config);
         })
         // fit data
-        .then(function(ret) {
+        .tap(function(ret) {
             // 兼容旧接口
             ret.outFile = ret.image;
 
             tools.log('Actions.makeshot.done');
-
-            return ret;
         });
     },
     // 新关联列表（待完善）
-    makelist: function(client, config, callback) {
+    makelist: function(config) {
         var self = this;
+
+        tools.log('Actions.makelist');
 
         // config
         this.processConfig(config);
 
         return processers.makelist(config)
         // optimizeImage
-        .then(function(res) {
-            return self.optimizeImage(res, config);
+        .then(ret => {
+            return self.optimizeImage(ret, config);
         })
         // fit data
-        .then(function(res) {
-            var data = {
-                status: 'success',
-                message: '',
-                data: res
-            };
-
-            callback(null, 'makelist_result', data);
-        })
-        .catch(function(err) {
-            callback(err);
+        .tap(() => {
+            tools.log('Actions.makelist.done');
         });
     }
 };

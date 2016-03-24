@@ -64,26 +64,33 @@ server.on('data', e => {
         config: config,
         handle: () => {
             var cfg = config;
-            var replyAction = function(result, action) {
+            var replyAction = function(err, data) {
                 var clientAdp = new SocketAdp.Client(client);
 
                 clientAdp.on('error', function(ex) {
                     tools.error(ex);
                 });
 
-                if(!action) {
-                    action = cfg.action + '_result';
+                var action = cfg.action;
+                if(err) {
+                    action += '_error';
+
+                    clientAdp.send(action, {
+                        status: 'error',
+                        message: err.message,
+                        data: data
+                    });
+
+                    return;
                 }
 
-                clientAdp.send(action, result);
+                action += '_result';
+                clientAdp.send(action, data);
             };
 
             return actions.invoke(cfg.action, cfg, client)
             .then(result => {
-                replyAction({
-                    status: 'success',
-                    data: result
-                });
+                replyAction(null, result);
             })
             .catch(ex => {
                 tools.error(ex, {
@@ -93,12 +100,10 @@ server.on('data', e => {
                 // tools.info('Action invoke error, uid=', client.uid);
 
                 replyAction({
-                    status: 'error',
-                    // code: ex.code || -1,
-                    message: ex.message,
-                    data: null
-                });
+                    message: ex.message
+                }, null);
 
+                // debug
                 if(process.env.NODE_ENV === 'development') {
                     console.error(ex);
                 }

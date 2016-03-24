@@ -36,28 +36,35 @@ var client = new SocketAdp(io);
 
 client.on('data', function(e) {
     var dataLen = e.data.length;
-    var ret = JSON.parse(e.data);
-
-    console.log('\n---'+ e.type +'--'+ dataLen +'--'+ tools.formatFilesize(dataLen) +'--');
-
-    if(ret.status !== 'success') {
-        console.error('Got an error!');
-        console.error(JSON.stringify(ret));
-    }
+    var data = e.data;
 
     tools.log('Client.ondata', e.type);
 
-    if(e.type === 'makeshot_result') {
-        console.log(JSON.stringify(ret));
+    console.log('\n---'+ e.type +'--'+ dataLen +'--'+ tools.formatFilesize(dataLen) +'--');
 
-        getFile(ret.data.image);
+    // error handle
+    if(/error/.test(e.type)) {
+        console.error('Got an error!');
+        console.error(data.toString());
+
+        makeshot();
+        return;
+    }
+
+    // result handle
+    if(e.type === 'makeshot_result') {
+        data = JSON.parse(data);
+        console.log(JSON.stringify(data));
+
+        getFile(data.image);
     }
     else if(e.type === 'getfile_result'){
         // console.log(e.raw.slice(0, 40).toString());
         // console.log(e.data.slice(0, 40));
         console.log('\n');
 
-        var testOutPath = '/Users/mikongge/Downloads/out.png';
+        // test write file
+        var testOutPath = path.join(process.env.OUT_PATH, 'out.png');
         fs.writeFileSync(testOutPath, e.data, {
             encoding: 'binary'
         });
@@ -84,7 +91,7 @@ function makeShot() {
         return;
     }
 
-    console.log('start makeshot - '+ (count++));
+    console.log('start makeshot - '+ (++count));
     tools.log('Client.makeshot');
 
     var relativePath = path.relative(process.cwd(), __dirname + '/..');
@@ -100,6 +107,7 @@ function getFile(path) {
 
     client.send('getfile', {
         action: 'getfile',
+        keepFiles: true,
         path: path
     });
 }
