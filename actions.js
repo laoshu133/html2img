@@ -173,10 +173,8 @@ var actions = {
 
             return fs.readFileAsync(url);
         })
-        .then(buf => {
+        .tap(buf => {
             tools.log('Actions.getfile.done');
-
-            return buf;
         });
     },
     // 压缩图片
@@ -215,7 +213,6 @@ var actions = {
             ret.outFile = ret.image;
 
             tools.log('Actions.makeshot.done');
-            tools.log('mmmm', fs.existsSync(ret.image));
 
             return ret;
         });

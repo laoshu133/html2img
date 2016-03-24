@@ -13,13 +13,14 @@ var fs = require('fs');
 var net = require('net');
 var path = require('path');
 
+var tools = require('../lib/tools');
 var SocketAdp = require('../lib/SocketAdp');
 
 var configs = [
     'demos/makeshot.json',
-    // 'demos/makeshot-big.json',
-    // 'demos/makeshot-wireless.json',
-    // 'demos/makeshot-html-test.html'
+    'demos/makeshot-big.json',
+    'demos/makeshot-wireless.json',
+    'demos/makeshot-html-test.html'
 ];
 
 var io = net.connect({
@@ -36,12 +37,14 @@ var client = new SocketAdp(io);
 client.on('data', function(e) {
     var ret = JSON.parse(e.data);
 
-    console.log('\n---'+ e.type +'--'+ e.data.length + '---');
+    console.log('\n---'+ e.type +'--'+ ret.length +'--'+ tools.formatFilesize(ret.length) +'--');
 
     if(ret.status !== 'success') {
         console.error('Got an error!');
         console.error(JSON.stringify(ret));
     }
+
+    tools.log('Client.ondata', e.type);
 
     if(e.type === 'makeshot_result') {
         console.log(JSON.stringify(ret));
@@ -75,7 +78,8 @@ function makeShot() {
         return;
     }
 
-    console.log('start makeshot ['+ (count++) +']');
+    console.log('start makeshot - '+ (count++));
+    tools.log('Client.makeshot');
 
     var relativePath = path.relative(process.cwd(), __dirname + '/..');
     cfgPath = path.join(relativePath, cfgPath);
@@ -86,6 +90,7 @@ function makeShot() {
 
 function getFile(path) {
     console.log('\n-------Getfile-------\n path=', path);
+    tools.log('Client.getfile');
 
     client.send('getfile', {
         action: 'getfile',
