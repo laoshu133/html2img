@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "filesize": "^3.2.1"
+  }
+}

@@ -5,16 +5,16 @@
  *
  */
 
+// env
+require('dotenv-safe').load();
+
 // deps
 var fs = require('fs');
 var net = require('net');
 var path = require('path');
-var through = require('through2');
 
+var tools = require('../lib/tools');
 var SocketAdp = require('../lib/SocketAdp');
-
-// init
-console.log('Strat client...');
 
 var configs = [
     // 'demos/makelist.json',
@@ -28,24 +28,29 @@ var io = net.connect({
     port: 3000
 });
 
+// init
+console.log('Strat client...');
+
 var client = new SocketAdp(io);
 
-var lastConfig;
-var lastResult;
-
 client.on('data', function(e) {
-    lastResult = e.data;
+    var ret = JSON.parse(e.data);
 
-    console.log('\n---'+ e.type +'--'+ e.data.length + '---');
+    console.log('\n---'+ e.type +'--'+ ret.length +'--'+ tools.formatFilesize(ret.length) +'--');
+
+    if(ret.status !== 'success') {
+        console.error('Got an error!');
+        console.error(JSON.stringify(ret));
+    }
+
+    tools.log('Client.ondata', e.type);
 
     if(e.type === 'makelist_result') {
-        console.log(e.data.toString());
+        console.log(JSON.stringify(ret));
 
         getFile();
     }
     else {
-        // console.log(e.raw.slice(0, 40).toString());
-        // console.log(e.data.slice(0, 40));
         console.log('\n');
 
         makelist();
@@ -58,6 +63,7 @@ io.on('connect', function() {
     makelist();
 });
 
+// makelist
 var count = 0;
 function makelist() {
     var cfgPath = configs.shift();
@@ -69,53 +75,37 @@ function makelist() {
         return;
     }
 
-    console.log('start makelist ['+ (count++) +']');
+    console.log('start makelist - '+ (count++));
+    tools.log('Client.makelist');
 
     var relativePath = path.relative(process.cwd(), __dirname + '/..');
     cfgPath = path.join(relativePath, cfgPath);
 
-    getConfig(cfgPath, function(data) {
-        var cfg = JSON.parse(data.toString());
-
-        lastConfig = cfg;
-        client.send('makelist', cfg);
-    });
+    var cfg = getConfig(cfgPath);
+    client.send('makelist', cfg);
 }
 
 function getFile() {
-    var cfg = lastConfig;
-    if(!cfg) {
-        console.log('Getfile, No cfg...');
-        io.end();
+    console.log('\n-------Getfile-------\n path=', path);
+    tools.log('Client.getfile');
 
-        return;
-    }
-
-    var res = JSON.parse(lastResult.toString());
-
-    console.log(cfg.id, res.data.image);
     client.send('getfile', {
-        id: cfg.id,
-        url: res.data.image
+        action: 'getfile',
+        path: path
     });
 }
 
-function getConfig(configPath, callback) {
-    var rs = fs.createReadStream(configPath);
+function getConfig(configPath) {
+    var buf = fs.readFileSync(configPath);
+    var config = buf.toString();
 
-    var len = 0;
-    var data = [];
+    if(/\.html$/i.test(configPath)) {
+        config = JSON.stringify({
+            action: 'makeshot',
+            htmlTpl: 'list_wireless.html',
+            content: config
+        });
+    }
 
-    rs.pipe(through(function(chunk, enc, cb) {
-        len += chunk.length;
-        data.push(chunk);
-
-        cb();
-    }));
-
-    rs.on('end', function() {
-        var config = Buffer.concat(data, len);
-
-        callback(config);
-    });
+    return config;
 }
