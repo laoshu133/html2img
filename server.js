@@ -15,14 +15,16 @@ var queue = require('./lib/queue');
 var tools = require('./lib/tools');
 var SocketAdp = require('./lib/SocketAdp');
 
-var actions = require('./actions');
-
 // config
 var configUtils = require('./config');
 
 // start
 console.log('Start Server...');
 
+// actions
+var actions = require('./actions');
+
+// io
 var io = net.Server();
 var server = new SocketAdp(io);
 

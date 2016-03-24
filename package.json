@@ -25,6 +25,7 @@
     "jpegtran-bin": "^3.0.6",
     "dotenv-safe": "^2.2.0",
     "bluebird": "^3.3.4",
-    "winston": "^2.2.0"
+    "winston": "^2.2.0",
+    "filesize": "^3.2.1"
   }
 }

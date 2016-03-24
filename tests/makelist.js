@@ -34,9 +34,10 @@ console.log('Strat client...');
 var client = new SocketAdp(io);
 
 client.on('data', function(e) {
+    var retLen = e.data.length;
     var ret = JSON.parse(e.data);
 
-    console.log('\n---'+ e.type +'--'+ ret.length +'--'+ tools.formatFilesize(ret.length) +'--');
+    console.log('\n---'+ e.type +'--'+ retLen +'--'+ tools.formatFilesize(retLen) +'--');
 
     if(ret.status !== 'success') {
         console.error('Got an error!');
@@ -102,7 +103,7 @@ function getConfig(configPath) {
     if(/\.html$/i.test(configPath)) {
         config = JSON.stringify({
             action: 'makeshot',
-            htmlTpl: 'list_wireless.html',
+            htmlTpl: 'hlg_wireless.html',
             content: config
         });
     }

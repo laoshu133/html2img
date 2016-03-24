@@ -7,10 +7,12 @@
 
 // deps
 var path = require('path');
-var rimraf = require('rimraf');
 var lodash = require('lodash');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
+
+// rimraf
+fs.rimraf = Promise.promisify(require('rimraf'));
 
 var tools = require('./lib/tools');
 var Horseman = require('./lib/horseman');
@@ -124,40 +126,35 @@ var actions = {
         return config;
     },
     // 清理目录
-    clean: function(client, config, callback) {
-        // config
-        this.processConfig(config);
+    clean: function(config) {
+        var url = config.path;
 
         tools.log('Actions.clean');
 
-        var url = config.path || config.out.path;
-        var type = 'clean_result';
+        return new Promise(resolve => {
+            fs.exists(url, exists => {
+                resolve(exists);
+            });
+        })
+        .then(exists => {
+            if(!exists) {
+                var msg = 'No such file or directory, ' + url;
 
-        tools.log('Actions.clean', url);
-
-        if(!fs.existsSync(url)) {
-            var msg = 'No such file or directory, ' + url;
-            var err = new Error(msg);
-
-            return callback(err, type, -1);
-        }
-
-        rimraf(url, function(err) {
-            var code = 0;
-            if(err) {
-                code = -2;
+                throw new Error(msg);
             }
 
+            return fs.rimraf(url);
+        })
+        .tap(() => {
             tools.log('Actions.clean.done');
-
-            callback(err, type, code);
         });
     },
     // 取文件
     getfile: function(config) {
-        tools.log('Actions.getfile');
-
+        var self = this;
         var url = config.path;
+
+        tools.log('Actions.getfile');
 
         return new Promise(resolve => {
             fs.exists(url, exists => {
@@ -173,7 +170,12 @@ var actions = {
 
             return fs.readFileAsync(url);
         })
-        .tap(buf => {
+        .tap(() => {
+            if(!config.keepFiles) {
+                return self.clean(config);
+            }
+        })
+        .tap(() => {
             tools.log('Actions.getfile.done');
         });
     },

@@ -35,9 +35,10 @@ console.log('Strat client...');
 var client = new SocketAdp(io);
 
 client.on('data', function(e) {
+    var dataLen = e.data.length;
     var ret = JSON.parse(e.data);
 
-    console.log('\n---'+ e.type +'--'+ ret.length +'--'+ tools.formatFilesize(ret.length) +'--');
+    console.log('\n---'+ e.type +'--'+ dataLen +'--'+ tools.formatFilesize(dataLen) +'--');
 
     if(ret.status !== 'success') {
         console.error('Got an error!');
@@ -51,10 +52,15 @@ client.on('data', function(e) {
 
         getFile(ret.data.image);
     }
-    else {
+    else if(e.type === 'getfile_result'){
         // console.log(e.raw.slice(0, 40).toString());
         // console.log(e.data.slice(0, 40));
         console.log('\n');
+
+        var testOutPath = '/Users/mikongge/Downloads/out.png';
+        fs.writeFileSync(testOutPath, e.data, {
+            encoding: 'binary'
+        });
 
         makeShot();
     }
@@ -105,7 +111,7 @@ function getConfig(configPath) {
     if(/\.html$/i.test(configPath)) {
         config = JSON.stringify({
             action: 'makeshot',
-            htmlTpl: 'list_wireless.html',
+            htmlTpl: 'hlg_wireless.html',
             content: config
         });
     }

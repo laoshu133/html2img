@@ -1,6 +1,6 @@
 {
     "action": "makeshot",
-    "htmlTpl": "list_wireless.html",
+    "htmlTpl": "hlg_wireless.html",
     "size": {
       "type": 21,
       "width": 640,
