@@ -1,6 +1,6 @@
 {
-  "name": "hlg-html2img",
-  "description": "hlg-html2img",
+  "name": "html2img",
+  "description": "html2img",
   "version": "0.1.0",
   "main": "server.js",
   "repository": {
