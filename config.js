@@ -29,18 +29,18 @@ var config = {
         this.currConfig = cfg;
     },
     getConfig: function(cfg) {
-        var ret = lodash.merge(ret, this.currConfig, cfg);
+        cfg = lodash.merge({}, this.currConfig, cfg);
 
-        if(!ret.id) {
-            ret.id = tools.uuid(ret.action);
+        if(!cfg.id) {
+            cfg.id = tools.uuid(cfg.action);
         }
 
         // 旧版，待废弃
-        if(!config.action) {
-            config.action = cfg.type;
+        if(!cfg.action) {
+            cfg.action = cfg.type;
         }
 
-        return ret;
+        return cfg;
     }
 };
 
