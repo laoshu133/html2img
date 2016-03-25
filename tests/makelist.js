@@ -18,7 +18,7 @@ var SocketAdp = require('../lib/SocketAdp');
 
 var configs = [
     // 'demos/makelist.json',
-    'demos/makelist-taobao.json',
+    // 'demos/makelist-taobao.json',
     'demos/makelist.json'
 ];
 
