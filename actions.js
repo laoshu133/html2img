@@ -46,7 +46,7 @@ var actions = {
 
             tools.error(err);
 
-            process.exit(1);
+            // process.exit(1);
         });
 
         return horseman.ready.then(function() {
