@@ -9,7 +9,7 @@
   "imageQuality": 90,
   "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
   "wrapSelector": ".shot_flag_wrap_panel",
-  "wrapFindTimeout": 1600,
+  "wrapFindTimeout": 4800,
   "requestHeaders": {
     "Referer": "http://tbgr.huanleguang.com/_shot"
   },
