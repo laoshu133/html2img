@@ -15,18 +15,18 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "debug": "^2.2.0",
-    "rimraf": "^2.5.2",
-    "lodash": "^4.6.1",
-    "through2": "^2.0.1",
-    "node-horseman": "^2.8.2",
-    "exec-buffer": "^2.0.1",
-    "pngquant-bin": "^3.1.0",
-    "jpegtran-bin": "^3.0.6",
-    "dotenv-safe": "^2.2.0",
     "bluebird": "^3.3.4",
-    "winston": "^2.2.0",
+    "debug": "^2.2.0",
+    "dotenv-safe": "^2.2.0",
+    "exec-buffer": "^2.0.1",
     "filesize": "^3.2.1",
-    "jquery": "^2.2.2"
+    "fs-extra-promise": "^0.3.1",
+    "jpegtran-bin": "^3.0.6",
+    "jquery": "^2.2.2",
+    "lodash": "^4.6.1",
+    "node-horseman": "^2.8.2",
+    "pngquant-bin": "^3.1.0",
+    "through2": "^2.0.1",
+    "winston": "^2.2.0"
   }
 }

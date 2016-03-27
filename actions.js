@@ -9,10 +9,7 @@
 var path = require('path');
 var lodash = require('lodash');
 var Promise = require('bluebird');
-var fs = Promise.promisifyAll(require('fs'));
-
-// rimraf
-fs.rimraf = Promise.promisify(require('rimraf'));
+var fs = require('fs-extra-promise');
 
 var tools = require('./lib/tools');
 var Horseman = require('./lib/horseman');
@@ -74,7 +71,7 @@ var actions = {
         return this[action](config, client);
     },
     // config
-    processConfig: function(config) {
+    processConfig: Promise.method(function(config) {
         if(config.out) {
             return config;
         }
@@ -95,9 +92,6 @@ var actions = {
         var cwd = path.relative(__dirname, '.');
         var outPath = path.join(cwd,  process.env.OUT_PATH, outDir);
 
-        // mkdir
-        tools.mkDeepDir(outPath);
-
         config.out = {
             // name: '',
             path: outPath,
@@ -110,32 +104,33 @@ var actions = {
         if(config.content) {
             var inPath = path.join(outPath, 'in.html');
             var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
-            var htmlTpl = fs.readFileSync(htmlTplPath);
 
-            var content = tools.processHTML(config.content);
-            var html = tools.fill(htmlTpl, {
-                cwd: path.resolve(cwd),
-                content: content
+            return fs.readFileAsync(htmlTplPath)
+            .then(htmlTpl => {
+                var content = tools.processHTML(config.content);
+                var html = tools.fill(htmlTpl, {
+                    cwd: path.resolve(cwd),
+                    content: content
+                });
+
+                return fs.outputFileAsync(inPath, html);
+            })
+            .then(() => {
+                config.url = inPath;
+
+                return config;
             });
-
-            fs.writeFileSync(inPath, html);
-
-            config.url = inPath;
         }
 
         return config;
-    },
+    }),
     // 清理目录
     clean: function(config) {
         var url = config.path;
 
         tools.log('Actions.clean');
 
-        return new Promise(resolve => {
-            fs.exists(url, exists => {
-                resolve(exists);
-            });
-        })
+        return fs.existsAsync(url)
         .then(exists => {
             if(!exists) {
                 var msg = 'No such file or directory, ' + url;
@@ -143,7 +138,7 @@ var actions = {
                 throw new Error(msg);
             }
 
-            return fs.rimraf(url);
+            return fs.removeAsync(url);
         })
         .tap(() => {
             tools.log('Actions.clean.done');
@@ -156,11 +151,7 @@ var actions = {
 
         tools.log('Actions.getfile');
 
-        return new Promise(resolve => {
-            fs.exists(url, exists => {
-                resolve(exists);
-            });
-        })
+        return fs.existsAsync(url)
         .then(exists => {
             if(!exists) {
                 var msg = 'No such file or directory, ' + url;
@@ -201,10 +192,11 @@ var actions = {
 
         tools.log('Actions.makeshot');
 
-        // config
-        this.processConfig(config);
-
-        return processers.makeshot(config)
+        return this.processConfig(config)
+        // shot
+        .then(() => {
+            return processers.makeshot(config);
+        })
         // optimizeImage
         .then(function(ret) {
             return self.optimizeImage(ret, config);
@@ -223,10 +215,11 @@ var actions = {
 
         tools.log('Actions.makelist');
 
-        // config
-        this.processConfig(config);
-
-        return processers.makelist(config)
+        return this.processConfig(config)
+        // makelist
+        .then(() => {
+            return processers.makelist(config);
+        })
         // optimizeImage
         .then(ret => {
             return self.optimizeImage(ret, config);
