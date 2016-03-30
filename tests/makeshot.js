@@ -121,6 +121,8 @@ function getConfig(configPath) {
         config = JSON.stringify({
             action: 'makeshot',
             htmlTpl: 'hlg_wireless.html',
+            imageType: 'jpg',
+            imageQuality: 80,
             content: config
         });
     }
