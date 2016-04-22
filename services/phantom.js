@@ -142,9 +142,16 @@ let phantomAdp = {
                 jqueryUrl = jqueryUrl.replace('.min', '');
             }
 
-            jqueryUrl = require.resolve(jqueryUrl);
+            return page.evaluate(function() {
+                return !!window.jQuery;
+            })
+            .then(hasJQuery => {
+                if(!hasJQuery) {
+                    jqueryUrl = require.resolve(jqueryUrl);
 
-            return page.injectJs(jqueryUrl);
+                    return page.injectJs(jqueryUrl);
+                }
+            });
         })
         // inject shot tools
         .tap(page => {
@@ -152,6 +159,12 @@ let phantomAdp = {
             clientToolsUrl = path.resolve(__dirname, clientToolsUrl);
 
             return page.injectJs(clientToolsUrl);
+        })
+        // inject shot tools
+        .tap(page => {
+            if(cfg.includeJs) {
+                return page.includeJs(cfg.includeJs);
+            }
         });
     }
 };

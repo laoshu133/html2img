@@ -26,11 +26,11 @@ module.exports = function(cfg) {
 
         let dfd = {};
         let interval = 160;
-        var start = Date.now();
+        let start = Date.now();
         let ttl = cfg.wrapFindTimeout;
         let minCount = cfg.wrapMinCount;
         let maxCount = cfg.wrapMaxCount;
-        var selector = cfg.wrapSelector;
+        let selector = cfg.wrapSelector;
 
         if(maxCount < minCount) {
             maxCount = Infinity;
