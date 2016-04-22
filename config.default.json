@@ -9,10 +9,12 @@
   "imageQuality": 90,
   "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
   "wrapSelector": ".shot_flag_wrap_panel",
-  "wrapFindTimeout": 9600,
+  "wrapFindTimeout": 2400,
+  "wrapMinCount": 1,
+  "wrapMaxCount": 0,
   "requestHeaders": {
     "Referer": "http://tbgr.huanleguang.com/_shot"
   },
-  "viewport": [1960, 1200],
+  "viewport": [1920, 1200],
   "size": null
 }
