@@ -92,7 +92,8 @@ module.exports = function(cfg) {
             images[inx] = path;
 
             return page.crop(rect, path, {
-                quality: cfg.imageQuality
+                quality: cfg.imageQuality,
+                zoomFactor: 0.5
             });
         });
     })

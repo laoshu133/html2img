@@ -63,9 +63,104 @@ lodash.assign(PhantomPage.prototype, {
             return this.property('clipRect', lastClipRect || {});
         });
     },
+    /**
+     * 截屏
+     *
+     * @param  {Number} options.quality 图像质量
+     * @param  {Number} options.type 裁剪类型
+     * 10 - 长边裁剪，圆点中心，不足补白
+     * 11 - 长边裁剪，圆点左上，不足补白
+     * 12 - 长边裁剪，圆点左上，不足不处理
+     * 20 - 短边裁剪，圆点中心，不足不处理
+     * 21 - 短边裁剪，圆点左上，不足不处理
+     */
     screenshot: function(path, options) {
-        console.log('rrr', path, options);
-        return this.render(path, options);
+        let renderOptions = {
+            format: options.format,
+            quality: options.quality
+        };
+
+        let size = options.size;
+        if(
+            !size ||
+            !size.type ||
+            (!size.width && !size.height)
+        ) {
+            return this.render(path, renderOptions);
+        }
+
+        return Promise.resolve()
+        .then(() => {
+            return this.property('clipRect');
+        })
+        .then(clipRect => {
+            return clipRect || page.property('viewportSize');
+        })
+        // 修正属性
+        .tap(rect => {
+            if(!rect.left) {
+                rect.left = 0;
+            }
+            if(!rect.top) {
+                rect.top = 0;
+            }
+        })
+        // 选边
+        .then(rect => {
+            let type = size.type;
+            let heightRatio = size.height / rect.height;
+            let widthRatio = size.width / rect.width;
+            let zoom = widthRatio;
+
+            if(
+                // 长边裁剪
+                (type < 20 && widthRatio > heightRatio) ||
+                // 短边裁剪
+                (type >= 20 && widthRatio < heightRatio)
+            ) {
+                zoom = heightRatio;
+            }
+
+            // 默认左上角开始裁剪
+            let cropRect = {
+                height: size.height,
+                width: size.width,
+                left: rect.left,
+                top: rect.top
+            };
+
+            // 居中裁剪
+            if(type % 10 === 0) {
+                cropRect.left += (rect.width - size.width) / 2;
+                cropRect.top += (rect.height - size.height) / 2;
+            }
+
+            // 长边裁剪，减去补白
+            if(type === 12) {
+                if(size.height > rect.height) {
+                    cropRect.height = rect.height;
+                }
+                else if(size.width > rect.width) {
+                    cropRect.width = rect.width;
+                }
+            }
+
+            return {
+                cropRect: cropRect,
+                zoom: zoom
+            };
+        })
+        // 缩放
+        .tap(data => {
+            return this.property('zoomFactor', data.zoom);
+        })
+        // 重设裁剪区域
+        .tap(data => {
+            return this.property('clipRect', data.cropRect);
+        })
+        .tap(() => {
+            return this.render(path, renderOptions);
+        });
     }
 });
 
