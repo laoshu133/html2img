@@ -4,14 +4,16 @@
  */
 'use strict';
 
-let path = require('path');
+const path = require('path');
 
-let phantom = require('phantom');
-let Promise = require('bluebird');
+require('./phantom-page');
+const phantom = require('phantom');
 
-let logger = require('./logger');
+const Promise = require('bluebird');
+const logger = require('./logger');
 
-let phantomAdp = {
+
+const phantomAdp = {
     instances: [],
     create: function() {
         return phantom.create([

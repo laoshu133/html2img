@@ -28,26 +28,21 @@ module.exports = function(cfg) {
         let interval = 160;
         let start = Date.now();
         let ttl = cfg.wrapFindTimeout;
-        let minCount = cfg.wrapMinCount;
-        let maxCount = cfg.wrapMaxCount;
         let selector = cfg.wrapSelector;
-
-        if(maxCount < minCount) {
-            maxCount = Infinity;
-        }
+        let minCount = cfg.wrapMinCount;
 
         function check() {
             return page.evaluate(function(selector) {
-                var $ = window.jQuery;
-                var shotTools = window.shotTools;
+                // var $ = window.jQuery;
+                // var shotTools = window.shotTools;
 
-                console.log('jQuery:', !!$, !!$ ? $.fn.jquery : null);
-                console.log('shotTools', !!shotTools, !!shotTools ? shotTools.version : null);
+                // console.log('jQuery:', !!$ ? $.fn.jquery : null);
+                // console.log('shotTools', !!shotTools ? shotTools.version : null);
 
                 return document.querySelectorAll(selector).length;
             }, selector)
             .then(count => {
-                if(!count || count <= 0) {
+                if(!count || count <= minCount) {
                     let errMsg = 'Wrap element not found: ' + selector;
 
                     return Promise.reject(new Error(errMsg));
@@ -57,7 +52,7 @@ module.exports = function(cfg) {
             })
             .then(() => {
                 dfd.resolve();
-            }, (err) => {
+            }, err => {
                 let now = Date.now();
                 if(now - start <= ttl) {
                     setTimeout(check, interval);
@@ -76,12 +71,35 @@ module.exports = function(cfg) {
         });
     })
     .then(() => {
-        return page.render('./__out/out.png');
+        let selector = cfg.wrapSelector;
+
+        return page.getCropRects(selector, {
+            maxCount: cfg.wrapMaxCount
+        });
     })
-    .then(ret => {
+    .then(rects => {
+        var out = cfg.out;
+        var imagePath = out.image;
+        var images = out.images = [];
+        var rExt = /(\.\w+)$/;
+
+        return Promise.mapSeries(rects, (rect, inx) => {
+            var path = imagePath;
+            if(inx > 0) {
+                path = path.replace(rExt, '-'+ (inx+1) +'$1');
+            }
+
+            images[inx] = path;
+
+            return page.crop(rect, path, {
+                quality: cfg.imageQuality
+            });
+        });
+    })
+    .then(() => {
         logger.info('Actions.makeshot.done');
 
-        return ret;
+        return cfg.out;
     });
 
 };

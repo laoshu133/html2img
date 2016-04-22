@@ -7,12 +7,38 @@
     var tools = {
         version: '0.0.2',
         init: function() {
+            // this.initTaobaoCSSShim();
+        },
+        getCropRects: function(selector, options) {
+            var maxCount = options && options.maxCount;
+            if(!maxCount || maxCount <= 0) {
+                maxCount = Infinity;
+            }
+
+            var rects = [];
+
+            $(selector).each(function(i, elem) {
+                if(!elem || !elem.getBoundingClientRect) {
+                    return;
+                }
+
+                rects.push(elem.getBoundingClientRect());
+
+                if(rects.length >= maxCount) {
+                    return false;
+                }
+            });
+
+            return rects;
+        },
+        initTaobaoCSSShim: function() {
             // taobao css
             var tbStyle = $('#J_Taobao_css')[0];
             if(tbStyle) {
                 tbStyle.innerHTML = this.getTaobaoCSS();
             }
         },
+
         /**
          * 缩放/裁剪
          *

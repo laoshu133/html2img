@@ -70,9 +70,9 @@ const config = {
         }
 
         // out config
+        let cwd = '.';
         let outDir = cfg.id || 'tmp';
         let outName = cfg.name || 'out';
-        let cwd = path.relative(__dirname, '.');
 
         let outPath = process.env.OUT_PATH;
         if(outPath.charAt(0) !== '/') {
@@ -97,7 +97,6 @@ const config = {
             .then(htmlTpl => {
                 let content = tools.processHTML(cfg.content);
                 let html = tools.fill(htmlTpl, {
-                    cwd: path.resolve(cwd),
                     content: content
                 });
 
