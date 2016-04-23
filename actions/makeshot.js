@@ -17,6 +17,10 @@ module.exports = function(cfg) {
 
     return config.processContent(cfg)
     .then(cfg => {
+        if(!cfg.url) {
+            throw new Error('url not provided');
+        }
+
         return phantom.preparePage(cfg);
     })
     // check wrap count
@@ -35,14 +39,13 @@ module.exports = function(cfg) {
             return page.evaluate(function(selector) {
                 // var $ = window.jQuery;
                 // var shotTools = window.shotTools;
-
                 // console.log('jQuery:', !!$ ? $.fn.jquery : null);
                 // console.log('shotTools', !!shotTools ? shotTools.version : null);
 
                 return document.querySelectorAll(selector).length;
             }, selector)
             .then(count => {
-                if(!count || count <= minCount) {
+                if(!count || count < minCount) {
                     let errMsg = 'Wrap element not found: ' + selector;
 
                     return Promise.reject(new Error(errMsg));

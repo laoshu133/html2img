@@ -8,17 +8,20 @@
 // env
 require('dotenv-safe').load();
 
+// logger
+const logger = require('./services/logger');
+
 // Controllers
-let controllerFactory = require('./controllers/index');
+const controllerFactory = require('./controllers/index');
 
 // koa
-let koa = require('koa');
-let onerror = require('koa-onerror');
-let favicon = require('koa-favicon');
-var bodyParser = require('koa-bodyparser');
+const koa = require('koa');
+const onerror = require('koa-onerror');
+const favicon = require('koa-favicon');
+const bodyParser = require('koa-bodyparser');
 
 // init app, whit proxy
-let app = koa();
+const app = koa();
 app.proxy = true;
 
 // request body
@@ -42,7 +45,10 @@ app.use(function *(){
 
 // Error handle
 onerror(app, {
-    json: function(err) {
+    accepts: function() {
+        return 'json';
+    },
+    all: function(err) {
         let data = err.data || {};
         let statusCode = err.status;
 
@@ -65,9 +71,14 @@ onerror(app, {
     }
 });
 
+// Error report
+app.on('error', function(err) {
+    logger.error('[App error]', err);
+});
+
 
 // start up
-let port = process.env.NODE_PORT || 3007;
+let port = process.env.PORT || 3007;
 
 app.listen(port);
 console.log('Server listening:', port);

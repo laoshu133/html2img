@@ -9,6 +9,8 @@ const lodash = require('lodash');
 const Promise = require('bluebird');
 const fs = require('fs-extra-promise');
 
+const tools = require('../lib/tools');
+
 // default config
 const defaultConfig = require('../config.default.json');
 

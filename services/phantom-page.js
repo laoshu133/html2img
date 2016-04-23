@@ -46,13 +46,9 @@ lodash.assign(PhantomPage.prototype, {
 
         let lastClipRect;
 
-        console.log(111, rect);
-
         return this.property('clipRect')
         .then(clipRect => {
             lastClipRect = clipRect;
-
-            console.log('xxx', rect);
 
             return this.property('clipRect', rect);
         })
@@ -79,6 +75,9 @@ lodash.assign(PhantomPage.prototype, {
             format: options.format,
             quality: options.quality
         };
+
+        // @TODO options.size
+        return this.render(path, renderOptions);
 
         let size = options.size;
         if(

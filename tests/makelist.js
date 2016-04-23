@@ -25,7 +25,7 @@ var configs = [
 var io = net.connect({
     host: 'localhost',
     // host: '192.168.10.134',
-    port: process.env.NODE_PORT
+    port: process.env.PORT
 });
 
 // init

@@ -108,6 +108,10 @@ const phantomAdp = {
         .then(phPage => {
             page = phPage;
 
+            if(!cfg.url) {
+                throw new Error('url not provided');
+            }
+
             return page.open(cfg.url);
         })
         .then(status => {

@@ -1,33 +1,91 @@
 /**
  * html2img
  *
- * client-makeshot
+ * tests/makeshot
  *
  */
+'use strict';
 
 // env
-require('dotenv-safe').load();
+require('dotenv-safe').load({
+    // sample: '../.env.example',
+    // path: '../.env'
+});
 
 // deps
-var fs = require('fs');
+const Promise = require('bluebird');
+const fs = require('fs-extra-promise');
+const request = require('request-promise');
+
+const logger = require('../services/logger');
+
+let configs = [
+    'demos/makeshot.json',
+    // 'demos/makeshot-big.json',
+    // 'demos/makeshot-wireless.json',
+    // 'demos/makeshot-html-test.html',
+    // 'demos/makeshot-danchaofan.json'
+];
+
+Promise.mapSeries(configs, cfgPath => {
+    logger.info('Client.makeshot');
+
+    return fs.readFileAsync(cfgPath)
+    .then(buf => {
+        if(/\.json$/.test(cfgPath)) {
+            return JSON.parse(buf);
+        }
+
+        let cfg = {
+            action: 'makeshot',
+            htmlTpl: 'hlg_wireless.html',
+            imageType: 'jpg',
+            imageQuality: 80,
+            content: buf
+        };
+
+        return cfg;
+    })
+    .then(cfg => {
+        let shotUrl = 'http://localhost:';
+        shotUrl += process.env.PORT;
+
+        logger.info('Client.makeshot.request');
+
+        return request({
+            method: 'POST',
+            uri: shotUrl,
+            json: true,
+            body: cfg
+        });
+    })
+    .then(res => {
+        logger.info('Client.makeshot.request.done');
+
+        console.log(res);
+    });
+})
+.then(() => {
+    logger.info('Client.makeshot.complete');
+});
+
+
+
+return;
+
+// deps
+// var fs = require('fs');
 var net = require('net');
 var path = require('path');
 
 var tools = require('../lib/tools');
 var SocketAdp = require('../lib/SocketAdp');
 
-var configs = [
-    'demos/makeshot.json',
-    // 'demos/makeshot-big.json',
-    'demos/makeshot-wireless.json',
-    'demos/makeshot-html-test.html',
-    'demos/makeshot-danchaofan.json'
-];
 
 var io = net.connect({
     host: 'localhost',
     // host: '192.168.10.134',
-    port: process.env.NODE_PORT
+    port: process.env.PORT
 });
 
 // init
