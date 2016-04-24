@@ -15,6 +15,7 @@
   "requestHeaders": {
     "Referer": "http://tbgr.huanleguang.com/_shot"
   },
+  "includeJs": null,
   "viewport": null,
   "size": null
 }

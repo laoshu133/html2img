@@ -23,11 +23,12 @@ module.exports = function(cfg) {
 
         return phantom.preparePage(cfg);
     })
-    // check wrap count
-    .then(phPage => {
-        // cache
+    // cache page
+    .tap(phPage => {
         page = phPage;
-
+    })
+    // check wrap count
+    .then(() => {
         let dfd = {};
         let interval = 160;
         let start = Date.now();
@@ -81,13 +82,13 @@ module.exports = function(cfg) {
         });
     })
     .then(rects => {
-        var out = cfg.out;
-        var imagePath = out.image;
-        var images = out.images = [];
-        var rExt = /(\.\w+)$/;
+        let out = cfg.out;
+        let imagePath = out.image;
+        let images = out.images = [];
+        let rExt = /(\.\w+)$/;
 
         return Promise.mapSeries(rects, (rect, inx) => {
-            var path = imagePath;
+            let path = imagePath;
             if(inx > 0) {
                 path = path.replace(rExt, '-'+ (inx+1) +'$1');
             }
@@ -100,6 +101,11 @@ module.exports = function(cfg) {
             });
         });
     })
+    // clean
+    .tap(() => {
+        return page.release();
+    })
+    // result
     .then(() => {
         logger.info('Actions.makeshot.done');
 
