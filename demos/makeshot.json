@@ -2,7 +2,7 @@
   "action": "makeshot",
   "size": {
     "type": 20,
-    "width": 300
+    "width": 320
   },
   "imageType": "jpg",
   "_comment_viewport": "如果需要导出的图片大小大于1024*800，需要手动指定 viewport",

@@ -121,7 +121,7 @@ function makeshot(cfg, hooks) {
 
             return page.crop(rect, path, {
                 quality: cfg.imageQuality,
-                zoomFactor: 0.5
+                size: cfg.size
             });
         });
     })

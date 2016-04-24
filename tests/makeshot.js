@@ -21,9 +21,9 @@ const logger = require('../services/logger');
 
 let configs = [
     'demos/makeshot.json',
-    'demos/makeshot-big.json',
-    'demos/makeshot-wireless.json',
-    'demos/makeshot-html-test.html',
+    // 'demos/makeshot-big.json',
+    // 'demos/makeshot-wireless.json',
+    // 'demos/makeshot-html-test.html',
     // 'demos/makeshot-danchaofan.json'
 ];
 
