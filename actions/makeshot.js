@@ -4,6 +4,7 @@
  */
 'use strict';
 
+const lodash = require('lodash');
 const Promise = require('bluebird');
 
 const phantom = require('../lib/phantom');
@@ -17,10 +18,18 @@ makeshot.counts = {
     error: 0
 };
 
-function makeshot(cfg) {
+function makeshot(cfg, hooks) {
     logger.info('Actions.makeshot');
 
     let page;
+
+    // hooks
+    hooks = lodash.assign({
+        beforeCheck: lodash.noop,
+        beforeOptimize: lodash.noop,
+        beforeShot: lodash.noop,
+        afterShot: lodash.noop
+    }, hooks);
 
     return config.processContent(cfg)
     .then(cfg => {
@@ -33,6 +42,10 @@ function makeshot(cfg) {
     // cache page
     .tap(phPage => {
         page = phPage;
+    })
+    // hooks.beforeCheck
+    .tap(() => {
+        return hooks.beforeCheck(page, cfg);
     })
     // check wrap count
     .then(() => {
@@ -88,6 +101,10 @@ function makeshot(cfg) {
             maxCount: cfg.wrapMaxCount
         });
     })
+    // hooks.beforeShot
+    .tap(() => {
+        return hooks.beforeShot(page, cfg);
+    })
     .then(rects => {
         let out = cfg.out;
         let imagePath = out.image;
@@ -108,9 +125,17 @@ function makeshot(cfg) {
             });
         });
     })
+    // hooks.beforeOptimize
+    .tap(() => {
+        return hooks.beforeOptimize(page, cfg);
+    })
     // clean
     .tap(() => {
         return page.release();
+    })
+    // hooks.afterShot
+    .tap(() => {
+        return hooks.afterShot(cfg);
     })
     // result & count
     .then(() => {
