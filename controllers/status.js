@@ -20,7 +20,7 @@ module.exports = function(router) {
             uptime: Date.now() - startTime,
 
             // shot
-            makeshot_counts: makeshot.counts,
+            shot_counts: makeshot.counts,
 
             // phantom
             phantom_total: phantoms.length,
