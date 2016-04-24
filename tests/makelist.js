@@ -20,8 +20,8 @@ const request = require('request-promise');
 const logger = require('../services/logger');
 
 let configs = [
-    // 'demos/makelist.json',
-    // 'demos/makelist-taobao.json',
+    'demos/makelist.json',
+    'demos/makelist-taobao.json',
     'demos/makelist.json'
 ];
 
