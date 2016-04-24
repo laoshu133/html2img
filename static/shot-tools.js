@@ -22,7 +22,12 @@
                     return;
                 }
 
-                rects.push(elem.getBoundingClientRect());
+                var rect = elem.getBoundingClientRect();
+                if(!rect || !rect.width || !rect.height) {
+                    return;
+                }
+
+                rects.push(rect);
 
                 if(rects.length >= maxCount) {
                     return false;

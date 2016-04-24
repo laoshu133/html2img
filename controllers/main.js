@@ -25,8 +25,9 @@ module.exports = function(router) {
     };
 
     let shotMW = function *() {
-        let query = this.query;
+        let timestamp = Date.now();
         let body = this.request.body;
+        let query = this.query;
 
         let cfg = yield config.create(lodash.merge(query, body));
         if(cfg.dataType === 'image') {
@@ -54,7 +55,9 @@ module.exports = function(router) {
         // covert result (local path -> url)
         let result = {
             image: pathToUrl(ret.image),
-            metadata: ret.metadata || null
+            metadata: ret.metadata || null,
+            // elapsed
+            elapsed: Date.now() - timestamp
         };
         if(ret.images) {
             result.images = ret.images.map(pathToUrl);
