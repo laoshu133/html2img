@@ -8,6 +8,7 @@ let Router = require('koa-router');
 
 let ctrls = [
     require('./main'),
+    require('./file'),
     require('./status')
 ];
 

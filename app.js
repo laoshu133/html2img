@@ -27,6 +27,15 @@ app.proxy = true;
 // request body
 app.use(bodyParser());
 
+// 404
+app.use(function *(next) {
+    yield next;
+
+    if(this.status === 404 && !this.body) {
+        this.throw(404);
+    }
+});
+
 // Controllers
 app.use(controllerFactory(app));
 
@@ -35,12 +44,6 @@ app.use(controllerFactory(app));
 app.use(favicon('./static/favicon.ico', {
     maxAge: 30 * 24 * 60 * 60 * 1000
 }));
-
-// 404
-app.use(function *(){
-    // redirect to onerror
-    this.throw(404);
-});
 
 
 // Error handle
