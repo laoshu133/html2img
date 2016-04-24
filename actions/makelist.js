@@ -17,7 +17,7 @@ function makelist(cfg) {
                 let selector = cfg.wrapSelector;
 
                 return page.evaluate(function(options) {
-                    return shotTools.covertList(options);
+                    return shotTools.covertTaobaoList(options);
                 }, {
                     type: cfg.listOutType || 'map',
                     imageBlank: cfg.imageBlank,

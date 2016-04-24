@@ -1,127 +1,74 @@
 /**
  * html2img
  *
- * makelist
+ * tests/makelist
  *
  */
+'use strict';
 
 // env
-require('dotenv-safe').load();
+require('dotenv-safe').load({
+    // sample: '../.env.example',
+    // path: '../.env'
+});
 
 // deps
-var fs = require('fs');
-var net = require('net');
-var path = require('path');
+const Promise = require('bluebird');
+const fs = require('fs-extra-promise');
+const request = require('request-promise');
 
-var tools = require('../lib/tools');
-var SocketAdp = require('../lib/SocketAdp');
+const logger = require('../services/logger');
 
-var configs = [
+let configs = [
     // 'demos/makelist.json',
-    'demos/makelist-taobao.json',
+    // 'demos/makelist-taobao.json',
     'demos/makelist.json'
 ];
 
-var io = net.connect({
-    host: 'localhost',
-    // host: '192.168.10.134',
-    port: process.env.PORT
-});
+let startTime = Date.now();
 
-// init
-console.log('Strat client...');
+// Promise.map(configs, (cfgPath, inx) => { // 并行
+Promise.mapSeries(configs, (cfgPath, inx) => { // 串行
+    logger.info('Client.makelist', inx);
 
-var client = new SocketAdp(io);
+    return fs.readFileAsync(cfgPath)
+    .then(buf => {
+        if(/\.json$/.test(cfgPath)) {
+            return JSON.parse(buf);
+        }
 
-client.on('data', function(e) {
-    var dataLen = e.data.length;
-    var data = e.data;
-
-    tools.log('Client.ondata', e.type);
-
-    console.log('\n---'+ e.type +'--'+ dataLen +'--'+ tools.formatFilesize(dataLen) +'--');
-
-    // error handle
-    if(/error/.test(e.type)) {
-        console.error('Got an error!');
-        console.error(data.toString());
-
-        makelist();
-        return;
-    }
-
-    // result handle
-    if(e.type === 'makelist_result') {
-        data = JSON.parse(data);
-        console.log(JSON.stringify(data));
-
-        getFile(data.image);
-    }
-    else if(e.type === 'getfile_result'){
-        // console.log(e.raw.slice(0, 40).toString());
-        // console.log(e.data.slice(0, 40));
-        console.log('\n');
-
-        // test write file
-        var testOutPath = path.join(process.env.OUT_PATH, 'out.png');
-        fs.writeFileSync(testOutPath, e.data, {
-            encoding: 'binary'
-        });
-
-        makelist();
-    }
-});
-
-io.on('connect', function() {
-    console.log('Client connected');
-
-    makelist();
-});
-
-// makelist
-var count = 0;
-function makelist() {
-    var cfgPath = configs.shift();
-
-    if(!cfgPath) {
-        console.log('makelist, No cfg...');
-        io.end();
-
-        return;
-    }
-
-    console.log('start makelist - '+ (++count));
-    tools.log('Client.makelist');
-
-    var relativePath = path.relative(process.cwd(), __dirname + '/..');
-    cfgPath = path.join(relativePath, cfgPath);
-
-    var cfg = getConfig(cfgPath);
-    client.send('makelist', cfg);
-}
-
-function getFile(path) {
-    console.log('\n-------Getfile-------\n path=', path);
-    tools.log('Client.getfile');
-
-    client.send('getfile', {
-        action: 'getfile',
-        keepFiles: true,
-        path: path
-    });
-}
-
-function getConfig(configPath) {
-    var buf = fs.readFileSync(configPath);
-    var config = buf.toString();
-
-    if(/\.html$/i.test(configPath)) {
-        config = JSON.stringify({
-            action: 'makeshot',
+        // tmp test
+        let cfg = {
+            action: 'makelist',
             htmlTpl: 'hlg_wireless.html',
-            content: config
-        });
-    }
+            imageType: 'jpg',
+            imageQuality: 80,
+            content: buf.toString()
+        };
 
-    return config;
-}
+        return cfg;
+    })
+    .then(cfg => {
+        let shotUrl = 'http://localhost:';
+        shotUrl += process.env.PORT;
+
+        logger.info('Client.makelist.request');
+
+        return request({
+            method: 'POST',
+            uri: shotUrl,
+            json: true,
+            body: cfg
+        });
+    })
+    .then(res => {
+        logger.info('Client.makelist.request.done', inx, res);
+        logger.info('-----');
+    });
+})
+.then(() => {
+    let elapsed = Date.now() - startTime;
+
+    console.info('\n---Client.makelist.complete--'+ elapsed +'--\n');
+});
+

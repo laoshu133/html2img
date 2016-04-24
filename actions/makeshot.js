@@ -19,7 +19,7 @@ makeshot.counts = {
 };
 
 function makeshot(cfg, hooks) {
-    logger.info('Actions.makeshot');
+    logger.info('Actions.makeshot['+ cfg.action +']');
 
     let page;
 
@@ -139,7 +139,7 @@ function makeshot(cfg, hooks) {
     })
     // result & count
     .then(() => {
-        logger.info('Actions.makeshot.done');
+        logger.info('Actions.makeshot['+ cfg.action +'].done');
 
         makeshot.counts.total += 1;
         makeshot.counts.success += 1;

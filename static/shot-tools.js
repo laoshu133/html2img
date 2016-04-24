@@ -53,7 +53,7 @@
          * table - table
          * taobao - 淘宝特定 class
          */
-        covertTabaoList: function(options) {
+        covertTaobaoList: function(options) {
             var type = options.type || 'map';
             var covertor = this.listCovertors[type];
             var links = [];

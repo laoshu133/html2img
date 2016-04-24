@@ -39,6 +39,7 @@ Promise.mapSeries(configs, (cfgPath, inx) => { // 串行
             return JSON.parse(buf);
         }
 
+        // tmp test
         let cfg = {
             action: 'makeshot',
             htmlTpl: 'hlg_wireless.html',
