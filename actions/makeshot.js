@@ -10,7 +10,14 @@ const phantom = require('../lib/phantom');
 const logger = require('../services/logger');
 const config = require('../services/config');
 
-module.exports = function(cfg) {
+// counts
+makeshot.counts = {
+    total: 0,
+    success: 0,
+    error: 0
+};
+
+function makeshot(cfg) {
     logger.info('Actions.makeshot');
 
     let page;
@@ -105,11 +112,21 @@ module.exports = function(cfg) {
     .tap(() => {
         return page.release();
     })
-    // result
+    // result & count
     .then(() => {
         logger.info('Actions.makeshot.done');
 
+        makeshot.counts.total += 1;
+        makeshot.counts.success += 1;
+
         return cfg.out;
+    }, ex => {
+        makeshot.counts.total += 1;
+        makeshot.counts.error += 1;
+
+        return Promise.reject(ex);
     });
 
 };
+
+module.exports = makeshot;

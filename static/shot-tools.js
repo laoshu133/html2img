@@ -1,13 +1,14 @@
 /**
- * page-tools
+ * shot-tools
  *
  */
 
 (function(global, $) {
+    // deps jquery
     var tools = {
         version: '0.0.2',
         init: function() {
-            // this.initTaobaoCSSShim();
+            this.tryTaobaoCSSShim();
         },
         getCropRects: function(selector, options) {
             var maxCount = options && options.maxCount;
@@ -36,125 +37,15 @@
 
             return rects;
         },
-        initTaobaoCSSShim: function() {
+        tryTaobaoCSSShim: function() {
             // taobao css
             var tbStyle = $('#J_Taobao_css')[0];
             if(tbStyle) {
                 tbStyle.innerHTML = this.getTaobaoCSS();
             }
         },
-
         /**
-         * 缩放/裁剪
-         *
-         * @param  {String} options.selector 目标元素
-         * @param  {Number} options.type 裁剪类型
-         * 10 - 长边裁剪，圆点中心，不足补白
-         * 11 - 长边裁剪，圆点左上，不足补白
-         * 12 - 长边裁剪，圆点左上，不足不处理
-         * 20 - 短边裁剪，圆点中心，不足不处理
-         * 21 - 短边裁剪，圆点左上，不足不处理
-         */
-        getCrop: function(wrapElem, options) {
-            var size = options && options.size;
-            var outCrop = {
-                height: 0,
-                width: 0,
-                left: 0,
-                top: 0
-            };
-
-            wrapElem = $(wrapElem);
-            if(!wrapElem.length) {
-                return outCrop;
-            }
-
-            wrapElem.css('transform', 'none');
-
-            var rect;
-            var wrapWidth = wrapElem.width();
-            var wrapHeight = wrapElem.height();
-            var wrapWHRatio = wrapWidth / wrapHeight;
-
-            if(!size || !size.type) {
-                rect = wrapElem[0].getBoundingClientRect();
-
-                outCrop.height = wrapHeight;
-                outCrop.width = wrapWidth;
-                outCrop.left = rect.left;
-                outCrop.top = rect.top;
-
-                return outCrop;
-            }
-
-            // padding, height/width
-            if(!size.height) {
-                size.height = size.width / wrapWHRatio;
-            }
-            else if(!size.width) {
-                size.width = size.height * wrapWHRatio;
-            }
-
-            var heightRatio = size.height / wrapHeight;
-            var widthRatio = size.width / wrapWidth;
-            var scale = widthRatio;
-
-            var type = ~~size.type || 10;
-            // 选边
-            if(
-                // 长边裁剪
-                (type < 20 && widthRatio > heightRatio) ||
-                // 短边裁剪
-                (type >= 20 && widthRatio < heightRatio)
-            ) {
-                scale = heightRatio;
-            }
-
-            wrapElem.css('transform', 'scale('+ scale +')');
-
-            rect = wrapElem[0].getBoundingClientRect();
-
-            // 默认左上角开始裁剪
-            outCrop.height = size.height;
-            outCrop.width = size.width;
-            outCrop.left = rect.left;
-            outCrop.top = rect.top;
-
-            // 居中裁剪
-            if(type % 10 === 0) {
-                outCrop.left += (rect.width - size.width) / 2;
-                outCrop.top += (rect.height - size.height) / 2;
-            }
-
-            // 长边裁剪，减去补白
-            if(type === 12) {
-                if(size.height > rect.height) {
-                    outCrop.height = rect.height;
-                }
-                else if(size.width > rect.width) {
-                    outCrop.width = rect.width;
-                }
-            }
-
-            // debug
-            // outCrop.html = document.documentElement.outerHTML;
-
-            return outCrop;
-        },
-        getCrops: function(selector, options) {
-            var self = this;
-            var crops = [];
-
-            $(selector).each(function(i, elem) {
-                var crop = self.getCrop(elem, options);
-
-                crops.push(crop);
-            });
-
-            return crops;
-        },
-        /**
-         * 转换关联列表
+         * 转换关联列表-淘宝
          *
          * @param  {String} options.selector 目标元素
          * @param  {Number} options.type 目标类型
@@ -162,7 +53,7 @@
          * table - table
          * taobao - 淘宝特定 class
          */
-        covertList: function(options) {
+        covertTabaoList: function(options) {
             var type = options.type || 'map';
             var covertor = this.listCovertors[type];
             var links = [];
