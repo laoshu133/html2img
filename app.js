@@ -77,6 +77,7 @@ onerror(app, {
 // Error report
 app.on('error', function(err) {
     logger.error('[App error]', err);
+    console.log(err, err.stack);
 });
 
 
