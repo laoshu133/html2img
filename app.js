@@ -81,10 +81,12 @@ app.on('error', function(err) {
 
 
 // start up
-let port = process.env.PORT || 3007;
+if(!module.parent) {
+    let port = process.env.PORT || 3007;
+    app.listen(port);
 
-app.listen(port);
-console.log('Server listening:', port);
+    console.log('Server listening:', port);
+}
 
 // exports
 module.exports = app;

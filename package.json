@@ -1,8 +1,8 @@
 {
   "name": "html2img",
   "description": "html2img",
-  "version": "0.1.0",
-  "main": "server.js",
+  "version": "0.3.0",
+  "main": "app.js",
   "repository": {
     "type": "git",
     "url": "git@git.huanleguang.com:static/html2img.git"
