@@ -33,20 +33,7 @@ Promise.mapSeries(configs, (cfgPath, inx) => { // 串行
 
     return fs.readFileAsync(cfgPath)
     .then(buf => {
-        if(/\.json$/.test(cfgPath)) {
-            return JSON.parse(buf);
-        }
-
-        // tmp test
-        let cfg = {
-            action: 'makelist',
-            htmlTpl: 'hlg_wireless.html',
-            imageType: 'jpg',
-            imageQuality: 80,
-            content: buf.toString()
-        };
-
-        return cfg;
+        return JSON.parse(buf);
     })
     .then(cfg => {
         let shotUrl = 'http://localhost:';
