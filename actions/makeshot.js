@@ -6,9 +6,9 @@
 
 const Promise = require('bluebird');
 
+const phantom = require('../lib/phantom');
 const logger = require('../services/logger');
 const config = require('../services/config');
-const phantom = require('../services/phantom');
 
 module.exports = function(cfg) {
     logger.info('Actions.makeshot');

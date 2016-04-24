@@ -2,8 +2,8 @@
   "url": null,
   "content": "",
   "action": "makeshot",
-  "actionOptions": null,
   "htmlTpl": "taobao_desc.html",
+  "dataType": "json",
   "optimizeImage": false,
   "imageType": "png",
   "imageQuality": 90,
@@ -15,6 +15,6 @@
   "requestHeaders": {
     "Referer": "http://tbgr.huanleguang.com/_shot"
   },
-  "viewport": [1920, 1200],
+  "viewport": null,
   "size": null
 }

@@ -6,6 +6,7 @@
 
 const path = require('path');
 const lodash = require('lodash');
+const send = require('koa-send');
 
 const config = require('../services/config');
 const actions = require('../actions/index');
@@ -28,9 +29,11 @@ module.exports = function(router) {
         let body = this.request.body;
 
         let cfg = yield config.create(lodash.merge(query, body));
+        if(cfg.dataType === 'image') {
+            cfg.wrapMaxCount = 1;
+        }
 
         let ret = null;
-
         if(actions[cfg.action]) {
             ret = yield actions[cfg.action](cfg);
         }
@@ -43,7 +46,12 @@ module.exports = function(router) {
             this.throw(500, 'Unknow error');
         }
 
-        // covert result
+        // respone image
+        if(cfg.dataType === 'image') {
+            return yield send(this, ret.image);
+        }
+
+        // covert result (local path -> url)
         let result = {
             image: pathToUrl(ret.image),
             metadata: ret.metadata || null
