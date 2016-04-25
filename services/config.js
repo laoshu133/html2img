@@ -52,6 +52,17 @@ const config = {
                 cfg.id = [action, Date.now(), ++this.uuid].join('_');
             }
 
+            // viewport
+            let viewport = cfg.viewport;
+            if(viewport && typeof viewport === 'string') {
+                viewport = viewport.replace(/[\[\]]/, '').split(',');
+
+                cfg.viewport = [
+                    +viewport[0] || 1920,
+                    +viewport[1] || 1200
+                ];
+            }
+
             return cfg;
         });
     },
