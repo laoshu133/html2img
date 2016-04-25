@@ -16,7 +16,7 @@ module.exports = function(router) {
 
         let data = {
             // app
-            startTime: new Date(startTime).toJSON(),
+            start_time: new Date(startTime).toJSON(),
             uptime: Date.now() - startTime,
 
             // shot
