@@ -77,6 +77,10 @@ onerror(app, {
 // Error report
 app.on('error', function(err) {
     logger.error('[App error]', err);
+
+    if(app.env === 'development') {
+        console.error(err);
+    }
 });
 
 

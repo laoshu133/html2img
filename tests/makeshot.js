@@ -41,7 +41,7 @@ Promise.mapSeries(configs, (cfgPath, inx) => { // 串行
 
         // tmp test
         let cfg = {
-            action: 'makeshot',
+            // dataType: 'image',
             htmlTpl: 'hlg_wireless.html',
             imageType: 'jpg',
             imageQuality: 80,
@@ -57,6 +57,7 @@ Promise.mapSeries(configs, (cfgPath, inx) => { // 串行
         logger.info('Client.makeshot.request');
 
         return request({
+            encoding: null,
             method: 'POST',
             uri: shotUrl,
             json: true,
