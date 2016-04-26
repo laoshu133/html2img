@@ -29,7 +29,7 @@ app.use(bodyParser());
 
 // 404
 app.use(function *(next) {
-    yield next;
+    yield* next;
 
     if(this.status === 404 && !this.body) {
         this.throw(404);
