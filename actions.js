@@ -1,21 +1,19 @@
 /**
- * hlg-html2img
+ * html2img
  *
  * actions
  */
+'use strict';
 
 // deps
-var fs = require('fs');
 var path = require('path');
-var rimraf = require('rimraf');
 var lodash = require('lodash');
-var Horseman = require('node-horseman');
+var Promise = require('bluebird');
+var fs = require('fs-extra-promise');
 
 var tools = require('./lib/tools');
+var Horseman = require('./lib/horseman');
 var processers = require('./lib/processers');
-
-// config
-var config = require('./config').getConfig();
 
 var horseman = null;
 var actions = {
@@ -25,12 +23,13 @@ var actions = {
             return horseman.ready;
         }
 
-        var horsemanConfig = config.horsemanConfig;
+        // init Horseman (phantomjs)
+        tools.log('Actions.init');
 
-        // init Horseman(phantomjs)
-        tools.time('Actions.init');
-
-        horseman = new Horseman(horsemanConfig);
+        horseman = new Horseman({
+            phantomPath: process.env.PHANTOMJS_PATH
+            // Referer: process.env.REQUEST_REFERER
+        });
 
         // processers
         processers.init({
@@ -39,87 +38,62 @@ var actions = {
 
         // error
         horseman.on('error', function(msg, trace) {
-            tools.error('Horseman Error:', msg, trace);
+            var err = new Error('[Horseman Error] ' + msg);
+            err.trace = trace;
 
-            process.exit(1);
+            tools.error(err);
+
+            // process.exit(1);
         });
 
         return horseman.ready.then(function() {
-            var slice = Array.prototype.slice;
-
             // page, phantomjs page
             var page = horseman.page;
 
-            // render, support quality
-            var _render = page.render;
-            page.render = function(dest, options, callback) {
-                if(typeof options === 'function') {
-                    callback = options;
-                    options = null;
-                }
-
-                // default quality
-                options = lodash.merge({
-                    quality: config.imageQuality
-                }, options);
-
-                return _render.call(page, dest, options, callback);
-            };
-
-            // clean fix, not store request
-            page.onResourceReceived = function(res) {
-                // tools.log('ResourceReceived', res.status, res.url);
-            };
-
             // debug
             page.onConsoleMessage = function() {
-                var args = slice.call(arguments);
+                var args = lodash.toArray(arguments);
                 args.unshift('Actions.page.console');
 
                 tools.log.apply(tools, args);
             };
 
-            // custom settings
-            var resourceTimeout = horsemanConfig.resourceTimeout;
-            if(resourceTimeout) {
-                var customSettings = {
-                    resourceTimeout: resourceTimeout
-                };
-
-                // tools.time('Actions.init.setting');
-                page.get('settings', function(err, settings) {
-                    settings = lodash.merge(settings, customSettings);
-
-                    page.set('settings', settings, function() {
-                        // tools.timeEnd('Actions.init.setting');
-                        tools.timeEnd('Actions.init');
-                    });
-                });
-            }
+            // ready
+            tools.log('Actions.init.done');
         });
     },
+    // invoke
+    invoke: function(action, config, client) {
+        if(!this[action]) {
+            return Promise.reject(new Error('No action defined'));
+        }
+
+        return this[action](config, client);
+    },
     // config
-    processConfig: function(config) {
+    processConfig: Promise.method(function(config) {
         if(config.out) {
             return config;
         }
 
-        var cwd = __dirname;
+        var imgExtMap = {
+            'jpeg': '.jpg',
+            'jpg': '.jpg',
+            'png': '.png'
+        };
         var imgExt = config.imageExtname;
+        if(!imgExt) {
+            imgExt = imgExtMap[config.imageType || 'png'];
+        }
 
         // out config
         var outDir = config.id || 'tmp';
         var outName = config.name || 'out';
-        var outPath = path.join(config.outPath, outDir);
-        if(outPath.slice(0, 1) !== '/') {
-            outPath = path.join(cwd, outPath);
-        }
-
-        // mkdir
-        tools.mkDeepDir(outPath);
+        var cwd = path.relative(__dirname, '.');
+        var outPath = path.join(cwd,  process.env.OUT_PATH, outDir);
 
         config.out = {
-            name: '',
+            // name: '',
             path: outPath,
             dirname: outDir,
             html: path.join(outPath, outName + '.html'),
@@ -127,80 +101,73 @@ var actions = {
         };
 
         // content
-        if(config.content && !config.url) {
+        if(config.content) {
             var inPath = path.join(outPath, 'in.html');
             var htmlTplPath = path.join(cwd, 'tpl', config.htmlTpl);
-            var htmlTpl = fs.readFileSync(htmlTplPath);
 
-            var content = tools.processHTML(config.content);
-            var html = tools.fill(htmlTpl, {
-                content: content,
-                cwd: cwd
+            return fs.readFileAsync(htmlTplPath)
+            .then(htmlTpl => {
+                var content = tools.processHTML(config.content);
+                var html = tools.fill(htmlTpl, {
+                    cwd: path.resolve(cwd),
+                    content: content
+                });
+
+                return fs.outputFileAsync(inPath, html);
+            })
+            .then(() => {
+                config.url = inPath;
+
+                return config;
             });
-
-            fs.writeFileSync(inPath, html);
-
-            config.url = inPath;
         }
 
         return config;
-    },
+    }),
     // 清理目录
-    clean: function(client, config, callback) {
-        // config
-        this.processConfig(config);
+    clean: function(config) {
+        var url = config.path;
 
-        tools.time('Actions.clean');
+        tools.log('Actions.clean');
 
-        var url = config.path || config.out.path;
-        var type = 'clean_result';
+        return fs.existsAsync(url)
+        .then(exists => {
+            if(!exists) {
+                var msg = 'No such file or directory, ' + url;
 
-        tools.log('Actions.clean', url);
-
-        if(!fs.existsSync(url)) {
-            var msg = 'No such file or directory, ' + url;
-            var err = new Error(msg);
-
-            return callback(err, type, -1);
-        }
-
-        rimraf(url, function(err) {
-            var code = 0;
-            if(err) {
-                code = -2;
+                throw new Error(msg);
             }
 
-            tools.timeEnd('Actions.clean');
-
-            callback(err, type, code);
+            return fs.removeAsync(url);
+        })
+        .tap(() => {
+            tools.log('Actions.clean.done');
         });
     },
     // 取文件
-    getfile: function(client, config, callback) {
-        // config
-        this.processConfig(config);
+    getfile: function(config) {
+        var self = this;
+        var url = config.path;
 
-        tools.time('Actions.getfile');
+        tools.log('Actions.getfile');
 
-        var url = config.url;
-        if(!url) {
-            url = config.out.image;
-        }
+        return fs.existsAsync(url)
+        .then(exists => {
+            if(!exists) {
+                var msg = 'No such file or directory, ' + url;
 
-        if(!fs.existsSync(url)) {
-            var msg = 'No such file or directory, ' + url;
-            return callback(new Error(msg));
-        }
-
-        fs.readFile(url, function(err, buf) {
-            if(err) {
-                callback(err);
-                return;
+                throw new Error(msg);
             }
 
-            tools.timeEnd('Actions.getfile');
-
-            callback(null, 'file', buf);
+            return fs.readFileAsync(url);
+        })
+        .tap(() => {
+            if(!config.keepFiles) {
+                return self.clean(config);
+            }
+        })
+        .tap(() => {
+            tools.log('Actions.getfile.done');
         });
     },
     // 压缩图片
@@ -213,119 +180,56 @@ var actions = {
             image: ret.image
         })
         .then(function(newImage) {
-            ret.old_image = ret.image;
+            ret.full_image = ret.image;
             ret.image = newImage;
 
             return ret;
         });
     },
     // 缩略图
-    makeshot: function(client, config, callback) {
+    makeshot: function(config) {
         var self = this;
 
-        // config
-        this.processConfig(config);
+        tools.log('Actions.makeshot');
 
-        processers.makeshot(config)
+        return this.processConfig(config)
+        // shot
+        .then(() => {
+            return processers.makeshot(config);
+        })
         // optimizeImage
-        .then(function(res) {
-            return self.optimizeImage(res, config);
+        .then(function(ret) {
+            return self.optimizeImage(ret, config);
         })
         // fit data
-        .then(function(res) {
-            var data = {
-                status: 'success',
-                message: '',
-                data: res
-            };
-
+        .tap(function(ret) {
             // 兼容旧接口
-            res.outFile = res.image;
+            ret.outFile = ret.image;
 
-            callback(null, 'makeshot_result', data);
-        })
-        .catch(function(err) {
-            callback(err);
+            tools.log('Actions.makeshot.done');
         });
     },
     // 新关联列表（待完善）
-    makelist: function(client, config, callback) {
+    makelist: function(config) {
         var self = this;
 
-        // config
-        this.processConfig(config);
+        tools.log('Actions.makelist');
 
-        processers.makelist(config)
+        return this.processConfig(config)
+        // makelist
+        .then(() => {
+            return processers.makelist(config);
+        })
         // optimizeImage
-        .then(function(res) {
-            return self.optimizeImage(res, config);
+        .then(ret => {
+            return self.optimizeImage(ret, config);
         })
         // fit data
-        .then(function(res) {
-            var data = {
-                status: 'success',
-                message: '',
-                data: res
-            };
-
-            callback(null, 'makelist_result', data);
-        })
-        .catch(function(err) {
-            callback(err);
+        .tap(() => {
+            tools.log('Actions.makelist.done');
         });
     }
 };
-
-
-// Horseman shim
-(function() {
-    // var HorsemanPromise = require('node-horseman/lib/HorsemanPromise');
-    // var _pageMaker = Horseman.prototype.pageMaker;
-
-    // Horseman.prototype.pageMaker = function() {
-    //     var self = this;
-    //     var cwd = __dirname;
-    //     var options = this.options;
-    //     var scripts = options.clientScripts;
-
-    //     console.log('xxx000', typeof _pageMaker);
-
-    //     return _pageMaker.apply(this, arguments)
-    //     .then(function() {
-    //         if(!scripts || !scripts.length) {
-    //             return;
-    //         }
-
-    //         var page = self.page;
-    //         var _onLoadFinished = page.onLoadFinished;
-
-    //         page.onLoadFinished = function() {
-    //             console.log('xxx', typeof _onLoadFinished);
-    //             _onLoadFinished.apply(this, arguments);
-
-    //             self.ready.then(function() {
-    //                 var dfs = scripts.map(function(js) {
-    //                     var p = path.join(cwd, js);
-
-    //                     return new HorsemanPromise(function(resolve) {
-    //                         page.injectJs(p, function(err) {
-    //                             if(err) {
-    //                                 tools.error(err);
-    //                             }
-
-    //                             resolve();
-    //                         });
-    //                     });
-    //                 });
-
-    //                 var promise = HorsemanPromise.all(dfs);
-
-    //                 self.ready = promise;
-    //             });
-    //         };
-    //     });
-    // };
-})();
 
 
 // clean horseman

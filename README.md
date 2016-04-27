@@ -40,21 +40,17 @@ node client-getfile.js
 
 ```
 {
-  "id": null,
-  "action": "makeshot",
-  "description": "任务说明",
-  "htmlTpl": "tb_desc.html",
   "url": null,
   "content": "",
-  "outPath": "__out",
-  "wrapSelector": ".hlg_flag_wrap_panel",
-  "replaceSelector": ".hlg_flag_replace_place",
-  "horsemanConfig": {
-    "phantomPath": "/usr/local/bin/phantomjs"
-  },
-  "horsemanHeaders": {
-    "Referer": "http://tbgr.huanleguang.com/_thumb"
-  },
+  "action": "makeshot",
+  "actionOptions": null,
+  "htmlTpl": "taobao_desc.html",
+  "optimizeImage": false,
+  "imageType": "png",
+  "imageQuality": 90,
+  "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
+  "wrapSelector": ".shot_flag_wrap_panel",
+  "requestHeaders": null,
   "viewport": null,
   "size": null
 }

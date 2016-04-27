@@ -2,20 +2,14 @@
   "url": null,
   "content": "",
   "action": "makeshot",
+  "actionOptions": null,
   "htmlTpl": "taobao_desc.html",
-  "dataType": "json",
   "optimizeImage": false,
   "imageType": "png",
   "imageQuality": 90,
   "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
   "wrapSelector": ".shot_flag_wrap_panel",
-  "wrapFindTimeout": 2400,
-  "wrapMinCount": 1,
-  "wrapMaxCount": 0,
-  "requestHeaders": {
-    "Referer": "http://tbgr.huanleguang.com/_shot"
-  },
-  "includeJs": null,
+  "requestHeaders": null,
   "viewport": null,
   "size": null
 }

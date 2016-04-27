@@ -1,141 +1,76 @@
 /**
- * hlg-html2img
+ * html2img
  *
- * client-makeshot
+ * tests/makeshot
  *
  */
+'use strict';
+
+// env
+require('dotenv-safe').load({
+    // sample: '../.env.example',
+    // path: '../.env'
+});
 
 // deps
-var fs = require('fs');
-var net = require('net');
-var path = require('path');
-var through = require('through2');
+const Promise = require('bluebird');
+const fs = require('fs-extra-promise');
+const request = require('request-promise');
 
-var tools = require('../lib/tools');
-var SocketAdp = require('../lib/SocketAdp');
+const logger = require('../services/logger');
 
-// init
-console.log('Strat client...');
-tools.time('Client process');
-
-var type = 'makeshot';
-var configs = [
+let configs = [
     'demos/makeshot.json',
-    // 'demos/makeshot-big.json',
-    'demos/makeshot-wireless.json'
+    'demos/makeshot-big.json',
+    'demos/makeshot-wireless.json',
+    'demos/makeshot-html-test.html',
+    // 'demos/makeshot-danchaofan.json'
 ];
 
+let startTime = Date.now();
 
-var io = net.connect({
-    host: 'localhost',
-    // host: '192.168.10.134',
-    port: 3000
-});
+// Promise.map(configs, (cfgPath, inx) => { // 并行
+Promise.mapSeries(configs, (cfgPath, inx) => { // 串行
+    logger.info('Client.makeshot', inx);
 
-var client = new SocketAdp(io);
+    return fs.readFileAsync(cfgPath)
+    .then(buf => {
+        if(/\.json$/.test(cfgPath)) {
+            return JSON.parse(buf);
+        }
 
-var lastConfig;
-var lastResult;
+        // tmp test
+        let cfg = {
+            // dataType: 'image',
+            htmlTpl: 'hlg_wireless.html',
+            imageType: 'jpg',
+            imageQuality: 80,
+            content: buf.toString()
+        };
 
-client.on('data', function(e) {
-    lastResult = e.data;
+        return cfg;
+    })
+    .then(cfg => {
+        let shotUrl = 'http://localhost:';
+        shotUrl += process.env.PORT;
 
-    console.log('\n---'+ e.type +'--'+ e.data.length + '---');
+        logger.info('Client.makeshot.request');
 
-    if(e.type === 'makeshot_result') {
-        console.log(e.data.toString());
-
-        getFile();
-    }
-    else {
-        // console.log(e.raw.slice(0, 40).toString());
-        // console.log(e.data.slice(0, 40));
-        console.log('\n');
-
-        makeShot();
-    }
-});
-
-io.on('connect', function() {
-    console.log('Client connected');
-
-    makeShot();
-});
-
-var count = 0;
-function makeShot() {
-    var cfgPath = configs.shift();
-
-    if(!cfgPath) {
-        console.log('Makeshot, No cfg...');
-        io.end();
-
-        return;
-    }
-
-    console.log('start makeshot ['+ (count++) +']');
-
-    var relativePath = path.relative(process.cwd(), __dirname + '/..');
-    cfgPath = path.join(relativePath, cfgPath);
-
-    getConfig(cfgPath, function(data) {
-        var cfg = JSON.parse(data.toString());
-
-        lastConfig = cfg;
-        client.send('makeshot', cfg);
+        return request({
+            encoding: null,
+            method: 'POST',
+            uri: shotUrl,
+            json: true,
+            body: cfg
+        });
+    })
+    .then(res => {
+        logger.info('Client.makeshot.request.done', inx, res);
+        logger.info('-----');
     });
-}
+})
+.then(() => {
+    let elapsed = Date.now() - startTime;
 
-function getFile() {
-    var cfg = lastConfig;
-    if(!cfg) {
-        console.log('Getfile, No cfg...');
-        io.end();
-
-        return;
-    }
-
-    var res = JSON.parse(lastResult.toString());
-
-    console.log(cfg.id, res.data.image);
-    client.send('getfile', {
-        id: cfg.id,
-        url: res.data.image
-    });
-}
-
-function getConfig(configPath, callback) {
-    var rs = fs.createReadStream(configPath);
-
-    var len = 0;
-    var data = [];
-
-    rs.pipe(through(function(chunk, enc, cb) {
-        len += chunk.length;
-        data.push(chunk);
-
-        cb();
-    }));
-
-    rs.on('end', function() {
-        var config = Buffer.concat(data, len);
-
-        // Tmp DEBUG
-        // override wireless
-        (function() {
-            var tmpHTML = 'demos/tmp-test.html';
-            if(
-                configPath === 'demos/makeshot-wireless.json' &&
-                fs.existsSync(tmpHTML)
-            ) {
-                config = JSON.parse(config);
-
-                config.content = fs.readFileSync(tmpHTML).toString();
-
-                config = JSON.stringify(config);
-            }
-        })();
-
-        callback(config);
-    });
-}
+    console.info('\n---Client.makeshot.complete--'+ elapsed +'--\n');
+});

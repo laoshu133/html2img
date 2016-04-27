@@ -29,7 +29,7 @@
     }
     </style>
     <style id="J_Taobao_css"></style>
-    <script src="../../lib/jquery.min.js"></script>
+    <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
     <script src="../../lib/client-tools.js"></script>
 </head>
 <body>
@@ -63,7 +63,7 @@
 
         $('.main').html(config.content);
 
-        var listData = dsTools.covertList({
+        var listData = shotTools.covertList({
             type: config.listOutType || 'map',
             imageBlank: config.imageBlank,
             selector: '.main'
@@ -73,9 +73,9 @@
 
         if(listData.status === 'success') {
             var html = listData.html;
-            var extName = config.imageExtname || '.png';
+            var extName = config.imageType || 'png';
             var imgUrl = '../../__out/' + config.id;
-            imgUrl += '/out' + extName;
+            imgUrl += '/out.' + extName;
 
             html = html.replace('{imgUrl}', imgUrl);
 

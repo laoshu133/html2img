@@ -2,19 +2,24 @@
 
 # node
 node_modules
+npm-debug.log
+.env
+
+# app
+*.nginx.conf
 
 # build
-__out
 __build
+__build.lock
 
 # IDE
 .idea
 
+*.sublime-project
 *.sublime-workspace
+
 sftp-config.json
 sftp-settings.json
-config.json
 
-#atrTemplate
-.cache/
-
+# build
+__out
