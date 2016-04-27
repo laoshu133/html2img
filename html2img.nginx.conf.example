@@ -1,7 +1,7 @@
 # env: dev
 server {
     listen       80;
-    server_name  shot.huanleguang.cn;
+    server_name  shot.huanleguang.cn shot.danchaofan.com shot.danchaofan.ttxsapp.com;
 
     access_log off;
 
