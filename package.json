@@ -12,7 +12,7 @@
     "test": "node tests/makeshot.js",
     "test_list": "node tests/makelist.js",
     "dev": "nodemon -i tests app.js",
-    "start": "pm2 startOrReload shot"
+    "start": "pm2 startOrReload package.json"
   },
   "apps": [{
     "name": "shot",
