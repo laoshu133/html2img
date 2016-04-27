@@ -17,6 +17,8 @@
   "apps": [{
     "name": "shot",
     "script": "app.js",
+    "exec_mode": "cluster",
+    "instances": 2,
     "env": {
       "NODE_ENV": "production"
     }
