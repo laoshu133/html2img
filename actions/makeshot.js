@@ -129,13 +129,13 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.beforeOptimize(page, cfg);
     })
-    // clean
-    .tap(() => {
-        return page.release();
-    })
     // hooks.afterShot
     .tap(() => {
         return hooks.afterShot(cfg);
+    })
+    // clean
+    .finally(() => {
+        return page.release();
     })
     // result & count
     .then(() => {
