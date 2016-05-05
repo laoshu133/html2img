@@ -58,12 +58,12 @@ function makeshot(cfg, hooks) {
 
         function check() {
             return page.evaluate(function(selector) {
-                // var $ = window.jQuery;
+                var $ = window.jQuery;
                 // var shotTools = window.shotTools;
                 // console.log('jQuery:', !!$ ? $.fn.jquery : null);
                 // console.log('shotTools', !!shotTools ? shotTools.version : null);
 
-                return document.querySelectorAll(selector).length;
+                return $(selector).length;
             }, selector)
             .then(count => {
                 if(!count || count < minCount) {
