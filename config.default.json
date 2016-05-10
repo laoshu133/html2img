@@ -9,7 +9,7 @@
   "imageQuality": 90,
   "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
   "wrapSelector": ".shot_flag_wrap_panel",
-  "wrapFindTimeout": 2400,
+  "wrapFindTimeout": 16000,
   "wrapMinCount": 1,
   "wrapMaxCount": 0,
   "requestHeaders": {
