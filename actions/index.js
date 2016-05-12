@@ -6,5 +6,6 @@
 
 module.exports = {
     makeshot: require('./makeshot'),
-    makelist: require('./makelist')
+    makelist: require('./makelist'),
+    preivew: require('./preview')
 };
