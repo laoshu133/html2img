@@ -105,6 +105,9 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.beforeShot(page, cfg);
     })
+    // 给渲染一个喘息的机会，体谅下 phantomjs 的渲染性能
+    .delay(+cfg.renderDelay || 0)
+    // map rect & crop (Series)
     .then(rects => {
         let out = cfg.out;
         let imagePath = out.image;
@@ -119,10 +122,7 @@ function makeshot(cfg, hooks) {
 
             images[inx] = path;
 
-            return page.crop(rect, path, {
-                quality: cfg.imageQuality,
-                size: cfg.size
-            });
+            return page.crop(rect, path);
         });
     })
     // hooks.beforeOptimize
