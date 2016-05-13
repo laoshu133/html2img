@@ -39,7 +39,7 @@ module.exports = function(router) {
             ret = yield actions[cfg.action](cfg);
         }
         else {
-            this.throw(403, 'No action defined');
+            this.throw(400, 'No action defined: ' + cfg.action);
         }
 
         // check result
