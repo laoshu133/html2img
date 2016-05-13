@@ -133,6 +133,12 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.afterShot(cfg);
     })
+
+    // // debug
+    // .tap(() => {
+    //     return page.screenshot('./__out.png');
+    // })
+
     // clean
     .finally(() => {
         return page.release();
