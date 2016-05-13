@@ -4,6 +4,7 @@
   "action": "makeshot",
   "htmlTpl": "taobao_desc.html",
   "dataType": "json",
+  "renderDelay": 160,
   "optimizeImage": false,
   "imageType": "png",
   "imageQuality": 90,
