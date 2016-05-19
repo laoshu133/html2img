@@ -66,9 +66,10 @@ const config = {
             return cfg;
         });
     },
-    processContent: function(cfg) {
+    processContent: Promise.method(function(cfg) {
+        // processed
         if(cfg.out) {
-            return Promise.resolve(cfg);
+            return cfg;
         }
 
         let imgExtMap = {
@@ -101,10 +102,20 @@ const config = {
             image: path.join(outPath, outName + imgExt)
         };
 
+        // url
+        let url = cfg.url;
+        let rAbsUrl = /^\w+:\/\//;
+
+        // whitout content, padding url
+        if(!cfg.content && url && !rAbsUrl.test(url)) {
+            cfg.url = 'http://' + url;
+        }
+
         // content
         if(cfg.content) {
-            let url = path.join(outPath, 'out.html');
             let htmlTplPath = path.join(cwd, 'tpl', cfg.htmlTpl);
+
+            url = path.join(outPath, 'out.html');
 
             return fs.readFileAsync(htmlTplPath)
             .then(htmlTpl => {
@@ -122,8 +133,8 @@ const config = {
             });
         }
 
-        return Promise.resolve(cfg);
-    }
+        return cfg;
+    })
 };
 
 module.exports = config;
