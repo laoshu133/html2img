@@ -122,7 +122,11 @@ function makeshot(cfg, hooks) {
 
             images[inx] = path;
 
-            return page.crop(rect, path);
+            return page.crop(rect, path, {
+                quality: cfg.imageQuality,
+                format: cfg.imageType,
+                size: cfg.imageSize
+            });
         });
     })
     // hooks.beforeOptimize
