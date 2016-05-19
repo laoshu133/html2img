@@ -75,12 +75,20 @@ onerror(app, {
 });
 
 // Error report
-app.on('error', function(err) {
-    logger.error('[App error]', err);
+app.on('error', err => {
+    logger.info('[App Error]', err.message);
+    logger.error(err);
+});
 
-    if(app.env === 'development') {
-        console.error(err);
-    }
+// process.crash
+process.on('uncaughtException', ex => {
+    logger.info('[App Crashed]', ex.message);
+
+    // process.exit(1) 前此处 logger 无法记录错误，原因未知
+    // 可能 stderr 已经关闭
+    // logger.error(ex);
+
+    process.exit(1);
 });
 
 

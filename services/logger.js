@@ -1,5 +1,7 @@
 /**
  * services/logger
+ *
+ * 默认输出指控制台，建议基于 pm2 管理日志
  */
 'use strict';
 
@@ -8,15 +10,14 @@ const debug = require('debug');
 
 let prefix = process.env.DEBUG.replace(':*', ':');
 
-let log = debug(prefix + 'info');
-let logError = debug(prefix + 'error');
-
-logError.log = console.error.bind(console);
-
 let logger = {
-    log: log,
-    info: log,
-    error: logError
+    log: debug(prefix + 'log'),
+    info: debug(prefix + 'info'),
+    error: debug(prefix + 'error')
 };
+
+logger.log.log = console.log.bind(console);
+logger.info.log = console.info.bind(console);
+logger.error.log = console.error.bind(console);
 
 module.exports = logger;
