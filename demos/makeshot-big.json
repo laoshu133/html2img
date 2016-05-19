@@ -1,6 +1,6 @@
 {
     "action": "makeshot",
-    "size": {
+    "imageSize": {
       "type": 10,
       "width": 600
     },
