@@ -8,13 +8,16 @@
 const debug = require('debug');
 // const lodash = require('lodash');
 
-let prefix = process.env.DEBUG.replace(':*', ':');
+let prefix = process.env.DEBUG.replace(/\:\*$/, ':');
 
 let logger = {
     log: debug(prefix + 'log'),
     info: debug(prefix + 'info'),
     error: debug(prefix + 'error')
 };
+
+// logger.debug -> logger.log
+logger.debug = logger.log;
 
 logger.log.log = console.log.bind(console);
 logger.info.log = console.info.bind(console);
