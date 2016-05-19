@@ -23,7 +23,7 @@ const config = {
         }
 
         // local config
-        let localConfig = path.resolve('../config.json');
+        let localConfig = path.join(__dirname, '../config.json');
 
         return fs.existsAsync(localConfig)
         .then(exists => {
