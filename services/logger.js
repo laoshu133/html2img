@@ -1,40 +1,23 @@
 /**
  * services/logger
+ *
+ * 默认输出指控制台，建议基于 pm2 管理日志
  */
 'use strict';
 
-const winston = require('winston');
-const DebugTransportFactory = require('../lib/winston.transports.debug');
+const debug = require('debug');
+// const lodash = require('lodash');
 
-let logger;
+let prefix = process.env.DEBUG.replace(':*', ':');
 
-if(process.env.NODE_ENV === 'development') {
-    let prefix = process.env.DEBUG.replace(':*', ':');
-    let DebugTransport = DebugTransportFactory(prefix);
+let logger = {
+    log: debug(prefix + 'log'),
+    info: debug(prefix + 'info'),
+    error: debug(prefix + 'error')
+};
 
-    logger = new winston.Logger({
-        level: 'debug',
-        colorize: true,
-        transports: [
-            new DebugTransport()
-        ]
-    });
-}
-else {
-    logger = new (winston.Logger)({
-        transports: [
-            new winston.transports.File({
-                name: 'info-file',
-                filename: process.env.LOGS_PATH + '/info.log',
-                level: 'info'
-            }),
-            new winston.transports.File({
-                name: 'error-file',
-                filename: process.env.LOGS_PATH + '/error.log',
-                level: 'error'
-            })
-        ]
-    });
-}
+logger.log.log = console.log.bind(console);
+logger.info.log = console.info.bind(console);
+logger.error.log = console.error.bind(console);
 
 module.exports = logger;
