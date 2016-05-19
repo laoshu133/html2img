@@ -18,18 +18,19 @@ const config = {
     uuid: 0,
     defaultConfig: defaultConfig,
     getCurrentConfig: function() {
-        let configPath = '../config.json';
-
         if(this.currentConfig) {
             return Promise.resolve(this.currentConfig);
         }
 
-        return fs.existsAsync(configPath)
+        // local config
+        let localConfig = path.resolve('../config.json');
+
+        return fs.existsAsync(localConfig)
         .then(exists => {
-            return exists ? fs.readFileAsync(configPath) : null;
+            return exists ? fs.readFileAsync(localConfig) : null;
         })
-        .then(configBuf => {
-            return JSON.parse(configBuf);
+        .then(buf => {
+            return JSON.parse(buf);
         })
         .then(config => {
             config = lodash.merge({}, this.defaultConfig, config);
