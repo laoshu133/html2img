@@ -116,6 +116,56 @@ curl -H "Content-type: application/json" -X POST -d '{"url":"http://meiyaapp.com
 - 21 - 短边适应，圆点左上
 
 
+## 返回值
+
+返回值类型由 `dataType` 配置决定，支持 `json`, `image`，默认为 `json`
+
+如果为 `image`，默认只截取一张图片，且直接返回图片
+
+如果为 `json` 返回值各字段说明：
+
+```json
+{
+    // 第一张图片
+    "image": "http://shot.huanleguang.cn/file/makeshot_1463680442328_1/out.png",
+    // 截图的图片列表
+    "images": ["http://shot.huanleguang.cn/file/makeshot_1463680442328_1/out.png", "http://shot.huanleguang.cn/file/makeshot_1463680442328_1/out-2.png", "http://shot.huanleguang.cn/file/makeshot_1463680442328_1/out-3.png", "http://shot.huanleguang.cn/file/makeshot_1463680442328_1/out-4.png", "http://shot.huanleguang.cn/file/makeshot_1463680442328_1/out-5.png"],
+    // 元数据
+    "metadata": {
+        // 截图的区域大小
+        "crops": [{
+            "width": 400,
+            "height": 565.359375,
+            "left": 0,
+            "top": 617.765625
+        }, {
+            "width": 400,
+            "height": 565.359375,
+            "left": 0,
+            "top": 1183.125
+        }, {
+            "width": 400,
+            "height": 565.359375,
+            "left": 0,
+            "top": 1748.484375
+        }, {
+            "width": 400,
+            "height": 565.359375,
+            "left": 0,
+            "top": 2313.84375
+        }, {
+            "width": 400,
+            "height": 565.359375,
+            "left": 0,
+            "top": 2879.203125
+        }]
+    },
+    // 截图耗时，毫秒
+    "elapsed": 2182
+}
+```
+
+
 ## 贡献代码
 
 @TODO
