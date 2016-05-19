@@ -83,10 +83,7 @@ app.on('error', err => {
 // process.crash
 process.on('uncaughtException', ex => {
     logger.info('[App Crashed]', ex.message);
-
-    // process.exit(1) 前此处 logger 无法记录错误，原因未知
-    // 可能 stderr 已经关闭
-    // logger.error(ex);
+    logger.error(ex);
 
     process.exit(1);
 });
