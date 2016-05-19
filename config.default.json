@@ -13,9 +13,7 @@
   "wrapFindTimeout": 16000,
   "wrapMinCount": 1,
   "wrapMaxCount": 0,
-  "requestHeaders": {
-    "Referer": "http://tbgr.huanleguang.com/_shot"
-  },
+  "requestHeaders": {},
   "includeJs": null,
   "viewport": null
 }
