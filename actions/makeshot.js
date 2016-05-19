@@ -109,10 +109,21 @@ function makeshot(cfg, hooks) {
     .delay(+cfg.renderDelay || 0)
     // map rect & crop (Series)
     .then(rects => {
+        let rExt = /(\.\w+)$/;
+        let cropProps = ['width', 'height', 'left', 'top'];
+
         let out = cfg.out;
         let imagePath = out.image;
         let images = out.images = [];
-        let rExt = /(\.\w+)$/;
+
+        // metadata
+        let metadata = out.metadata;
+        if(!metadata) {
+            metadata = out.metadata = {};
+        }
+
+        // crops
+        let crops = metadata.crops = [];
 
         return Promise.mapSeries(rects, (rect, inx) => {
             let path = imagePath;
@@ -121,6 +132,7 @@ function makeshot(cfg, hooks) {
             }
 
             images[inx] = path;
+            crops[inx] = lodash.pick(rect, cropProps);
 
             return page.crop(rect, path, {
                 quality: cfg.imageQuality,
