@@ -139,10 +139,6 @@ function makeshot(cfg, hooks) {
     //     return page.screenshot('./__out.png');
     // })
 
-    // clean
-    .finally(() => {
-        return page.release();
-    })
     // result & count
     .then(() => {
         logger.info('Actions.makeshot['+ cfg.action +'].done');
@@ -151,11 +147,18 @@ function makeshot(cfg, hooks) {
         makeshot.counts.success += 1;
 
         return cfg.out;
-    }, ex => {
+    })
+    .catch(ex => {
         makeshot.counts.total += 1;
         makeshot.counts.error += 1;
 
         return Promise.reject(ex);
+    })
+    // clean
+    .finally(() => {
+        if(page) {
+            return page.release();
+        }
     });
 
 };
