@@ -156,7 +156,7 @@ function makeshot(cfg, hooks) {
     })
     // clean
     .finally(() => {
-        if(page) {
+        if(page && page.release) {
             return page.release();
         }
     });
