@@ -18,18 +18,19 @@ const config = {
     uuid: 0,
     defaultConfig: defaultConfig,
     getCurrentConfig: function() {
-        let configPath = '../config.json';
-
         if(this.currentConfig) {
             return Promise.resolve(this.currentConfig);
         }
 
-        return fs.existsAsync(configPath)
+        // local config
+        let localConfig = path.join(__dirname, '../config.json');
+
+        return fs.existsAsync(localConfig)
         .then(exists => {
-            return exists ? fs.readFileAsync(configPath) : null;
+            return exists ? fs.readFileAsync(localConfig) : null;
         })
-        .then(configBuf => {
-            return JSON.parse(configBuf);
+        .then(buf => {
+            return JSON.parse(buf);
         })
         .then(config => {
             config = lodash.merge({}, this.defaultConfig, config);
@@ -66,9 +67,10 @@ const config = {
             return cfg;
         });
     },
-    processContent: function(cfg) {
+    processContent: Promise.method(function(cfg) {
+        // processed
         if(cfg.out) {
-            return Promise.resolve(cfg);
+            return cfg;
         }
 
         let imgExtMap = {
@@ -101,10 +103,20 @@ const config = {
             image: path.join(outPath, outName + imgExt)
         };
 
+        // url
+        let url = cfg.url;
+        let rAbsUrl = /^\w+:\/\//;
+
+        // whitout content, padding url
+        if(!cfg.content && url && !rAbsUrl.test(url)) {
+            cfg.url = 'http://' + url;
+        }
+
         // content
         if(cfg.content) {
-            let url = path.join(outPath, 'out.html');
             let htmlTplPath = path.join(cwd, 'tpl', cfg.htmlTpl);
+
+            url = path.join(outPath, 'out.html');
 
             return fs.readFileAsync(htmlTplPath)
             .then(htmlTpl => {
@@ -122,8 +134,8 @@ const config = {
             });
         }
 
-        return Promise.resolve(cfg);
-    }
+        return cfg;
+    })
 };
 
 module.exports = config;

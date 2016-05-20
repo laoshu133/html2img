@@ -8,15 +8,12 @@
   "optimizeImage": false,
   "imageType": "png",
   "imageQuality": 90,
-  "imageBlank": "http://wscdn.huanleguang.com/assets/img/blank.png",
-  "wrapSelector": ".shot_flag_wrap_panel",
+  "imageSize": null,
+  "wrapSelector": "body",
   "wrapFindTimeout": 16000,
   "wrapMinCount": 1,
   "wrapMaxCount": 0,
-  "requestHeaders": {
-    "Referer": "http://tbgr.huanleguang.com/_shot"
-  },
+  "requestHeaders": {},
   "includeJs": null,
-  "viewport": null,
-  "size": null
+  "viewport": null
 }

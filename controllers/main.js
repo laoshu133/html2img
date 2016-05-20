@@ -55,6 +55,7 @@ module.exports = function(router) {
         // covert result (local path -> url)
         let result = {
             image: pathToUrl(ret.image),
+            images: lodash.map(ret.images, pathToUrl),
             metadata: ret.metadata || null,
             // elapsed
             elapsed: Date.now() - timestamp

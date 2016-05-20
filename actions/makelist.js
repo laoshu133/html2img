@@ -20,7 +20,6 @@ function makelist(cfg) {
                     return shotTools.covertTaobaoList(options);
                 }, {
                     type: cfg.listOutType || 'map',
-                    imageBlank: cfg.imageBlank,
                     selector: selector
                 });
             })

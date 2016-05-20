@@ -4,9 +4,11 @@
  */
 
 (function(global, $) {
+
     // deps jquery
     var tools = {
         version: '0.0.2',
+        imageBlank: 'http://wscdn.huanleguang.com/assets/img/blank.png',
         init: function() {
             this.tryTaobaoCSSShim();
         },
@@ -97,7 +99,6 @@
             className += 'list_fited';
 
             var tmpRet = covertor.call(this, {
-                imageBlank: options.imageBlank,
                 className: className,
                 wrapElem: wrapElem,
                 wrapRect: wrapRect,
@@ -146,12 +147,12 @@
                 var itemTpl = '<div class="{absClassName}" style="display:inline;background:none;border:0;width:{width}px;left:{left}px;top:{top}px"><a href="{href}" target="{target}" style="display:inline-block;vertical-align:top"><img src="{imgBlank}" height="{height}" width="{width}" valign="top"></a></div>';
 
                 var listHTML = '';
-                var imageBlank = options.imageBlank;
+                var imageBlank = tools.imageBlank;
                 var absClassName = this.getTaobaoAbsClass();
 
                 options.links.forEach(function(link) {
-                    link.imgBlank = imageBlank;
                     link.absClassName = absClassName;
+                    link.imgBlank = imageBlank;
 
                     listHTML += fill(itemTpl, link);
                 });
