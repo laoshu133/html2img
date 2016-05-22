@@ -94,7 +94,7 @@ if(!module.parent) {
     let port = process.env.PORT || 3007;
     app.listen(port);
 
-    console.log('Server listening:', port);
+    logger.info('Server listening: ' + port);
 }
 
 // exports
