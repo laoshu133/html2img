@@ -172,8 +172,8 @@ function makeshot(cfg, hooks) {
     })
     // clean
     .finally(() => {
-        if(page && page.release) {
-            return page.release();
+        if(page && page.releaseOrClose) {
+            return page.releaseOrClose();
         }
     });
 
