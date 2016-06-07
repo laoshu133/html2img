@@ -40,6 +40,7 @@ module.exports = function(router) {
             startTimePretty: prettyDate(selfStartTime),
             uptime: Date.now() - selfStartTime,
             totalMemory: bytes(0),
+            totalShots: 0,
             workersCount: 0,
             workers: [],
         };
@@ -61,6 +62,7 @@ module.exports = function(router) {
 
             return fs.readJSONAsync(filepath)
             .then(status => {
+                // tmp
                 status.filename = filename;
 
                 return status;
@@ -85,6 +87,7 @@ module.exports = function(router) {
             });
         })
         .then(allStatus => {
+            let totalShots = 0;
             let totalMemory = 0;
             let startTime = selfStartTime;
 
@@ -93,6 +96,9 @@ module.exports = function(router) {
                     startTime = status.startTime;
                 }
 
+                // totalShots
+                totalShots += status.shotCounts.total;
+
                 let memory = status.phantomStat.memory;
 
                 // pretty mem
@@ -100,6 +106,9 @@ module.exports = function(router) {
 
                 // total mem
                 totalMemory += memory;
+
+                // clean
+                delete status.filename;
             });
 
             // startTime & Pretty
@@ -108,6 +117,9 @@ module.exports = function(router) {
 
             // uptime
             status.uptime = Date.now() - startTime;
+
+            // totalShots
+            status.totalShots = totalShots;
 
             // totalMemory
             status.totalMemory = bytes(totalMemory);
