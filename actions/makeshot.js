@@ -4,18 +4,38 @@
  */
 'use strict';
 
+const path = require('path');
 const lodash = require('lodash');
 const Promise = require('bluebird');
+const fs = require('fs-extra-promise');
 
 const phantom = require('../lib/phantom');
 const logger = require('../services/logger');
 const config = require('../services/config');
 
-// counts
-makeshot.counts = {
+// status counts
+makeshot.shotCounts = {
     total: 0,
     success: 0,
     error: 0
+};
+
+// sync status
+makeshot.syncStatus = function() {
+    let filename = process.pid + '.json';
+    let statusPath = path.join(process.env.STATUS_PATH, filename);
+
+    return phantom.getStatus()
+    .then(statusData => {
+        let status = lodash.assign({
+            shotCounts: makeshot.shotCounts
+        }, statusData);
+
+        return status;
+    })
+    .then(status => {
+        return fs.outputJSONAsync(statusPath, status);
+    });
 };
 
 function makeshot(cfg, hooks) {
@@ -159,19 +179,23 @@ function makeshot(cfg, hooks) {
     .then(() => {
         logger.info('Actions.makeshot['+ cfg.action +'].done');
 
-        makeshot.counts.total += 1;
-        makeshot.counts.success += 1;
+        makeshot.shotCounts.total += 1;
+        makeshot.shotCounts.success += 1;
 
         return cfg.out;
     })
     .catch(ex => {
-        makeshot.counts.total += 1;
-        makeshot.counts.error += 1;
+        makeshot.shotCounts.total += 1;
+        makeshot.shotCounts.error += 1;
 
         return Promise.reject(ex);
     })
-    // clean
+    // clean & status
     .finally(() => {
+        // sync status
+        makeshot.syncStatus();
+
+        // clean
         if(page) {
             return page.close();
         }

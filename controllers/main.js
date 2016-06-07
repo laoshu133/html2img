@@ -14,7 +14,7 @@ const actions = require('../actions/index');
 
 module.exports = function(router) {
 
-    let readmeTpl = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Readme</title></head><body><pre>{{content}}</pre></body></html>';
+    let readmeTpl = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Readme - html2img</title></head><body><pre>{{content}}</pre></body></html>';
 
     let pathToUrl = function(localPath) {
         let env = process.env;
@@ -70,6 +70,7 @@ module.exports = function(router) {
 
         // covert result (local path -> url)
         let result = {
+            id: cfg.id,
             image: pathToUrl(ret.image),
             images: lodash.map(ret.images, pathToUrl),
             metadata: ret.metadata || null,
