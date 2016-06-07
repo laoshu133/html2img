@@ -9,7 +9,8 @@ let Router = require('koa-router');
 let ctrls = [
     require('./main'),
     require('./file'),
-    require('./status')
+    require('./status'),
+    require('./clean')
 ];
 
 module.exports = function (app) {
