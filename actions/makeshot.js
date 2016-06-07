@@ -38,12 +38,6 @@ makeshot.syncStatus = function() {
     });
 };
 
-makeshot.counts = {
-    total: 0,
-    success: 0,
-    error: 0
-};
-
 function makeshot(cfg, hooks) {
     logger.info('Actions.makeshot['+ cfg.action +']');
 
@@ -185,14 +179,14 @@ function makeshot(cfg, hooks) {
     .then(() => {
         logger.info('Actions.makeshot['+ cfg.action +'].done');
 
-        makeshot.counts.total += 1;
-        makeshot.counts.success += 1;
+        makeshot.shotCounts.total += 1;
+        makeshot.shotCounts.success += 1;
 
         return cfg.out;
     })
     .catch(ex => {
-        makeshot.counts.total += 1;
-        makeshot.counts.error += 1;
+        makeshot.shotCounts.total += 1;
+        makeshot.shotCounts.error += 1;
 
         return Promise.reject(ex);
     })

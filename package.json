@@ -11,7 +11,7 @@
   "scripts": {
     "test": "node tests/makeshot.js",
     "test_list": "node tests/makelist.js",
-    "dev": "nodemon -i tests app.js",
+    "dev": "nodemon --ignore tests/ --ignore __out/ app.js",
     "start": "pm2 startOrReload package.json"
   },
   "apps": [
