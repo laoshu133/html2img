@@ -10,7 +10,6 @@ const Promise = require('bluebird');
 const fs = require('fs-extra-promise');
 const pidstat = Promise.promisify(require('pidusage').stat);
 
-const makeshot = require('../actions/makeshot');
 const STATUS_PATH = process.env.STATUS_PATH;
 
 module.exports = function(router) {
