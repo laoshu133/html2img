@@ -32,17 +32,17 @@ module.exports = function(router) {
         let body = this.request.body;
         let query = this.query;
 
-        // Guide
-        if(this.method === 'GET' && lodash.isEmpty(query)) {
-            let readmePath = __dirname + '/../README.md';
-            let readme = yield fs.readFileAsync(readmePath);
+        // // Guide
+        // if(this.method === 'GET' && lodash.isEmpty(query)) {
+        //     let readmePath = __dirname + '/../README.md';
+        //     let readme = yield fs.readFileAsync(readmePath);
 
-            readme = readmeTpl.replace('{{content}}', readme.toString());
+        //     readme = readmeTpl.replace('{{content}}', readme.toString());
 
-            this.body = readme;
+        //     this.body = readme;
 
-            return;
-        }
+        //     return;
+        // }
 
         // parse config
         let cfg = yield config.create(lodash.merge(query, body));
