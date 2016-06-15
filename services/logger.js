@@ -1,12 +1,11 @@
 /**
  * services/logger
  *
- * 默认输出指控制台，建议基于 pm2 管理日志
+ * 默认输出至控制台，建议基于 pm2 管理日志
  */
 'use strict';
 
 const debug = require('debug');
-// const lodash = require('lodash');
 
 let prefix = process.env.DEBUG.replace(/\:\*$/, ':');
 
@@ -27,6 +26,7 @@ logger.error.log = console.error.bind(console);
 // 非 TTY 输出时，格式化时间为当地时间
 if(!process.stdout.isTTY) {
     let rSingleNum = /\b(\d)\b/g;
+
     debug.formatArgs = function() {
         let args = arguments;
         let name = this.namespace;
