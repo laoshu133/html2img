@@ -13,30 +13,32 @@ const pidstat = Promise.promisify(require('pidusage').stat);
 const STATUS_PATH = process.env.STATUS_PATH;
 
 module.exports = function(router) {
-    let selfStartTime = Date.now();
+    let prettyDate = function(date) {
+        let rSingleNum = /\b(\d)\b/g;
 
-    let prettyDate = function(ms) {
-        let date = new Date(ms);
-
-        let ret = [
-            date.getFullYear() + '-',
-            (date.getMonth() + 1) + '-',
+        return [
+            date.getFullYear() + '/',
+            date.getMonth() + 1 + '/',
             date.getDate() + ' ',
             date.getHours() + ':',
             date.getMinutes() + ':',
             date.getSeconds()
         ]
-        .join('');
-
-        return ret.replace(/\-(\d)\b/g, '-0$1');
+        .join('')
+        .replace(rSingleNum, '0$1');
     };
+    let prettyMs = function(ms) {
+        return prettyDate(new Date(ms));
+    };
+
+    let selfStartTime = Date.now();
 
     router.get('/status', function *() {
         let rStatusFilename = /^\d+\.json$/;
 
         let status = {
             startTime: selfStartTime,
-            startTimePretty: prettyDate(selfStartTime),
+            startTimePretty: prettyMs(selfStartTime),
             uptime: Date.now() - selfStartTime,
             totalMemory: bytes(0),
             totalShots: 0,
@@ -112,7 +114,7 @@ module.exports = function(router) {
 
             // startTime & Pretty
             status.startTime = startTime;
-            status.startTimePretty = prettyDate(startTime);
+            status.startTimePretty = prettyMs(startTime);
 
             // uptime
             status.uptime = Date.now() - startTime;
