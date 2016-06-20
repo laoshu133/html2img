@@ -79,11 +79,14 @@ function makeshot(cfg, hooks) {
         function check() {
             return page.evaluate(function(selector) {
                 var $ = window.jQuery;
+                // wait for page loaded
+                var loaded = document.readyState === 'complete';
+
                 // var shotTools = window.shotTools;
                 // console.log('jQuery:', !!$ ? $.fn.jquery : null);
                 // console.log('shotTools', !!shotTools ? shotTools.version : null);
 
-                return $(selector).length;
+                return loaded && $(selector).length;
             }, selector)
             .then(count => {
                 if(!count || count < minCount) {
@@ -114,16 +117,17 @@ function makeshot(cfg, hooks) {
             dfd.reject = reject;
         });
     })
+    // hooks.beforeShot
+    .tap(() => {
+        return hooks.beforeShot(page, cfg);
+    })
+    // get croper rects
     .then(() => {
         let selector = cfg.wrapSelector;
 
         return page.getCropRects(selector, {
             maxCount: cfg.wrapMaxCount
         });
-    })
-    // hooks.beforeShot
-    .tap(() => {
-        return hooks.beforeShot(page, cfg);
     })
     // 给渲染一个喘息的机会，体谅下 phantomjs 的渲染性能
     .delay(+cfg.renderDelay || 0)
