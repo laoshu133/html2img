@@ -114,7 +114,8 @@ const config = {
 
         // content
         if(cfg.content) {
-            let htmlTplPath = path.join(cwd, 'tpl', cfg.htmlTpl);
+            let tplName = cfg.htmlTpl || 'default.html';
+            let htmlTplPath = path.join(cwd, 'static/tpl', tplName);
 
             url = path.join(outPath, 'out.html');
 

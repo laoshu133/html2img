@@ -19,14 +19,13 @@
             }
 
             var rects = [];
-
             $(selector).each(function(i, elem) {
                 if(!elem || !elem.getBoundingClientRect) {
                     return;
                 }
 
                 var rect = elem.getBoundingClientRect();
-                if(!rect || !rect.width || !rect.height) {
+                if(!rect) {
                     return;
                 }
 
