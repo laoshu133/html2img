@@ -40,7 +40,7 @@
     "koa-router": "^5.4.0",
     "koa-send": "^3.2.0",
     "lodash": "^4.13.1",
-    "phantom": "^2.1.5",
+    "phantom": "^2.1.7",
     "pngquant-bin": "^3.1.0",
     "pidusage": "^1.0.1",
     "bytes": "^2.4.0"
