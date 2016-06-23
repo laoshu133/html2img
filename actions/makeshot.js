@@ -13,30 +13,7 @@ const phantom = require('../lib/phantom');
 const logger = require('../services/logger');
 const config = require('../services/config');
 
-// status counts
-makeshot.shotCounts = {
-    total: 0,
-    success: 0,
-    error: 0
-};
-
-// sync status
-makeshot.syncStatus = function() {
-    let filename = process.pid + '.json';
-    let statusPath = path.join(process.env.STATUS_PATH, filename);
-
-    return phantom.getStatus()
-    .then(statusData => {
-        let status = lodash.assign({
-            shotCounts: makeshot.shotCounts
-        }, statusData);
-
-        return status;
-    })
-    .then(status => {
-        return fs.outputJSONAsync(statusPath, status);
-    });
-};
+const OUT_PATH = process.env.OUT_PATH;
 
 function makeshot(cfg, hooks) {
     logger.info('Actions.makeshot['+ cfg.action +']');
@@ -205,6 +182,72 @@ function makeshot(cfg, hooks) {
         }
     });
 
+};
+
+// status counts
+makeshot.shotCounts = {
+    total: 0,
+    success: 0,
+    error: 0
+};
+
+// sync status
+makeshot.syncStatus = function() {
+    let filename = process.pid + '.json';
+    let statusPath = path.join(process.env.STATUS_PATH, filename);
+
+    return phantom.getStatus()
+    .then(statusData => {
+        let status = lodash.assign({
+            shotCounts: makeshot.shotCounts
+        }, statusData);
+
+        return status;
+    })
+    .then(status => {
+        return fs.outputJSONAsync(statusPath, status);
+    });
+};
+
+// cleanTimeoutShots
+// 删除已超时截图，默认 1 小时超时
+makeshot.cleanTimeoutShots = function() {
+    let now = Date.now();
+    let rOutId = /^[a-z]+\_\d+/i;
+    let shotTimeout = process.env.SHOT_TIMEOUT || 60 * 60 * 1000;
+
+    return fs.readdirAsync(OUT_PATH)
+    .filter(dirname => {
+        if(!rOutId.test(dirname)) {
+            return false;
+        }
+
+        let dirPath = path.join(OUT_PATH, dirname);
+
+        return fs.statAsync(dirPath)
+        .then(stats => {
+            let elapsed = now - stats.mtime.getTime();
+
+            if(
+                stats.isDirectory() &&
+                elapsed > shotTimeout
+            ) {
+                return true;
+            }
+
+            return false;
+        });
+    })
+    .map(dirname => {
+        let dirPath = path.join(OUT_PATH, dirname);
+
+        return fs.removeAsync(dirPath)
+        .then(() => {
+            return dirname;
+        });
+    }, {
+        concurrency: 5
+    });
 };
 
 module.exports = makeshot;
