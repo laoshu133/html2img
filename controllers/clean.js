@@ -4,12 +4,7 @@
  */
 'use strict';
 
-const path = require('path');
-const fs = require('fs-extra-promise');
-
 const makeshot = require('../actions/makeshot');
-
-const OUT_PATH = process.env.OUT_PATH;
 
 module.exports = function(router) {
     router.get('/clean', function *() {
@@ -20,9 +15,7 @@ module.exports = function(router) {
 
         // 指定 id 删除
         if(id) {
-            let dirPath = path.join(OUT_PATH, id);
-
-            yield fs.removeAsync(dirPath);
+            yield makeshot.removeShot(id);
 
             this.body = {
                 status: 'success',
@@ -33,7 +26,7 @@ module.exports = function(router) {
         }
 
         // 超时删除
-        let removedIds = yield makeshot.cleanTimeoutShots();
+        let removedIds = yield makeshot.clearTimeoutShots();
 
         this.body = {
             status: 'success',
