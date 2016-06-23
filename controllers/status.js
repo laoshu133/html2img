@@ -37,13 +37,14 @@ module.exports = function(router) {
         let rStatusFilename = /^\d+\.json$/;
 
         let status = {
-            startTime: selfStartTime,
+            host: process.env.WWW_HOST,
             startTimePretty: prettyMs(selfStartTime),
+            startTime: selfStartTime,
             uptime: Date.now() - selfStartTime,
             totalMemory: bytes(0),
             totalShots: 0,
             workersCount: 0,
-            workers: [],
+            workers: []
         };
 
         // check dir exists
