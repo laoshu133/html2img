@@ -109,7 +109,7 @@
         listCovertors: {
             map: function(options) {
                 var tpl = '<div class="{className}"><div><img usemap="#{mapName}" src="{imgUrl}" width="{imgWidth}" height="{imgHeight}" border="0" style="vertical-align:top"></div><map name="{mapName}" id="{mapName}">{linkList}</map></div>';
-                var itemTpl = '<area shape="RECT" coords="{coords}" type="anchor" target="{target}" href="{href}">';
+                var itemTpl = '<a href="{href}" target="{target}"><area shape="RECT" coords="{coords}" type="anchor" href="{href}" target="{target}"></a>';
 
                 var listHTML = '';
                 options.links.forEach(function(link) {
