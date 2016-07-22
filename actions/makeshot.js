@@ -9,7 +9,7 @@ const lodash = require('lodash');
 const Promise = require('bluebird');
 const fs = require('fs-extra-promise');
 
-const phantom = require('../lib/phantom');
+const phantomAdp = require('../lib/phantom-adp');
 const logger = require('../services/logger');
 const config = require('../services/config');
 
@@ -35,7 +35,7 @@ function makeshot(cfg, hooks) {
             throw new Error('url not provided');
         }
 
-        return phantom.preparePage(cfg);
+        return phantomAdp.preparePage(cfg);
     })
     // cache page
     .tap(phPage => {
@@ -226,7 +226,7 @@ makeshot.syncStatus = function() {
     let filename = process.pid + '.json';
     let statusPath = path.join(process.env.STATUS_PATH, filename);
 
-    return phantom.getStatus()
+    return phantomAdp.getStatus()
     .then(statusData => {
         let status = lodash.assign({
             shotCounts: makeshot.shotCounts

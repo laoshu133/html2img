@@ -27,6 +27,7 @@
   ],
   "dependencies": {
     "bluebird": "^3.4.0",
+    "bytes": "^2.4.0",
     "debug": "^2.2.0",
     "dotenv-safe": "^2.3.1",
     "exec-buffer": "^2.0.1",
@@ -40,10 +41,9 @@
     "koa-router": "^5.4.0",
     "koa-send": "^3.2.0",
     "lodash": "^4.13.1",
-    "phantom": "^2.1.7",
-    "pngquant-bin": "^3.1.0",
+    "phantom": "^2.1.12",
     "pidusage": "^1.0.1",
-    "bytes": "^2.4.0"
+    "pngquant-bin": "^3.1.0"
   },
   "devDependencies": {
     "request-promise": "^3.0.0"
