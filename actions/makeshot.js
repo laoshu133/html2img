@@ -15,6 +15,7 @@ const config = require('../services/config');
 
 const OUT_PATH = process.env.OUT_PATH;
 const SHOT_TIMEOUT = process.env.SHOT_TIMEOUT || 60 * 60 * 1000;
+const BLANK_IMAGE = path.resolve(__dirname, '../static/blank.png');
 
 function makeshot(cfg, hooks) {
     logger.info('Actions.makeshot['+ cfg.action +']');
@@ -138,7 +139,7 @@ function makeshot(cfg, hooks) {
         // crops
         let crops = metadata.crops = [];
 
-        return Promise.mapSeries(rects, (rect, inx) => {
+        return Promise.each(rects, (rect, inx) => {
             let path = imagePath;
             if(inx > 0) {
                 path = path.replace(rExt, '-'+ (inx+1) +'$1');
@@ -146,6 +147,11 @@ function makeshot(cfg, hooks) {
 
             images[inx] = path;
             crops[inx] = lodash.pick(rect, cropProps);
+
+            // rect is empty
+            if(rect.width <=0 || rect.height <= 0) {
+                return fs.copyAsync(BLANK_IMAGE, path);
+            }
 
             return page.crop(rect, path, {
                 quality: cfg.imageQuality,
