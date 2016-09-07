@@ -29,7 +29,12 @@ function makeshot(cfg, hooks) {
         afterShot: lodash.noop
     }, hooks);
 
-    return config.processContent(cfg)
+    // update status
+    return makeshot.syncStatus()
+    // process config
+    .then(() => {
+        return config.processContent(cfg);
+    })
     .then(cfg => {
         if(!cfg.url) {
             throw new Error('url not provided');
@@ -37,7 +42,7 @@ function makeshot(cfg, hooks) {
 
         return phantomAdp.preparePage(cfg);
     })
-    // cache page
+    // cache page, update status
     .tap(phPage => {
         page = phPage;
     })
@@ -45,6 +50,8 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.beforeCheck(page, cfg);
     })
+    // update status
+    .tap(makeshot.syncStatus)
     // check wrap count
     .then(() => {
         let dfd = {};
@@ -99,6 +106,10 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.beforeShot(page, cfg);
     })
+    // update status
+    .tap(() => {
+        return makeshot.syncStatus();
+    })
     // get croper rects
     .then(() => {
         let selector = cfg.wrapSelector;
@@ -151,6 +162,8 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.afterShot(cfg);
     })
+    // update status
+    .tap(makeshot.syncStatus)
 
     // // debug
     // .tap(() => {
@@ -173,14 +186,8 @@ function makeshot(cfg, hooks) {
         return Promise.reject(ex);
     })
 
-    // sync status
-    .tap(() => {
-        makeshot.syncStatus()
-        .catch(ex => {
-            logger.info('Actions.makeshot.syncStatus.error');
-            logger.error(ex);
-        });
-    })
+    // update status
+    .tap(makeshot.syncStatus)
     // clear timeout shots
     // 满足条件时清除已超时截图
     .tap(() => {
