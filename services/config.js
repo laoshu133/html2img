@@ -114,17 +114,29 @@ const config = {
 
         // content
         if(cfg.content) {
-            let tplName = cfg.htmlTpl || 'default.html';
+            let tplName = String(cfg.htmlTpl || 'default').trim();
+
+            // Filter
+            tplName = tplName.replace(/\.html$/, '').replace(/[^\w]/g, '');
+            tplName += '.html';
+
             let htmlTplPath = path.join(cwd, 'static/tpl', tplName);
 
-            url = path.join(outPath, 'out.html');
+            return fs.existsAsync(htmlTplPath)
+            .then(exists => {
+                if(!exists) {
+                    throw new Error('Template not exists: ' + tplName);
+                }
 
-            return fs.readFileAsync(htmlTplPath)
+                return fs.readFileAsync(htmlTplPath);
+            })
             .then(htmlTpl => {
                 let content = tools.processHTML(cfg.content);
                 let html = tools.fill(htmlTpl, {
                     content: content
                 });
+
+                url = path.join(outPath, 'out.html');
 
                 return fs.outputFileAsync(url, html);
             })
