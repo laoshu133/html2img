@@ -66,7 +66,7 @@ end
 
 if fileName then
     response.status = "success"
-    if ngx.var.upload_img_host then
+    if ngx.var.icon_img_url then
         response.result["upload_file"] = "http://"..ngx.var.icon_img_url.."/"..fileName
     else
         response.result["upload_file"] = fileName
