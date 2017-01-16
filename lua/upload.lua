@@ -1,6 +1,6 @@
 local upload = require "resty.upload"
 local cjson = require "cjson"
-local chunk_size = 4096
+local chunk_size = 8192
 local form,err = upload:new(chunk_size)
 local tid = ngx.var.arg_tid
 local imgDir = "/var/tmp/material_icon/"
