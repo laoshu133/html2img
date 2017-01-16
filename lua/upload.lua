@@ -66,6 +66,10 @@ end
 
 if fileName then
     response.status = "success"
-    response.result["upload_file"] = fileName
+    if ngx.var.upload_img_host then
+        response.result["upload_file"] = "http://"..ngx.var.icon_img_url.."/"..fileName
+    else
+        response.result["upload_file"] = fileName
+    end
     ngx.say(cjson.encode(response))
 end
