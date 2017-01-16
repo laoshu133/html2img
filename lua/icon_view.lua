@@ -3,7 +3,7 @@ local template = require "resty.template"
 ngx.header.content_type = "text/html; charset=UTF-8"
 local params = ngx.unescape_uri(ngx.var.arg_params)
 local iconParams = cjson.decode(params)
-local iconImgPath = ngx.var.arg_imgP
+local iconImgPath = ngx.unescape_uri(ngx.var.arg_imgP)
 local waterPrice = ngx.var.arg_price
 if waterPrice == nil then
 	ngx.exit(500)
