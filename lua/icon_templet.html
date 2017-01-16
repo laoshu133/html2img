@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>素材图标截图生成</title>
+        <!-- 使用截图服务  http://shot.huanleguang.com/ -->
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <style>
+            /* fonts */
+
+
+
+                @font-face {
+            /* 微软雅黑 */
+        font-family: 'Microsoft Yahei';
+                        src:  url('//st0.dancf.com/font/item/1469159243175.woff') format('woff');
+                    }
+            @font-face {
+            /* 宋体 */
+        font-family: 'Simsun';
+                        src:  url('//st0.dancf.com/font/item/1469159262111.woff') format('woff');
+                    }
+            @font-face {
+            /* 华康黑体 */
+        font-family: 'Huakang Heiti W5-A';
+                        src:  url('//st0.dancf.com/font/item/1461912229411.woff') format('woff');
+                    }
+            @font-face {
+            /* 简方隶 */
+        font-family: '简方隶';
+                        src:  url('//st0.dancf.com/font/item/1462431949065.woff') format('woff');
+                    }
+            @font-face {
+            /* 思源黑体-Heavy */
+        font-family: 'SourceHanSansSC-Heavy';
+                        src:  url('//st0.dancf.com/font/item/1481250646784.woff') format('woff');
+                    }
+            @font-face {
+            /* 喵小姐字体 */
+        font-family: 'MiaoXiaoJieJ';
+                        src:  url('//st0.dancf.com/font/item/1473646908083.woff') format('woff');
+                    }
+            @font-face {
+            /* 蒙纳摇杨简体 */
+        font-family: 'MYoyoPRC-Medium';
+                        src:  url('//st0.dancf.com/font/item/1470027190179.woff') format('woff');
+                    }
+            @font-face {
+            /* 孙中山百年行书 */
+        font-family: 'SunYatsenHsingshu-';
+                        src:  url('//st0.dancf.com/font/item/1470027248135.woff') format('woff');
+                    }
+            @font-face {
+            /* 晴圆 */
+        font-family: 'QingYuan';
+                        src:  url('//st0.dancf.com/font/item/1473656150519.woff') format('woff');
+                    }
+            @font-face {
+            /* 燕翎体 */
+        font-family: '汉仪燕翎体简';
+                        src:  url('//st0.dancf.com/font/item/1461811038419.woff') format('woff');
+                    }
+            @font-face {
+            /* 华文行楷 */
+        font-family: '华文行楷';
+                        src:  url('//st0.dancf.com/font/item/1462431081021.woff') format('woff');
+                    }
+            @font-face {
+            /* 华文琥珀 */
+        font-family: '华文琥珀';
+                        src:  url('//st0.dancf.com/font/item/1462431117783.woff') format('woff');
+                    }
+            @font-face {
+            /* 方正书宋简体 */
+        font-family: 'FZSSJW--GB1-0';
+                        src:  url('//st0.dancf.com/font/item/1469426546285.woff') format('woff');
+                    }
+            @font-face {
+            /* 方正兰亭特黑 */
+        font-family: 'FZLTTHK--GBK1-0';
+                        src:  url('//st0.dancf.com/font/item/1470026955896.woff') format('woff');
+                    }
+            @font-face {
+            /* 造字工房尚雅 */
+        font-family: 'MFShangYa-Regular';
+                        src:  url('//st0.dancf.com/font/item/1470026975432.woff') format('woff');
+                    }
+            @font-face {
+            /* 爱心体 */
+        font-family: '汉仪秀英体简';
+                        src:  url('//st0.dancf.com/font/item/1461808232228.woff') format('woff');
+                    }
+            @font-face {
+            /* 时尚中黑简 */
+        font-family: '时尚中黑简体';
+                        src:  url('//st0.dancf.com/font/item/1461809427138.woff') format('woff');
+                    }
+            @font-face {
+            /* 太极体 */
+        font-family: '汉仪太极体简';
+                        src:  url('//st0.dancf.com/font/item/1461809542257.woff') format('woff');
+                    }
+            @font-face {
+            /* 娃娃体 */
+        font-family: '迷你简娃娃篆';
+                        src:  url('//st0.dancf.com/font/item/1461810424471.woff') format('woff');
+                    }
+            @font-face {
+            /* 雪峰体 */
+        font-family: '汉仪雪峰体简';
+                        src:  url('//st0.dancf.com/font/item/1461810861543.woff') format('woff');
+                    }
+            @font-face {
+            /* 华康仿宋 */
+        font-family: '华康仿宋体W3-A';
+                        src:  url('//st0.dancf.com/font/item/1461912050959.woff') format('woff');
+                    }
+            @font-face {
+            /* 汉仪粗宋简 */
+        font-family: '汉仪粗宋简';
+                        src:  url('//st0.dancf.com/font/item/1462430991308.woff') format('woff');
+                    }
+            @font-face {
+            /* 迷你简粗活意 */
+        font-family: '迷你简粗活意';
+                        src:  url('//st0.dancf.com/font/item/1462431180389.woff') format('woff');
+                    }
+            @font-face {
+            /* 迷你简方叠体 */
+        font-family: '迷你简方叠体';
+                        src:  url('//st0.dancf.com/font/item/1462431335649.woff') format('woff');
+                    }
+            @font-face {
+            /* 庞中华行书 */
+        font-family: 'AMCSongGBK-Light';
+                        src:  url('//st0.dancf.com/font/item/1462433043131.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂金钟体 */
+        font-family: 'SentyGoldenBell';
+                        src:  url('//st0.dancf.com/font/item/1470027003603.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂黑板报体 */
+        font-family: 'SentyCHALK';
+                        src:  url('//st0.dancf.com/font/item/1465207052134.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂黑板报体底字 */
+        font-family: 'SentyChalkOriginal';
+                        src:  url('//st0.dancf.com/font/item/1465207110394.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂泡芙体 */
+        font-family: 'SentyCreamPuff';
+                        src:  url('//st0.dancf.com/font/item/1465207156188.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂小丸子体 */
+        font-family: 'SentyMARUKOpro';
+                        src:  url('//st0.dancf.com/font/item/1465207188986.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂剪纸体 */
+        font-family: 'SentyPaperCut';
+                        src:  url('//st0.dancf.com/font/item/1465207222388.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂绿豆体 */
+        font-family: 'sentypea';
+                        src:  url('//st0.dancf.com/font/item/1465207576128.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂下午茶体 */
+        font-family: 'SentyTEA';
+                        src:  url('//st0.dancf.com/font/item/1470027040824.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂文征明体 */
+        font-family: 'SentyWEN-SP-TR';
+                        src:  url('//st0.dancf.com/font/item/1473646816451.woff') format('woff');
+                    }
+            @font-face {
+            /* 新蒂赵孟頫字体 */
+        font-family: 'SentyZHAO';
+                        src:  url('//st0.dancf.com/font/item/1465208301641.woff') format('woff');
+                    }
+            @font-face {
+            /* Didot-Bold */
+        font-family: 'Didot-Bold';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/Didot-Bold.woff') format('woff');
+                    }
+            @font-face {
+            /* Didot-Italic */
+        font-family: 'Didot-Italic';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/Didot-Italic.woff') format('woff');
+                    }
+            @font-face {
+            /* Didot-Htf-l11-Light */
+        font-family: 'Didot-Htf-l11-Light';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/Didot-Htf-l11-Light.woff') format('woff');
+                    }
+            @font-face {
+            /* Didot-HTF-L11-Light */
+        font-family: 'Didot-HTF-L11-Light';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/Didot-HTF-L11-Light.woff') format('woff');
+                    }
+            @font-face {
+            /* Didot */
+        font-family: 'Didot';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/Didot.woff') format('woff');
+                    }
+            @font-face {
+            /* DidotLTStd-Bold_0 */
+        font-family: 'DidotLTStd-Bold_0';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/DidotLTStd-Bold_0.woff') format('woff');
+                    }
+            @font-face {
+            /* DidotLTStd-Headline_0 */
+        font-family: 'DidotLTStd-Headline_0';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/DidotLTStd-Headline_0.woff') format('woff');
+                    }
+            @font-face {
+            /* DidotLTStd-Ltalic */
+        font-family: 'DidotLTStd-Ltalic';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/DidotLTStd-Ltalic.woff') format('woff');
+                    }
+            @font-face {
+            /* DidotLTStd-Ornaments */
+        font-family: 'DidotLTStd-Ornaments';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/DidotLTStd-Ornaments.woff') format('woff');
+                    }
+            @font-face {
+            /* DidotLTStd-Roman */
+        font-family: 'DidotLTStd-Roman';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/DidotLTStd-Roman.woff') format('woff');
+                    }
+            @font-face {
+            /* 蒙纳简黑标宋-Bold */
+        font-family: 'MSungPRC-Bold';
+                                src:  url('//wscdn.huanleguang.com/zhutu/fonts/MSUNG-PRC-BOLD.woff') format('woff');
+                    }
+            @font-face {
+            /* 思源黑体-Bold */
+        font-family: 'SourceHanSansSC-Bold';
+                        src:  url('//st0.dancf.com/font/item/1469093096632.woff') format('woff');
+                    }
+            @font-face {
+            /* 思源黑体-Light */
+        font-family: 'SourceHanSansSC-Light';
+                        src:  url('//st0.dancf.com/font/item/1469093515183.woff') format('woff');
+                    }
+            @font-face {
+            /* 思源黑体-Medium */
+        font-family: 'SourceHanSansSC-Medium';
+                        src:  url('//st0.dancf.com/font/item/1469093533497.woff') format('woff');
+                    }
+            @font-face {
+            /* 思源黑体-Regular */
+        font-family: 'SourceHanSansSC-Regular';
+                        src:  url('//st0.dancf.com/font/item/1469093554573.woff') format('woff');
+                    }
+            @font-face {
+            /* OctinCollegeHv */
+        font-family: 'OctinCollegeHv';
+                        src:  url('//st0.dancf.com/font/item/1470027675246.woff') format('woff');
+                    }
+            @font-face {
+            /* Sniglet */
+        font-family: 'Sniglet';
+                        src:  url('//st0.dancf.com/font/item/1470027718315.woff') format('woff');
+                    }
+            @font-face {
+            /* SegoeScript */
+        font-family: 'SegoeScript';
+                        src:  url('//st0.dancf.com/font/item/1470027735028.woff') format('woff');
+                    }
+            @font-face {
+            /* SnellRoundhand-Script */
+        font-family: 'SnellRoundhand-Script';
+                        src:  url('//st0.dancf.com/font/item/1477898387107.woff') format('woff');
+                    }
+            @font-face {
+            /* RemachineScript */
+        font-family: 'RemachineScriptPersonalUseOnly';
+                        src:  url('//st0.dancf.com/font/item/1470027777932.woff') format('woff');
+                    }
+            @font-face {
+            /* MorningStar */
+        font-family: 'Morning Star';
+                        src:  url('//st0.dancf.com/font/item/1470030138979.woff') format('woff');
+                    }
+            @font-face {
+            /* actionjackson */
+        font-family: 'Action Jackson';
+                        src:  url('//st0.dancf.com/font/item/1461808737790.woff') format('woff');
+                    }
+            @font-face {
+            /* Monotype Corsiva */
+        font-family: 'Monotype Corsiva';
+                        src:  url('//st0.dancf.com/font/item/1461809306221.woff') format('woff');
+                    }
+            @font-face {
+            /* Ahkio Black */
+        font-family: 'Ahkio Black';
+                        src:  url('//st0.dancf.com/font/item/1465263254621.woff') format('woff');
+                    }
+            @font-face {
+            /* Ahkio Bold */
+        font-family: 'Ahkio Bold';
+                        src:  url('//st0.dancf.com/font/item/1465263281156.woff') format('woff');
+                    }
+            @font-face {
+            /* Ahkio Light */
+        font-family: 'Ahkio Light';
+                        src:  url('//st0.dancf.com/font/item/1465263306346.woff') format('woff');
+                    }
+            @font-face {
+            /* American Typewriter */
+        font-family: 'American Typewriter';
+                        src:  url('//st0.dancf.com/font/item/1465263349932.woff') format('woff');
+                    }
+            @font-face {
+            /* BerkshireSwash-Regular */
+        font-family: 'BerkshireSwash-Regular';
+                        src:  url('//st0.dancf.com/font/item/1465263370031.woff') format('woff');
+                    }
+            @font-face {
+            /* Coco-Bold */
+        font-family: 'Coco-Bold';
+                        src:  url('//st0.dancf.com/font/item/1465263389509.woff') format('woff');
+                    }
+            @font-face {
+            /* Coco-BoldItalic */
+        font-family: 'Coco-BoldItalic';
+                        src:  url('//st0.dancf.com/font/item/1465263410323.woff') format('woff');
+                    }
+            @font-face {
+            /* Coco-Italic */
+        font-family: 'Coco-Italic';
+                        src:  url('//st0.dancf.com/font/item/1465263428741.woff') format('woff');
+                    }
+            @font-face {
+            /* Coco-Regular */
+        font-family: 'Coco-Regular';
+                        src:  url('//st0.dancf.com/font/item/1465263456287.woff') format('woff');
+                    }
+            @font-face {
+            /* Didot Bold */
+        font-family: 'Didot Bold';
+                        src:  url('//st0.dancf.com/font/item/1465264346760.woff') format('woff');
+                    }
+            @font-face {
+            /* EchinosPark */
+        font-family: 'EchinosPark';
+                        src:  url('//st0.dancf.com/font/item/1465264370021.woff') format('woff');
+                    }
+            @font-face {
+            /* metabold */
+        font-family: 'metabold';
+                        src:  url('//st0.dancf.com/font/item/1465264389685.woff') format('woff');
+                    }
+            @font-face {
+            /* metamedium */
+        font-family: 'metamedium';
+                        src:  url('//st0.dancf.com/font/item/1465264412637.woff') format('woff');
+                    }
+            @font-face {
+            /* metanormal */
+        font-family: 'metanormal';
+                        src:  url('//st0.dancf.com/font/item/1465264430146.woff') format('woff');
+                    }
+            @font-face {
+            /* Georgia-Bold */
+        font-family: 'Georgia-Bold';
+                        src:  url('//st0.dancf.com/font/item/1465264452126.woff') format('woff');
+                    }
+            @font-face {
+            /* GeorgiaBoldItalic */
+        font-family: 'GeorgiaBoldItalic';
+                        src:  url('//st0.dancf.com/font/item/1465264467682.woff') format('woff');
+                    }
+            @font-face {
+            /* HelveticaNeueLtProbd */
+        font-family: 'HelveticaNeueLtProbd';
+                        src:  url('//st0.dancf.com/font/item/1465264488559.woff') format('woff');
+                    }
+            @font-face {
+            /* HelveticaNeueLtProUltlt */
+        font-family: 'HelveticaNeueLtProUltlt';
+                        src:  url('//st0.dancf.com/font/item/1465264509011.woff') format('woff');
+                    }
+            @font-face {
+            /* HelveticaNeueProRoman */
+        font-family: 'HelveticaNeueProRoman';
+                        src:  url('//st0.dancf.com/font/item/1465264527098.woff') format('woff');
+                    }
+            @font-face {
+            /* Homestead-Display */
+        font-family: 'Homestead-Display';
+                        src:  url('//st0.dancf.com/font/item/1465264546351.woff') format('woff');
+                    }
+            @font-face {
+            /* Homestead-Inline */
+        font-family: 'Homestead-Inline';
+                        src:  url('//st0.dancf.com/font/item/1465264563323.woff') format('woff');
+                    }
+            @font-face {
+            /* MonaLisaStd-Recut */
+        font-family: 'MonaLisaStd-Recut';
+                        src:  url('//st0.dancf.com/font/item/1465264605070.woff') format('woff');
+                    }
+            @font-face {
+            /* MonaLisaStd-solid */
+        font-family: 'MonaLisaStd-solid';
+                        src:  url('//st0.dancf.com/font/item/1465264663161.woff') format('woff');
+                    }
+            @font-face {
+            /* Knockout-HTF46-Flyweight */
+        font-family: 'Knockout-HTF46-Flyweight';
+                        src:  url('//st0.dancf.com/font/item/1465264697509.woff') format('woff');
+                    }
+            @font-face {
+            /* monolinescriptmtstd */
+        font-family: 'monolinescriptmtstd';
+                        src:  url('//st0.dancf.com/font/item/1465264718358.woff') format('woff');
+                    }
+            @font-face {
+            /* Octin College Free */
+        font-family: 'Octin College Free';
+                        src:  url('//st0.dancf.com/font/item/1465264736679.woff') format('woff');
+                    }
+            @font-face {
+            /* Octin College Hv */
+        font-family: 'Octin College Hv';
+                        src:  url('//st0.dancf.com/font/item/1465264751982.woff') format('woff');
+                    }
+            @font-face {
+            /* Octin College Lt */
+        font-family: 'Octin College Lt';
+                        src:  url('//st0.dancf.com/font/item/1465264768844.woff') format('woff');
+                    }
+            @font-face {
+            /* Octin Sports Lt */
+        font-family: 'Octin Sports Lt';
+                        src:  url('//st0.dancf.com/font/item/1465264784510.woff') format('woff');
+                    }
+            @font-face {
+            /* PalatinoLTStd-Bold */
+        font-family: 'PalatinoLTStd-Bold';
+                        src:  url('//st0.dancf.com/font/item/1465264811220.woff') format('woff');
+                    }
+            @font-face {
+            /* PalatinoLTStd-BoldItalic */
+        font-family: 'PalatinoLTStd-BoldItalic';
+                        src:  url('//st0.dancf.com/font/item/1465264960958.woff') format('woff');
+                    }
+            @font-face {
+            /* PalatinoLTStd-Italic */
+        font-family: 'PalatinoLTStd-Italic';
+                        src:  url('//st0.dancf.com/font/item/1465264988876.woff') format('woff');
+                    }
+            @font-face {
+            /* PalatinoLTStd-Roman */
+        font-family: 'PalatinoLTStd-Roman';
+                        src:  url('//st0.dancf.com/font/item/1465265008667.woff') format('woff');
+                    }
+            @font-face {
+            /* Ribbon */
+        font-family: 'Ribbon';
+                        src:  url('//st0.dancf.com/font/item/1465265070624.woff') format('woff');
+                    }
+            @font-face {
+            /* RockwellStd */
+        font-family: 'RockwellStd';
+                        src:  url('//st0.dancf.com/font/item/1465265088691.woff') format('woff');
+                    }
+            @font-face {
+            /* RockwellStd-Bold */
+        font-family: 'RockwellStd-Bold';
+                        src:  url('//st0.dancf.com/font/item/1465265109113.woff') format('woff');
+                    }
+            @font-face {
+            /* RockwellStd-BoldItalic */
+        font-family: 'RockwellStd-BoldItalic';
+                        src:  url('//st0.dancf.com/font/item/1465265124460.woff') format('woff');
+                    }
+            @font-face {
+            /* RockwellStd-Italic */
+        font-family: 'RockwellStd-Italic';
+                        src:  url('//st0.dancf.com/font/item/1465265143455.woff') format('woff');
+                    }
+            @font-face {
+            /* Sniglet Regular */
+        font-family: 'Sniglet Regular';
+                        src:  url('//st0.dancf.com/font/item/1465265163469.woff') format('woff');
+                    }
+            @font-face {
+            /* SNNeoNoire */
+        font-family: 'SNNeoNoire';
+                        src:  url('//st0.dancf.com/font/item/1465265303497.woff') format('woff');
+                    }
+            @font-face {
+            /* TimesNewRoman */
+        font-family: 'TimesNewRoman';
+                        src:  url('//st0.dancf.com/font/item/1465265365463.woff') format('woff');
+                    }
+            @font-face {
+            /* TrajanPro */
+        font-family: 'TrajanPro';
+                        src:  url('//st0.dancf.com/font/item/1465265395232.woff') format('woff');
+                    }
+            @font-face {
+            /* TrajanPro-Bold */
+        font-family: 'TrajanPro-Bold';
+                        src:  url('//st0.dancf.com/font/item/1465265410520.woff') format('woff');
+                    }
+            @font-face {
+            /* Unifraktur */
+        font-family: 'Unifraktur';
+                        src:  url('//st0.dancf.com/font/item/1465265429037.woff') format('woff');
+                    }
+            @font-face {
+            /* ZnikomitNo25 */
+        font-family: 'ZnikomitNo25';
+                        src:  url('//st0.dancf.com/font/item/1465265448926.woff') format('woff');
+                    }
+        /* fonts END */
+    *{ margin: 0; padding: 0; }
+    body{
+        padding: 40px;
+    }
+    .container{
+        margin: 0 auto;
+        height: {{height}}px;
+        width: {{width}}px;
+        position: relative;
+        overflow: hidden;
+    }
+    .img{
+        background: url({{iconImgPath}}) no-repeat;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .text{
+        color: {{color}};
+        position: absolute;
+        width: {{textWidth}};
+        left: {{textLeft}};
+        top: {{textTop}};
+        -webkit-transform: matrix({{transform}});
+        transform: matrix({{transform}});
+        text-align: {{textAlign}};
+        text-decoration: {{textDecoration}};
+        vertical-align: {{verticalAlign}};
+        line-height: {{lineHeight}};
+        font-size: {{fontSize}};
+        font-family: {{fontFamily}};
+        font-style: {{fontStyle}};
+        font-weight: {{fontWeight}};
+        letter-spacing: {{letterSpacing}};
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="img"></div>
+        <div class="text">{{waterPrice}}</div>
+    </div>
+</body>
+</html>
