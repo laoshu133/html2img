@@ -3,7 +3,7 @@ local cjson = require "cjson"
 local chunk_size = 4096
 local form,err = upload:new(chunk_size)
 local tid = ngx.var.arg_tid
-local tmpDir = "/var/tmp/material_image/"
+local imgDir = "/var/tmp/material_icon/"
 local file
 local fileName
 local response = {
@@ -34,9 +34,15 @@ while true do
             local filenameRegex = "filename=\"[^\"]*\\.(\\w+)\""
             local m = ngx.re.match(res[2],filenameRegex)
             if m then
+                local tmpDir = os.date("%Y%m%d")
                 local time = os.time()
-                fileName = "makeicon_"..time.."_"..tid.."."..m[1]
-                file = io.open(tmpDir..fileName,"w")
+                fileName = tmpDir.."/"..tid.."_"..time.."."..m[1]
+                file = io.open(imgDir..fileName,"w")
+                if not file then
+                    --[[ 失败尝试创建一次临时图片目录 ]]--
+                    os.execute("mkdir "..imgDir.."/"..tmpDir)
+                    file = io.open(imgDir..fileName,"w")
+                end
                 if not file then
                     response.status = "success"
                     response.desc = "fail to open tmp upload file"
