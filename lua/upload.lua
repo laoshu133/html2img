@@ -34,7 +34,7 @@ while true do
             local filenameRegex = "filename=\"[^\"]*\\.(\\w+)\""
             local m = ngx.re.match(res[2],filenameRegex)
             if m then
-                local tmpDir = os.date("%Y%m%d")
+                local tmpDir = os.date("%Y%m%d%H")
                 local time = os.time()
                 fileName = tmpDir.."/"..tid.."_"..time.."."..m[1]
                 file = io.open(imgDir..fileName,"w")

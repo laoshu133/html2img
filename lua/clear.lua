@@ -1,8 +1,14 @@
 #!/usr/bin/lua
 local tmpImgDir = "/var/tmp/material_icon/"
-for i=1,3,1 do
-	local curTimestamp = os.time()
-	local oldTimestamp = curTimestamp - i*24*60*60
-	local imgDir = os.date("%Y%m%d",oldTimestamp)
+local curTimestamp = os.time()
+local imgDirPrefix = os.date("%Y%m%d",curTimestamp)
+local curDateHour = os.date("%H")
+local imgDir
+for i=0,tonumber(curDateHour),1 do
+	if i < 10 then
+		imgDir = imgDirPrefix.."0"..i
+	else
+		imgDir = imgDirPrefix..i
+	end
 	os.execute("rm -rf "..tmpImgDir..imgDir)
 end
