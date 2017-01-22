@@ -4,11 +4,17 @@ local curTimestamp = os.time()
 local imgDirPrefix = os.date("%Y%m%d",curTimestamp)
 local curDateHour = os.date("%H")
 local imgDir
-for i=0,tonumber(curDateHour)-1,1 do
-	if i < 10 then
-		imgDir = imgDirPrefix.."0"..i
-	else
-		imgDir = imgDirPrefix..i
+if curDateHour > 0 then
+	for i=0,tonumber(curDateHour)-1,1 do
+		if i < 10 then
+			imgDir = imgDirPrefix.."0"..i
+		else
+			imgDir = imgDirPrefix..i
+		end
+		os.execute("rm -rf "..tmpImgDir..imgDir)
 	end
-	os.execute("rm -rf "..tmpImgDir..imgDir)
+else
+	local yesterdayTimestamp = curTimestamp - 24*60*60
+	imgDirPrefix = os.date("%Y%m%d",yesterdayTimestamp)
+	os.execute("rm -rf "..tmpImgDir..imgDirPrefix.."23")
 end
