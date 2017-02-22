@@ -3,6 +3,7 @@
  *
  * 默认输出至控制台，建议基于 pm2 管理日志
  */
+'use strict';
 
 const debug = require('debug');
 
