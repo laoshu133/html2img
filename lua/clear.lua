@@ -1,5 +1,5 @@
 #!/usr/bin/lua
-local tmpImgDir = "/var/tmp/material_icon/"
+local tmpImgDir = "/data/storage/material_icon/"
 local curTimestamp = os.time()
 local imgDirPrefix = os.date("%Y%m%d",curTimestamp)
 local curDateHour = os.date("%H")

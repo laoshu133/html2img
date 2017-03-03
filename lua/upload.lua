@@ -3,7 +3,7 @@ local cjson = require "cjson"
 local chunk_size = 8192
 local form,err = upload:new(chunk_size)
 local tid = ngx.var.arg_id
-local imgDir = "/var/tmp/material_icon/"
+local imgDir = "/data/storage/material_icon/"
 local file
 local fileName
 local response = {
