@@ -76,13 +76,21 @@ onerror(app, {
 
 // Error report
 app.on('error', err => {
-    logger.info('[App Error]', err.message);
+    logger.info('[App Error]', {
+        message: err.message,
+        code: err.code
+    });
+
     logger.error(err);
 });
 
 // process.crash
 process.on('uncaughtException', ex => {
-    logger.info('[App Crashed]', ex.message);
+    logger.info('[App Crashed]', {
+        message: ex.message,
+        code: ex.code
+    });
+
     logger.error(ex);
 
     process.exit(1);
