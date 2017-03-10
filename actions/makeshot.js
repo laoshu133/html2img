@@ -18,7 +18,7 @@ const SHOT_TIMEOUT = process.env.SHOT_TIMEOUT || 60 * 60 * 1000;
 const BLANK_IMAGE = path.resolve(__dirname, '../static/blank.png');
 
 function makeshot(cfg, hooks) {
-    logger.info('Actions.makeshot['+ cfg.action +']');
+    logger.info('Actions.makeshot[' + cfg.action + ']');
 
     let page;
 

@@ -78,6 +78,7 @@ onerror(app, {
 app.on('error', err => {
     logger.info('[App Error]', {
         message: err.message,
+        stack: err.stack,
         code: err.code
     });
 
@@ -88,6 +89,7 @@ app.on('error', err => {
 process.on('uncaughtException', ex => {
     logger.info('[App Crashed]', {
         message: ex.message,
+        stack: ex.stack,
         code: ex.code
     });
 
