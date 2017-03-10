@@ -142,14 +142,14 @@ function makeshot(cfg, hooks) {
         return Promise.each(rects, (rect, inx) => {
             let path = imagePath;
             if(inx > 0) {
-                path = path.replace(rExt, '-'+ (inx+1) +'$1');
+                path = path.replace(rExt, '-' + (inx + 1) + '$1');
             }
 
             images[inx] = path;
             crops[inx] = lodash.pick(rect, cropProps);
 
             // rect is empty
-            if(rect.width <=0 || rect.height <= 0) {
+            if(rect.width <= 0 || rect.height <= 0) {
                 return fs.copyAsync(BLANK_IMAGE, path);
             }
 
@@ -178,7 +178,7 @@ function makeshot(cfg, hooks) {
 
     // result & count
     .then(() => {
-        logger.info('Actions.makeshot['+ cfg.action +'].done');
+        logger.info('Actions.makeshot[' + cfg.action + '].done');
 
         makeshot.shotCounts.total += 1;
         makeshot.shotCounts.success += 1;
@@ -263,7 +263,7 @@ makeshot.removeShot = function(id) {
 // 删除已超时截图，默认 1 小时超时
 makeshot.clearTimeoutShots = function() {
     let now = Date.now();
-    let rOutId = /^[a-z]+\_\d+/i;
+    let rOutId = /^[a-z]+_\d+/i;
 
     return fs.readdirAsync(OUT_PATH)
     .filter(dirname => {
