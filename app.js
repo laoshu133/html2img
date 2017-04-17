@@ -5,8 +5,12 @@
  */
 'use strict';
 
-// env
-require('dotenv-safe').load();
+// global env
+require('dotenv-safe').load({
+    allowEmptyValues: true,
+    path: `${__dirname}/.env`,
+    sample: `${__dirname}/.env.example`
+});
 
 // logger
 const logger = require('./services/logger');
@@ -29,7 +33,7 @@ app.use(bodyParser());
 
 // 404
 app.use(function *(next) {
-    yield* next;
+    yield next;
 
     if(this.status === 404 && !this.body) {
         this.throw(404);
@@ -102,9 +106,12 @@ process.on('uncaughtException', ex => {
 // start up
 if(!module.parent) {
     let port = process.env.PORT || 3007;
-    app.listen(port);
 
-    logger.info('Server listening: ' + port);
+    app.listen(port);
+    logger.info('Server Start...', {
+        port: port,
+        www: 'http://' + process.env.WWW_HOST
+    });
 }
 
 // exports
