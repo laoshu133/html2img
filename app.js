@@ -5,12 +5,8 @@
  */
 'use strict';
 
-// global env
-require('dotenv-safe').load({
-    allowEmptyValues: true,
-    path: `${__dirname}/.env`,
-    sample: `${__dirname}/.env.example`
-});
+// env
+require('./env');
 
 // logger
 const logger = require('./services/logger');

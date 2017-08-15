@@ -4,13 +4,9 @@
  * tests/makelist
  *
  */
-'use strict';
 
 // env
-require('dotenv-safe').load({
-    // sample: '../.env.example',
-    // path: '../.env'
-});
+require('../env');
 
 // deps
 const Promise = require('bluebird');
