@@ -50,7 +50,7 @@ const config = {
 
             // id
             if(!cfg.id) {
-                cfg.id = [action, Date.now(), ++this.uuid].join('_');
+                cfg.id = [action, Date.now(), process.pid, ++this.uuid].join('_');
             }
 
             // viewport
