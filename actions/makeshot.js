@@ -198,10 +198,14 @@ function makeshot(cfg, hooks) {
     })
     // hooks.beforeOptimize
     .tap(() => {
+        traceInfo('image.optimize');
+
         return hooks.beforeOptimize(page, cfg);
     })
     // hooks.afterShot
     .tap(() => {
+        traceInfo('image.optimize.done');
+
         return hooks.afterShot(cfg);
     })
     // update status
@@ -214,8 +218,6 @@ function makeshot(cfg, hooks) {
 
     // result & count
     .then(() => {
-        traceInfo('done');
-
         makeshot.shotCounts.total += 1;
         makeshot.shotCounts.success += 1;
 
@@ -226,6 +228,14 @@ function makeshot(cfg, hooks) {
         makeshot.shotCounts.error += 1;
 
         return Promise.reject(ex);
+    })
+
+    // clean & status
+    .finally(() => {
+        // clean
+        if(page) {
+            return page.close();
+        }
     })
 
     // update status
@@ -257,12 +267,8 @@ function makeshot(cfg, hooks) {
         });
     })
 
-    // clean & status
-    .finally(() => {
-        // clean
-        if(page) {
-            return page.close();
-        }
+    .tap(() => {
+        traceInfo('done');
     });
 };
 
