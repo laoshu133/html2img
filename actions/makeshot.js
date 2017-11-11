@@ -18,7 +18,24 @@ const SHOT_TIMEOUT = process.env.SHOT_TIMEOUT || 60 * 60 * 1000;
 const BLANK_IMAGE = path.resolve(__dirname, '../static/blank.png');
 
 function makeshot(cfg, hooks) {
-    logger.info('Actions.makeshot[' + cfg.action + ']');
+    const startTimestamp = Date.now();
+    const traceInfo = (type, metadata) => {
+        const msg = `Makeshot.${type}`;
+        const elapsed = Date.now() - startTimestamp;
+        const lastMs = traceInfo.lastMs || 0;
+
+        traceInfo.lastMs = elapsed;
+
+        return logger.info(msg, lodash.assign({
+            shot_id: cfg.id,
+            shot_url: cfg.url,
+            selector: cfg.wrapSelector,
+            last_elasped: elapsed - lastMs,
+            elapsed: elapsed
+        }, metadata));
+    };
+
+    traceInfo('Start');
 
     let page;
 
@@ -34,12 +51,16 @@ function makeshot(cfg, hooks) {
     return makeshot.syncStatus()
     // process config
     .then(() => {
+        traceInfo('config.process');
+
         return config.processContent(cfg);
     })
     .then(cfg => {
         if(!cfg.url) {
             throw new Error('url not provided');
         }
+
+        traceInfo('phantomAdp.preparePage');
 
         return phantomAdp.preparePage(cfg);
     })
@@ -98,6 +119,8 @@ function makeshot(cfg, hooks) {
 
         setTimeout(check, interval);
 
+        traceInfo('page.check');
+
         return new Promise((resolve, reject) => {
             dfd.resolve = resolve;
             dfd.reject = reject;
@@ -105,6 +128,8 @@ function makeshot(cfg, hooks) {
     })
     // hooks.beforeShot
     .tap(() => {
+        traceInfo('page.check.done');
+
         return hooks.beforeShot(page, cfg);
     })
     // update status
@@ -113,6 +138,8 @@ function makeshot(cfg, hooks) {
     })
     // get croper rects
     .then(() => {
+        traceInfo('page.getCropRects');
+
         let selector = cfg.wrapSelector;
 
         return page.getCropRects(selector, {
@@ -123,6 +150,8 @@ function makeshot(cfg, hooks) {
     .delay(+cfg.renderDelay || 0)
     // map rect & crop (Series)
     .then(rects => {
+        traceInfo('page.getCropRects.done');
+
         let rExt = /(\.\w+)$/;
         let cropProps = ['width', 'height', 'left', 'top'];
 
@@ -153,10 +182,17 @@ function makeshot(cfg, hooks) {
                 return fs.copyAsync(BLANK_IMAGE, path);
             }
 
+            traceInfo(`page.crop-${inx}`);
+
             return page.crop(rect, path, {
                 quality: cfg.imageQuality,
                 format: cfg.imageType,
                 size: cfg.imageSize
+            })
+            .then(ret => {
+                traceInfo(`page.crop-${inx}.done`);
+
+                return ret;
             });
         });
     })
@@ -178,7 +214,7 @@ function makeshot(cfg, hooks) {
 
     // result & count
     .then(() => {
-        logger.info('Actions.makeshot[' + cfg.action + '].done');
+        traceInfo('done');
 
         makeshot.shotCounts.total += 1;
         makeshot.shotCounts.success += 1;
@@ -210,11 +246,14 @@ function makeshot(cfg, hooks) {
 
         makeshot.clearTimeoutShots()
         .then(removedIds => {
-            logger.info('Actions.makeshot.clearTimeoutShots', removedIds);
+            traceInfo('clearTimeoutShots', {
+                removedIds
+            });
         })
         .catch(ex => {
-            logger.info('Actions.makeshot.clearTimeoutShots.error');
-            logger.error(ex);
+            traceInfo('clearTimeoutShots.error', {
+                message: ex.stack || ex.message
+            });
         });
     })
 
