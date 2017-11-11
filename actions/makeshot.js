@@ -252,7 +252,7 @@ function makeshot(cfg, hooks) {
         })
         .catch(ex => {
             traceInfo('clearTimeoutShots.error', {
-                message: ex.stack || ex.message
+                stack: ex.stack || ex.message
             });
         });
     })
