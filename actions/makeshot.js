@@ -66,6 +66,8 @@ function makeshot(cfg, hooks) {
     })
     // cache page, update status
     .tap(phPage => {
+        traceInfo('phantomAdp.preparePage.done');
+
         page = phPage;
     })
     // hooks.beforeCheck
@@ -73,7 +75,13 @@ function makeshot(cfg, hooks) {
         return hooks.beforeCheck(page, cfg);
     })
     // update status
+    .tap(() => {
+        traceInfo('status.sync');
+    })
     .tap(makeshot.syncStatus)
+    .tap(() => {
+        traceInfo('status.sync.done');
+    })
     // check wrap count
     .then(() => {
         let dfd = {};
