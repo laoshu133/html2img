@@ -2,7 +2,6 @@
  * actions/makeshot
  *
  */
-'use strict';
 
 const path = require('path');
 const lodash = require('lodash');
@@ -17,7 +16,26 @@ const OUT_PATH = process.env.OUT_PATH;
 const SHOT_TIMEOUT = process.env.SHOT_TIMEOUT || 60 * 60 * 1000;
 const BLANK_IMAGE = path.resolve(__dirname, '../static/blank.png');
 
-function makeshot(cfg, hooks) {
+const shotCounts = Object.defineProperties({}, {
+    success: {
+        enumerable: true,
+        writable: true,
+        value: 0
+    },
+    error: {
+        enumerable: true,
+        writable: true,
+        value: 0
+    },
+    total: {
+        enumerable: true,
+        get() {
+            return this.success + this.error;
+        }
+    }
+});
+
+const makeshot = (cfg, hooks) => {
     const startTimestamp = Date.now();
     const traceInfo = (type, metadata) => {
         const msg = `Makeshot.${type}`;
@@ -35,8 +53,6 @@ function makeshot(cfg, hooks) {
         }, metadata));
     };
 
-    traceInfo('Start');
-
     let page;
 
     // hooks
@@ -47,11 +63,9 @@ function makeshot(cfg, hooks) {
         afterShot: lodash.noop
     }, hooks);
 
-    // update status
-    return makeshot.syncStatus()
     // process config
-    .then(() => {
-        traceInfo('config.process');
+    return Promise.try(() => {
+        traceInfo('start');
 
         return config.processContent(cfg);
     })
@@ -74,14 +88,7 @@ function makeshot(cfg, hooks) {
     .tap(() => {
         return hooks.beforeCheck(page, cfg);
     })
-    // update status
-    .tap(() => {
-        traceInfo('status.sync');
-    })
-    .tap(makeshot.syncStatus)
-    .tap(() => {
-        traceInfo('status.sync.done');
-    })
+
     // check wrap count
     .then(() => {
         let dfd = {};
@@ -140,10 +147,7 @@ function makeshot(cfg, hooks) {
 
         return hooks.beforeShot(page, cfg);
     })
-    // update status
-    .tap(() => {
-        return makeshot.syncStatus();
-    })
+
     // get croper rects
     .then(() => {
         traceInfo('page.getCropRects');
@@ -204,39 +208,6 @@ function makeshot(cfg, hooks) {
             });
         });
     })
-    // hooks.beforeOptimize
-    .tap(() => {
-        traceInfo('image.optimize');
-
-        return hooks.beforeOptimize(page, cfg);
-    })
-    // hooks.afterShot
-    .tap(() => {
-        traceInfo('image.optimize.done');
-
-        return hooks.afterShot(cfg);
-    })
-    // update status
-    .tap(makeshot.syncStatus)
-
-    // // debug
-    // .tap(() => {
-    //     return page.screenshot('./__out.png');
-    // })
-
-    // result & count
-    .then(() => {
-        makeshot.shotCounts.total += 1;
-        makeshot.shotCounts.success += 1;
-
-        return cfg.out;
-    })
-    .catch(ex => {
-        makeshot.shotCounts.total += 1;
-        makeshot.shotCounts.error += 1;
-
-        return Promise.reject(ex);
-    })
 
     // clean & status
     .finally(() => {
@@ -246,108 +217,159 @@ function makeshot(cfg, hooks) {
         }
     })
 
-    // update status
-    .tap(makeshot.syncStatus)
-    // clear timeout shots
-    // 满足条件时清除已超时截图
+    // hooks.beforeOptimize
     .tap(() => {
-        let clearInterval = 200;
-        let totalShotCount = makeshot.shotCounts.total;
+        traceInfo('image.optimize');
 
-        if(
-            !SHOT_TIMEOUT ||
-            SHOT_TIMEOUT < 0 ||
-            totalShotCount % clearInterval !== 0
-        ) {
+        return hooks.beforeOptimize(cfg);
+    })
+
+    // hooks.afterShot
+    .tap(() => {
+        traceInfo('image.optimize.done');
+
+        return hooks.afterShot(cfg);
+    })
+
+    // update status
+    // clear timeout shots
+    .tap(() => {
+        makeshot.syncStatusLazy();
+
+        makeshot.clearTimeoutShotsLazy();
+    })
+
+    // result & count
+    .then(() => {
+        shotCounts.success += 1;
+
+        traceInfo('done');
+
+        return cfg.out;
+    })
+
+    .catch(err => {
+        shotCounts.error += 1;
+
+        traceInfo('error', {
+            stack: err.stack || err.message
+        });
+
+        throw err;
+    });
+};
+
+// Extend makeshot
+Object.assign(makeshot, {
+    shotCounts,
+
+    syncStatus() {
+        const filename = process.pid + '.json';
+        const statusPath = path.join(process.env.STATUS_PATH, filename);
+
+        return phantomAdp.getStatus()
+        .then(statusData => {
+            const status = lodash.assign({
+                shotCounts: shotCounts
+            }, statusData);
+
+            return status;
+        })
+        .then(status => {
+            return fs.outputJSONAsync(statusPath, status);
+        });
+    },
+    syncStatusLazy: lodash.throttle(() => {
+        makeshot.syncStatus()
+        .then(() => {
+            logger.info('Makeshot.syncStatus', {
+                message: JSON.stringify(shotCounts)
+            });
+        })
+        .catch(err => {
+            logger.info('Makeshot.syncStatus.error', {
+                message: err.message,
+                stack: err.stack
+            });
+        });
+    }, 16 * 1000),
+
+    removeShot(id) {
+        const dirPath = path.join(OUT_PATH, id);
+
+        return fs.removeAsync(dirPath);
+    },
+    clearTimeoutShots() {
+        const IO_MAX = 4;
+        const now = Date.now();
+        const rOutId = /^[a-z]+/i;
+
+        return Promise.try(() => {
+            return fs.readdirAsync(OUT_PATH);
+        })
+        .filter(dirname => {
+            return rOutId.test(dirname);
+        })
+        .map(dirname => {
+            const dirPath = path.join(OUT_PATH, dirname);
+            const ret = {
+                dirname,
+                dirPath
+            };
+
+            return fs.statAsync(dirPath)
+            .then(stats => {
+                const ms = +stats.mtime;
+
+                ret.isDirectory = stats.isDirectory();
+                ret.elapsed = now - ms;
+
+                return ret;
+            })
+            // Ignore stats error
+            .catch(() => {
+                return ret;
+            });
+        }, {
+            concurrency: IO_MAX
+        })
+        .filter(({ isDirectory, elapsed }) => {
+            return isDirectory && elapsed > SHOT_TIMEOUT;
+        })
+        .map(({ dirname, dirPath }) => {
+            return fs.removeAsync(dirPath)
+            .then(() => {
+                return dirname;
+            });
+        }, {
+            concurrency: IO_MAX
+        });
+    },
+    clearTimeoutShotsLazy() {
+        const clearInterval = 200;
+        const totalShotCount = shotCounts.total;
+
+        if(totalShotCount % clearInterval !== 0) {
             return;
         }
 
         makeshot.clearTimeoutShots()
         .then(removedIds => {
-            traceInfo('clearTimeoutShots', {
+            if(!removedIds.length) {
+                return;
+            }
+
+            logger.info('Makeshot.clearTimeoutShots', {
                 removedIds
             });
         })
-        .catch(ex => {
-            traceInfo('clearTimeoutShots.error', {
-                stack: ex.stack || ex.message
+        .catch(err => {
+            logger.info('Makeshot.clearTimeoutShots.error', {
+                message: err.message,
+                stack: err.stack
             });
         });
-    })
-
-    .tap(() => {
-        traceInfo('done');
-    });
-};
-
-// status counts
-makeshot.shotCounts = {
-    total: 0,
-    success: 0,
-    error: 0
-};
-
-// sync status
-makeshot.syncStatus = function() {
-    let filename = process.pid + '.json';
-    let statusPath = path.join(process.env.STATUS_PATH, filename);
-
-    return phantomAdp.getStatus()
-    .then(statusData => {
-        let status = lodash.assign({
-            shotCounts: makeshot.shotCounts
-        }, statusData);
-
-        return status;
-    })
-    .then(status => {
-        return fs.outputJSONAsync(statusPath, status);
-    });
-};
-
-// 删除截图
-makeshot.removeShot = function(id) {
-    let dirPath = path.join(OUT_PATH, id);
-
-    return fs.removeAsync(dirPath);
-};
-
-// clearTimeoutShots
-// 删除已超时截图，默认 1 小时超时
-makeshot.clearTimeoutShots = function() {
-    let now = Date.now();
-    let rOutId = /^[a-z]+_\d+/i;
-
-    return fs.readdirAsync(OUT_PATH)
-    .filter(dirname => {
-        if(!rOutId.test(dirname)) {
-            return false;
-        }
-
-        let dirPath = path.join(OUT_PATH, dirname);
-
-        return fs.statAsync(dirPath)
-        .then(stats => {
-            let elapsed = now - stats.mtime.getTime();
-
-            if(
-                stats.isDirectory() &&
-                elapsed > SHOT_TIMEOUT
-            ) {
-                return true;
-            }
-
-            return false;
-        });
-    })
-    .map(dirname => {
-        return makeshot.removeShot(dirname)
-        .then(() => {
-            return dirname;
-        });
-    }, {
-        concurrency: 5
-    });
-};
+    }
+});
 
 module.exports = makeshot;
