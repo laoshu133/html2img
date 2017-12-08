@@ -20,7 +20,7 @@ if not form then
     return
 end
 
-form:set_timeout(1000)
+form:set_timeout(16000)
 while true do
     local typ,res,err = form:read()
     if not typ then
