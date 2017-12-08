@@ -283,13 +283,12 @@ Object.assign(makeshot, {
         makeshot.syncStatus()
         .then(() => {
             logger.info('Makeshot.syncStatus', {
-                message: JSON.stringify(shotCounts)
+                counts: JSON.stringify(shotCounts)
             });
         })
         .catch(err => {
             logger.info('Makeshot.syncStatus.error', {
-                message: err.message,
-                stack: err.stack
+                stack: err.stack || err.message
             });
         });
     }, 16 * 1000),
@@ -365,8 +364,7 @@ Object.assign(makeshot, {
         })
         .catch(err => {
             logger.info('Makeshot.clearTimeoutShots.error', {
-                message: err.message,
-                stack: err.stack
+                stack: err.stack || err.message
             });
         });
     }
